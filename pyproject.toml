@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ic2-reactor-optimizer"
+version = "0.1.0"
+description = "IC2 Experimental 2.8.221 EU reactor simulator and optimizer"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
+  "pydantic>=2.8",
+  "numpy>=2.0",
+  "h5py>=3.12",
+]
+
+[project.scripts]
+ic2-reactor = "ic2_reactor.__main__:main"
+
+[tool.setuptools]
+package-dir = {"" = "backend"}
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["tests"]
+
