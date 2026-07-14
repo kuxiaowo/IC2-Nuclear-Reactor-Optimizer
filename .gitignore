@@ -10,7 +10,6 @@ __pycache__/
 .data/
 data/
 local_data/
-public/ic2-textures/
 public/ic2-2.8.221.jar
 *.h5
 *.hdf5
