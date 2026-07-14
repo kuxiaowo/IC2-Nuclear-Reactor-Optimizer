@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from math import floor
-from typing import Callable, Iterable
+from typing import Callable
 
 from .components import COMPONENTS, ComponentSpec
 from .mark import FUEL_CYCLE_REACTOR_TICKS, classify_mark
@@ -15,10 +15,12 @@ class SlotState:
     heat: int = 0
     damage: int = 0
     removed: bool = False
+    spec: ComponentSpec = field(init=False, repr=False)
 
-    @property
-    def spec(self) -> ComponentSpec:
-        return COMPONENTS[self.component_id]
+    def __post_init__(self) -> None:
+        # A stack's component id never mutates; removed/replaced stacks get a
+        # fresh SlotState. Cache the immutable specification for this hot path.
+        self.spec = COMPONENTS[self.component_id]
 
     @property
     def broken(self) -> bool:
@@ -46,6 +48,7 @@ class SimulationOptions:
     auto_refuel: bool = False
     stop_on_stable: bool = False
     record_components: bool = True
+    record_history: bool = True
     stable_check_interval: int = FUEL_CYCLE_REACTOR_TICKS
     cancel_check: Callable[[], bool] | None = None
 
@@ -72,6 +75,9 @@ class ReactorSimulator:
     def __init__(self, layout: Layout):
         self.columns = layout.columns
         self.slots = [SlotState(component_id=item) for item in layout.slots]
+        self._neighbor_indices = tuple(
+            self._calculate_neighbors(index) for index in range(len(self.slots))
+        )
         self.initial_component_ids = tuple(layout.slots)
         self.hull_heat = layout.initial_hull_heat
         self.max_hull_heat = self.BASE_HULL_HEAT + sum(
@@ -92,14 +98,10 @@ class ReactorSimulator:
             for item in self.initial_component_ids
         )
 
-    def _neighbors(
-        self,
-        index: int,
-        order: Iterable[str] = OFFICIAL_NEIGHBOR_ORDER,
-    ) -> list[int]:
+    def _calculate_neighbors(self, index: int) -> tuple[int, ...]:
         row, col = divmod(index, self.columns)
         result: list[int] = []
-        for direction in order:
+        for direction in self.OFFICIAL_NEIGHBOR_ORDER:
             if direction == "left" and col > 0:
                 result.append(index - 1)
             elif direction == "right" and col + 1 < self.columns:
@@ -108,7 +110,10 @@ class ReactorSimulator:
                 result.append(index - self.columns)
             elif direction == "down" and row < 5:
                 result.append(index + self.columns)
-        return result
+        return tuple(result)
+
+    def _neighbors(self, index: int) -> tuple[int, ...]:
+        return self._neighbor_indices[index]
 
     def _active(self, index: int) -> bool:
         slot = self.slots[index]
@@ -247,8 +252,10 @@ class ReactorSimulator:
         for _ in range(spec.rod_count):
             pulses = spec.internal_pulses
             if not heat_run:
-                for _ in range(spec.internal_pulses):
-                    self._accept_uranium_pulse(index, index, False)
+                # Internal fuel pulses always target the still-active source
+                # stack, so their energy contribution can be accumulated in
+                # one operation without changing pulse ordering.
+                self._output_pulses += spec.internal_pulses
             for neighbor in self._neighbors(index):
                 if self._accept_uranium_pulse(neighbor, index, heat_run):
                     pulses += 1
@@ -366,13 +373,14 @@ class ReactorSimulator:
         # when its row-major slot is reached during the heat run.
         self.max_hull_heat = self.BASE_HULL_HEAT
         for index in range(len(self.slots)):
-            if not self._active(index):
+            slot = self.slots[index]
+            if slot.component_id == "empty" or slot.removed:
                 continue
-            kind = self.slots[index].spec.kind
+            kind = slot.spec.kind
             if kind == "fuel":
                 generated_heat += self._process_fuel(index, True)
             elif kind == "vent":
-                if self.slots[index].spec.side_vent:
+                if slot.spec.side_vent:
                     vented_heat += self._spread_vent(index)
                 else:
                     vented_heat += self._vent(index)
@@ -382,7 +390,8 @@ class ReactorSimulator:
                 self.max_hull_heat += self.slots[index].spec.hull_capacity_bonus
 
         for index in range(len(self.slots)):
-            if self._active(index) and self.slots[index].spec.kind == "fuel":
+            slot = self.slots[index]
+            if slot.component_id != "empty" and not slot.removed and slot.spec.kind == "fuel":
                 self._process_fuel(index, False, auto_refuel)
 
         eu_per_tick = self._output_pulses * self.EU_PER_PULSE
@@ -416,6 +425,37 @@ class ReactorSimulator:
                 values.append(slot.damage)
         return tuple(values)
 
+    def _fast_forward_fixed_state(self, target_tick: int, eu_per_tick: float) -> None:
+        """Advance a proven thermal fixed point without replaying every cycle.
+
+        Fuel damage does not participate in heat or energy production. With
+        automatic refuelling, depletion replaces a rod with a fresh identical
+        stack, so only damage counters and refuel events need advancing.
+        """
+        start_tick = self.reactor_tick
+        remaining = target_tick - start_tick
+        refuels: list[tuple[int, int, str]] = []
+        for index, slot in enumerate(self.slots):
+            if slot.component_id == "empty" or slot.removed or slot.spec.kind != "fuel":
+                continue
+            first_refuel = slot.spec.max_damage - slot.damage
+            for offset in range(first_refuel, remaining + 1, slot.spec.max_damage):
+                refuels.append((start_tick + offset, index, slot.component_id))
+            slot.damage = (slot.damage + remaining) % slot.spec.max_damage
+
+        # Energy-pass refuels are emitted in tick and row-major slot order.
+        for reactor_tick, index, component_id in sorted(refuels):
+            self.events.append(ReactorEvent(
+                reactor_tick=reactor_tick,
+                game_tick=reactor_tick * 20,
+                type=EventType.REFUEL,
+                slot=index,
+                component_id=component_id,
+                message=f"第 {index + 1} 格燃料棒原位更换",
+            ))
+        self.total_eu += eu_per_tick * 20 * remaining
+        self.reactor_tick = target_tick
+
     def simulate(self, options: SimulationOptions | None = None) -> SimulationRun:
         options = options or SimulationOptions()
         if options.max_game_ticks % 20:
@@ -425,27 +465,72 @@ class ReactorSimulator:
         stable = False
         signatures: dict[tuple, int] = {}
         last_eu = 0.0
+        safe_eu = 0.0
+        safe_cycle_count = 0
+        can_fast_forward = options.auto_refuel and options.stop_on_stable and not options.record_history
+        previous_thermal_state = self.state_signature(include_fuel_damage=False) if can_fast_forward else None
 
-        for _ in range(max_reactor_ticks):
-            if options.cancel_check and options.cancel_check():
+        for cycle in range(max_reactor_ticks):
+            # Cross-process event checks are comparatively expensive. Polling
+            # every 64 reactor cycles remains responsive without doing IPC on
+            # every simulated second.
+            if options.cancel_check and cycle % 64 == 0 and options.cancel_check():
                 reason = StopReason.CANCELLED
                 break
             last_eu, generated, vented = self.step(options.auto_refuel)
-            records.append(ReactorCycleRecord(
-                reactor_tick=self.reactor_tick,
-                hull_heat=self.hull_heat,
-                max_hull_heat=self.max_hull_heat,
-                eu_per_tick=last_eu,
-                total_eu=self.total_eu,
-                generated_heat=generated,
-                vented_heat=vented,
-                component_heat=tuple(slot.heat for slot in self.slots) if options.record_components else (),
-                component_damage=tuple(slot.damage for slot in self.slots) if options.record_components else (),
-                component_ids=tuple(slot.component_id for slot in self.slots) if options.record_components else (),
-            ))
+            if self.first_critical_tick is None:
+                current_intervention = self.first_component_break_tick
+            elif self.first_component_break_tick is None:
+                current_intervention = self.first_critical_tick
+            else:
+                current_intervention = min(self.first_critical_tick, self.first_component_break_tick)
+            if current_intervention is None or self.reactor_tick <= current_intervention:
+                safe_eu += last_eu
+                safe_cycle_count += 1
+            if options.record_history:
+                records.append(ReactorCycleRecord(
+                    reactor_tick=self.reactor_tick,
+                    hull_heat=self.hull_heat,
+                    max_hull_heat=self.max_hull_heat,
+                    eu_per_tick=last_eu,
+                    total_eu=self.total_eu,
+                    generated_heat=generated,
+                    vented_heat=vented,
+                    component_heat=tuple(slot.heat for slot in self.slots) if options.record_components else (),
+                    component_damage=tuple(slot.damage for slot in self.slots) if options.record_components else (),
+                    component_ids=tuple(slot.component_id for slot in self.slots) if options.record_components else (),
+                ))
             if self.meltdown_tick is not None:
                 reason = StopReason.MELTDOWN
                 break
+
+            if (
+                can_fast_forward
+                and self.first_critical_tick is None
+                and self.first_component_break_tick is None
+                and self.state_signature(include_fuel_damage=False) == previous_thermal_state
+            ):
+                interval = options.stable_check_interval
+                stable_tick = ((self.reactor_tick + interval - 1) // interval + 1) * interval
+                target_tick = min(stable_tick, max_reactor_ticks)
+                remaining = target_tick - self.reactor_tick
+                self._fast_forward_fixed_state(target_tick, last_eu)
+                safe_eu += last_eu * remaining
+                safe_cycle_count += remaining
+                if target_tick == stable_tick:
+                    stable = True
+                    self.events.append(ReactorEvent(
+                        reactor_tick=self.reactor_tick,
+                        game_tick=self.reactor_tick * 20,
+                        type=EventType.STABLE,
+                        message=f"检测到与第 {self.reactor_tick - interval} 周期相同的完整状态",
+                    ))
+                    reason = StopReason.STABLE
+                else:
+                    reason = StopReason.TICK_LIMIT
+                break
+            if can_fast_forward:
+                previous_thermal_state = self.state_signature(include_fuel_damage=False)
             if options.auto_refuel and self.reactor_tick % options.stable_check_interval == 0:
                 signature = self.state_signature(include_fuel_damage=False)
                 if signature in signatures:
@@ -467,9 +552,7 @@ class ReactorSimulator:
             tick for tick in (self.first_critical_tick, self.first_component_break_tick) if tick is not None
         ]
         first_intervention = min(intervention_ticks) if intervention_ticks else None
-        safe_records = records[:first_intervention] if first_intervention else records
-        safe_eu = sum(record.eu_per_tick for record in safe_records)
-        average = safe_eu / len(safe_records) if safe_records else 0.0
+        average = safe_eu / safe_cycle_count if safe_cycle_count else 0.0
         mark = classify_mark(
             self.first_critical_tick,
             self.first_component_break_tick,

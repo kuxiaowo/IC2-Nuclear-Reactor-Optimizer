@@ -23,24 +23,22 @@
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-npm install
-npm run build
 python main.py
 ```
 
-最后一个命令会直接从源码启动服务，并打开 `http://127.0.0.1:8000`。它不依赖 conda、PowerShell 启动脚本或预先安装本项目的软件包。可用 `python main.py --no-browser` 禁止自动打开浏览器，也可通过 `--host` 和 `--port` 修改监听地址。
+最后一个命令会自动检查前端：首次运行或前端源码、依赖清单发生变化时，自动执行 npm 依赖安装与生产构建；已有最新构建时直接启动。随后打开 `http://127.0.0.1:8000`。它不依赖 conda、PowerShell 启动脚本或预先安装本项目的软件包，但首次构建仍要求系统已安装 Node.js/npm。
+
+可用 `python main.py --no-browser` 禁止自动打开浏览器，通过 `--host` 和 `--port` 修改监听地址；`--rebuild` 强制重新构建，`--no-build` 跳过自动构建检查。
 
 如果更习惯 conda，也可以继续使用：
 
 ```powershell
 conda env create -f environment.yml
 conda activate ic2-reactor-optimizer
-npm install
-npm run build
 python main.py
 ```
 
-`npm run build` 只需在首次启动或前端代码变更后执行。开发时可分别运行：
+开发时可分别运行：
 
 ```powershell
 npm run api
@@ -67,8 +65,8 @@ npm audit
 
 测试覆盖官方字节码燃料金标准、组件参数、容量与即时移除边界、槽位顺序、反射板脉冲损耗、耗尽/续棒、临界/融毁、Mark 边界、HDF5 game-tick 展开、库存约束和完整有标签空间枚举。
 
-规则、参数出处与已知边界见 [docs/RULES.md](docs/RULES.md)。长轨迹写入 Git 忽略的 `.data/traces/`。
+规则、参数出处与已知边界见 [docs/RULES.md](docs/RULES.md)。Mark I 固定点快进、二层枚举完整性、最优解不遗漏和性能边界的结构化证明见 [Markdown 证明文档](docs/MARK_I_MATHEMATICAL_ANALYSIS.md)，可编译的正式公式稿见 [LaTeX 源文件](docs/MARK_I_OPTIMIZATION_PROOFS.tex)。长轨迹写入 Git 忽略的 `.data/traces/`。
 
 ## 重要说明
 
-“启发式最优”只表示当前预算内找到的最佳解。全局穷举不使用时间、代数、种群或随机种子预算，只设置 CPU 工作进程数；镜像方向也会分别模拟，仅在排行榜展示时归组并保留该组最佳方向。取消后只保留当前最佳，只有完整有标签空间枚举结束才显示“已证明全局最优”。本项目暂不附带开源许可证；这不等于默认允许复制、修改或再发布。
+“启发式最优”只表示当前预算内找到的最佳解。排行榜严格按平均 EU/t 排序。全局穷举不使用时间、代数、种群或随机种子预算，只设置 CPU 工作进程数；镜像方向会分别检查，仅在排行榜展示时归组。Mark I 搜索先计算燃料与反射板组成的发电骨架，低于当前榜单功率下界的完整布局由数学上界证明跳过热学模拟；其余布局仍按官方逻辑验证。取消后只保留当前最佳，只有完整有标签空间全部完成模拟或上界证明后才显示“已证明全局最优”。本项目暂不附带开源许可证；这不等于默认允许复制、修改或再发布。

@@ -163,6 +163,49 @@ def test_depleted_fuel_becomes_empty_and_has_dedicated_event():
     assert not any(event.type == EventType.COMPONENT_BROKEN and event.component_id == "uranium_single" for event in run.summary.events)
 
 
+def test_summary_only_simulation_matches_full_history():
+    full = ReactorSimulator(layout("uranium_quad", "heat_vent"))
+    full.slots[1].heat = 999
+    summary_only = ReactorSimulator(layout("uranium_quad", "heat_vent"))
+    summary_only.slots[1].heat = 999
+
+    expected = full.simulate(SimulationOptions(max_game_ticks=40))
+    actual = summary_only.simulate(SimulationOptions(max_game_ticks=40, record_history=False))
+
+    assert actual.records == []
+    assert actual.summary.model_dump() == expected.summary.model_dump()
+
+
+@pytest.mark.parametrize(
+    ("items", "expected_peak_heat"),
+    [
+        (("uranium_single", "reactor_heat_vent"), 0),
+        (("reactor_heat_vent", "empty", "uranium_single"), 4),
+    ],
+)
+def test_fixed_temperature_fast_forward_matches_full_mark_i_run(
+    items: tuple[str, ...], expected_peak_heat: int
+):
+    stable_layout = layout(*items)
+    expected = ReactorSimulator(stable_layout).simulate(SimulationOptions(
+        max_game_ticks=800_000,
+        auto_refuel=True,
+        stop_on_stable=True,
+        record_components=False,
+    ))
+    actual = ReactorSimulator(stable_layout).simulate(SimulationOptions(
+        max_game_ticks=800_000,
+        auto_refuel=True,
+        stop_on_stable=True,
+        record_components=False,
+        record_history=False,
+    ))
+
+    assert actual.records == []
+    assert actual.summary.model_dump() == expected.summary.model_dump()
+    assert actual.summary.peak_hull_heat == expected_peak_heat
+
+
 def test_critical_at_85_percent_and_meltdown_at_100_percent():
     critical = ReactorSimulator(layout("uranium_quad", initial_heat=8_499))
     critical.step()

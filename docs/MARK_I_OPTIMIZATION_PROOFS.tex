@@ -1,0 +1,386 @@
+\documentclass[UTF8,11pt]{ctexart}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,longtable,hyperref}
+
+\newtheorem{definition}{定义}[section]
+\newtheorem{lemma}[definition]{引理}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{corollary}[definition]{推论}
+\newtheorem{proposition}[definition]{命题}
+\newtheorem{remark}[definition]{说明}
+
+\title{IC2 2.8.221 Mark I 计算优化的形式化证明}
+\author{IC2 Nuclear Reactor Optimizer}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{范围与假设}
+
+本文只讨论 IC2 Experimental 2.8.221 的 EU 反应堆、铀燃料和项目当前支持的组件集。反应堆使用两阶段、行优先、立即写回结算。Mark I 优化器开启自动续棒，排行榜目标严格为平均发电功率 EU/t。
+
+\section{状态转移与固定点}
+
+\begin{definition}[约化热状态]
+令
+\[
+S_n=(H_n,L_n,C_n,D_n),
+\]
+其中 $H_n$ 为堆体热量，$L_n$ 为槽位组件 ID，$C_n$ 为组件热量，$D_n$ 为非燃料组件耐久。自动续棒时燃料耐久不进入约化状态。
+\end{definition}
+
+固定布局定义确定性状态转移
+\[
+S_{n+1}=F(S_n).
+\]
+
+\begin{proposition}[燃料产热与温度无关]
+一根内部燃料棒具有 $p$ 个有效脉冲时，产热为
+\[
+Q(p)=4\sum_{i=1}^{p}i=2p(p+1).
+\]
+有效脉冲数只由内部脉冲、相邻燃料和相邻有效反射板决定，因此温度不直接参与产热。
+\end{proposition}
+
+\begin{theorem}[固定点快进]
+若未发生临界、组件移除或融毁，且 $F(S_n)=S_n$，则对任意 $m\ge1$，有
+\[
+F^m(S_n)=S_n.
+\]
+\end{theorem}
+
+\begin{proof}
+对 $m$ 使用数学归纳法。$m=1$ 由条件成立。若 $F^k(S_n)=S_n$，则
+\[
+F^{k+1}(S_n)=F(F^k(S_n))=F(S_n)=S_n.
+\]
+燃料耐久不改变约化状态转移，自动续棒保持燃料类型和脉冲拓扑，因此每周期 EU/t 也相同。
+\end{proof}
+
+\section{发电骨架与冷却赋值}
+
+\begin{definition}[组件划分]
+令
+\[
+\mathcal P=\{\text{燃料、反射板}\},\qquad
+\mathcal C=\{\text{散热、换热、储热、冷凝、隔板}\}.
+\]
+两者互不相交。
+\end{definition}
+
+\begin{definition}[二层表示]
+对完整布局 $L$，$P(L)$ 保留 $\mathcal P$ 中的组件并把其他槽位变为空槽；$C(L)$ 记录 $P(L)$ 空位中的冷却组件赋值。
+\end{definition}
+
+\begin{theorem}[二层表示双射]
+映射
+\[
+\Phi:L\longmapsto(P(L),C(L))
+\]
+是完整库存有效布局集合与合法二层表示集合之间的双射。
+\end{theorem}
+
+\begin{proof}
+若 $L_1\ne L_2$，至少有一个槽位不同。该差异若属于 $\mathcal P$，则两个骨架不同；否则两个冷却赋值不同，故 $\Phi$ 为单射。反之，给定合法 $P$ 和 $C$，把 $C$ 唯一写回 $P$ 的空位即可重建一个完整布局，故 $\Phi$ 为满射。
+\end{proof}
+
+\begin{corollary}[库存约束保持]
+燃料、燃料棒总数和反射板约束只作用于 $P$，冷却组件上限只作用于 $C$。由于两类组件不相交，完整布局满足库存约束当且仅当两层分别满足对应约束。
+\end{corollary}
+
+\section{骨架功率与安全剪枝}
+
+\begin{theorem}[Mark I 骨架功率精确性]
+设第 $j$ 个燃料组件有 $r_j$ 根内部棒、$a_j$ 个内部脉冲和 $d_j$ 个相邻燃料或反射板，则在组件不移除的 Mark I-I 布局中
+\[
+P=5\sum_j r_j(a_j+d_j)\quad\mathrm{EU/t}.
+\]
+具有相同发电骨架的所有 Mark I-I 冷却完成布局拥有相同 EU/t。
+\end{theorem}
+
+\begin{proof}
+能量阶段的每个有效脉冲产生 5 EU/t。冷却组件不接收或返回铀脉冲。Mark I-I 中组件不被移除，因此脉冲拓扑保持不变。
+\end{proof}
+
+\begin{lemma}[活动有限反射板排除]
+与燃料相邻的有限反射板每周期至少增加一次耐久损耗，最终必然移除。因此它不可能无限期满足 Mark I-I 的无组件损坏条件。
+\end{lemma}
+
+\begin{theorem}[排行榜下界剪枝]
+若当前存在 10 个不同规范布局组，其功率均不小于 $\tau$，则任何骨架功率 $p<\tau$ 的冷却子树都不可能包含前十候选。
+\end{theorem}
+
+\begin{proof}
+由骨架功率精确性，该子树中任一 Mark I-I 布局的功率均为 $p$。因为已有 10 个不同规范组的功率至少为 $\tau>p$，该布局不可能进入前十。算法不剪枝 $p=\tau$，故相同功率的稳定排序不受影响。
+\end{proof}
+
+\begin{theorem}[不会遗漏优解]
+二层生成器不会遗漏任何可能进入 Mark I 前十的库存有效布局。
+\end{theorem}
+
+\begin{proof}
+由双射定理，每个完整布局属于唯一骨架和冷却赋值。活动有限反射板骨架由引理证明不可行；低于门槛的骨架由排行榜下界定理证明不可能进入前十；其余骨架的冷却赋值全部生成并执行官方热学验证。因此所有可能进入前十的布局均被验证。
+\end{proof}
+
+\section{冷却子树计数}
+
+设骨架有 $r$ 个空位，冷却组件上限为 $c_1,\ldots,c_k$。选择数量 $n_i$ 后，有标签赋值数为
+\[
+\frac{r!}{(r-\sum_i n_i)!\prod_i n_i!}.
+\]
+总数为
+\[
+N_C(r;c_1,\ldots,c_k)=
+\sum_{\substack{0\le n_i\le c_i\\\sum_i n_i\le r}}
+\frac{r!}{(r-\sum_i n_i)!\prod_i n_i!}.
+\]
+被证明排除的骨架直接把 $N_C$ 加入检查数和数学跳过数，无需构造各个完整布局。
+
+\section{性能边界}
+
+令 $N$ 为完整布局数，$K$ 为实际构造的完整布局数，$M$ 为热学模拟数，$B$ 为批量跳过数，则
+\[
+N=K+B,\qquad M\le K\le N.
+\]
+正常完成时
+\[
+\texttt{checked}=\texttt{evaluated}+\texttt{pruned}=N.
+\]
+
+设骨架成本、完整布局构造成本、热学模拟成本和额外调度成本分别为 $C_s,C_c,C_t,C_o$。近似有
+\[
+T_{\mathrm{old}}=N(C_c+C_t),
+\]
+\[
+T_{\mathrm{new}}=SC_s+KC_c+MC_t+C_o.
+\]
+严格加速条件为
+\[
+(N-K)C_c+(N-M)C_t>SC_s+C_o.
+\]
+所以可以无条件证明模拟数与完整布局构造数不增加，但不能无条件证明所有输入的墙钟时间严格缩短。
+
+\section{证书缓存}
+
+缓存键由完整有标签布局、列数和最大模拟周期组成。键完全相同意味着确定性状态转移和停止条件相同，可以复用结果。镜像布局不共享证书，因为其行优先状态转移可能不同。缓存采用容量上限，避免无限增长。
+
+\section{构造式精确求解器的程序契约}
+
+本节以后描述下一阶段拟实现的构造式求解器，而不是声称当前 \texttt{optimizer.py} 已包含前沿动态规划或约束合成器。当前二层生成器仍是完整性基线。新实现仅在通过本文交叉验证且所有未决分支闭合后，才可报告构造式全局最优。
+
+给定验证边界 $T$，令 $\operatorname{Accept}_T(L)$ 表示当前精确模拟器从零热状态出发，在边界 $T$ 内把布局 $L$ 判定为 Mark I。任何松弛模型的 \texttt{SAT} 结果只能作为候选；\texttt{UNKNOWN}、超时或取消必须保留为未决，并最终回退到精确完整验证。
+
+\section{骨架功率、产热与可实现性}
+
+\begin{theorem}[骨架同时决定功率与产热]
+设第 $j$ 个燃料组件具有 $r_j$ 根内部棒、$a_j$ 个内部脉冲、$d_j$ 个相邻燃料或有效反射板，并令 $q_j=a_j+d_j$。只要骨架保持存在，则
+\[
+P(s)=5\sum_j r_jq_j,
+\qquad
+Q(s)=2\sum_j r_jq_j(q_j+1).
+\]
+冷却完成不改变 $P(s)$ 或 $Q(s)$。
+\end{theorem}
+
+\begin{proof}
+每根内部棒贡献 $q_j$ 个能量脉冲，每个脉冲为 5 EU/t，得到第一式。每根内部棒的产热为 $4\sum_{i=1}^{q_j}i=2q_j(q_j+1)$，乘以 $r_j$ 并求和得到第二式。冷却组件不接收铀脉冲，故不出现在两式中。
+\end{proof}
+
+令 $\mathcal S$ 为库存有效骨架集合，$\mathcal C(s)$ 为骨架 $s$ 的合法冷却完成集合，并定义
+\[
+\operatorname{Feas}_T(s)
+\iff
+\exists c\in\mathcal C(s),\quad
+\operatorname{Accept}_T(s\oplus c).
+\]
+于是
+\[
+\operatorname{OPT}_T=
+\max_{s\in\mathcal S:\operatorname{Feas}_T(s)}P(s),
+\qquad
+P_{\max}=\max_{s\in\mathcal S}P(s).
+\]
+
+\begin{theorem}[原始最大骨架定理]
+$\operatorname{OPT}_T=P_{\max}$ 当且仅当至少存在一个功率为 $P_{\max}$ 的骨架满足 $\operatorname{Feas}_T$。
+\end{theorem}
+
+\begin{proof}
+若存在这样的骨架及冷却完成，它达到全部骨架的统一上界，故全局最优。反之，若最优值等于 $P_{\max}$，按最大值定义必有一个可实现骨架取得该值。
+\end{proof}
+
+该条件不能省略。例如单铀、铱反射板和普通散热片各一个时，最大骨架具有 10 EU/t 和每周期 12 热，而唯一散热片持续外排不超过 6；有限总储热必然增长。去掉反射板后的骨架只有 5 EU/t 和 4 热，却可以形成 Mark I-I。
+
+\section{可实现性与排除证书}
+
+\begin{theorem}[可达周期证书]
+对完整布局 $L$，若从初始状态沿安全前缀可达 $S$，存在 $k\ge1$ 使
+\[
+F_L^k(S)=S,
+\]
+且这 $k$ 个周期内没有临界、非燃料组件损坏或融毁，则该安全轨迹可以无限重复。
+\end{theorem}
+
+\begin{proof}
+由确定性，对任意 $m\ge0$ 有 $F_L^{mk}(S)=S$，每个中间状态也逐段重复。因此已经验证的周期安全谓词对所有未来成立。
+\end{proof}
+
+代数固定点必须由精确模拟证明从零热状态可达。单周期固定点只是充分条件；若只检查它而不保留精确回退，会遗漏先升温后稳定或周期大于 1 的布局。
+
+\begin{theorem}[持续热守恒排除]
+在没有组件移除的安全轨迹中，令 $E_n$ 为总储热，$W_n$ 为实际外排热量，则
+\[
+E_{n+1}=E_n+Q(s)-W_n.
+\]
+若对所有周期有 $W_n\le V$ 且 $Q(s)>V$，则该布局不可能是 Mark I。
+\end{theorem}
+
+\begin{proof}
+$E_n\ge E_0+n(Q(s)-V)$ 线性无界增长；但堆体和组件在不临界、不损坏条件下的总储热有有限上界，矛盾。
+\end{proof}
+
+对未完成骨架计算乐观持续外排上界 $\overline V(s)$：自散热片最多贡献自身 \texttt{self\_vent}，元件散热片最多贡献 \texttt{side\_vent} 乘以实际相邻可储热组件数；抽堆热和换热只搬运热量，储热、冷凝和隔板只增加有限容量。因此
+\[
+Q(s)>\overline V(s)
+\Longrightarrow
+\neg\operatorname{Feas}_T(s).
+\]
+反向推论不成立，因为邻接、行优先写回、容量、比例取整和暂态峰值仍可能导致失败。
+
+冷却合成器可使用槽位布尔变量、库存约束、乐观热流和邻接约束。若该模型是所有真实可行布局的必要条件松弛，则 \texttt{UNSAT} 可以安全排除，\texttt{SAT} 只能提交精确模拟。求解器的 \texttt{UNKNOWN} 或超时不得解释为不可行。
+
+当前程序已实现第一组必要条件证书：\texttt{skeleton\_heat\_per\_tick} 精确计算 $Q(s)$；\texttt{sustainable\_vent\_upper\_bound} 计算骨架层乐观持续外排；\texttt{sustainable\_heat\_flow\_upper\_bound} 在完整冷却赋值上建立乐观最大流。该网络保留燃料热源、散热上限、元件散热邻接、抽堆热和换热硬上限，同时放宽行优先顺序、热比例和容量。只有最大流仍小于产热时才排除。
+
+官方换热器在低百分比堆体交换分支可能使用 \texttt{exchange\_side}/2，这可大于名义 \texttt{exchange\_hull}，所以堆体边必须取乐观上界
+\[
+v_{\mathrm{hull}}^{\max}=\max(\texttt{exchange\_hull},\lfloor\texttt{exchange\_side}/2\rfloor,1).
+\]
+直接使用名义堆体交换值会低估真实能力，不能用于安全排除。
+
+\begin{theorem}[乐观最大流排除的可靠性]
+若完整布局存在安全周期轨迹，则其松弛热流网络的最大流不小于 $Q(s)$。
+\end{theorem}
+
+\begin{proof}
+在一个完整状态周期上，每个有限储热节点的净热量变化为零。对实际产热、搬运和外排量取时间平均，得到从燃料热源到外界热汇、总流量为 $Q(s)$ 的守恒流。松弛网络保留所有实际通路的硬上限，并只增加有利方向、忽略比例与顺序限制，因此该平均流仍然可行。故若最大流小于 $Q(s)$，安全周期不可能存在。
+\end{proof}
+
+\section{前沿动态规划}
+
+令网格为 $G=(V,E)$。对组件类型 $t$ 定义
+\[
+b(t)=
+\begin{cases}
+5r_ta_t,&t\text{ 为燃料},\\
+0,&\text{其他},
+\end{cases}
+\]
+并对相邻类型 $s,t$ 定义
+\[
+w(s,t)=5\left[
+\mathbf{1}_F(s)r_s\mathbf{1}_A(t)+
+\mathbf{1}_F(t)r_t\mathbf{1}_A(s)
+\right],
+\]
+其中 $\mathbf{1}_F$ 表示燃料，$\mathbf{1}_A$ 表示燃料或反射板。则
+\[
+P(s)=\sum_{v\in V}b(t_v)+\sum_{(u,v)\in E}w(t_u,t_v).
+\]
+
+按列逐格扫描高度 $h=6$ 的网格。令 $D(i,F,\mathbf u)$ 为处理前 $i$ 格、前沿标签为 $F$、库存使用量为 $\mathbf u$ 时的最大局部功率。放置新类型 $t$ 时只增加
+\[
+b(t)+w(t,t_{\mathrm{up}})+w(t,t_{\mathrm{left}}).
+\]
+
+\begin{theorem}[前沿动态规划精确性]
+每个状态只保留最大前驱，最终值等于库存约束下的 $P_{\max}$，回溯前驱可构造取得该值的骨架。
+\end{theorem}
+
+\begin{proof}
+对已处理格数归纳。所有从过去连接未来的网格边，其已处理端标签均包含在前沿 $F$ 中；库存剩余量由 $\mathbf u$ 唯一确定。具有相同 $(F,\mathbf u)$ 的较小局部解对任何未来扩展都不会优于较大局部解，因此可安全丢弃。递推枚举每个状态的全部合法新标签，故终态取得全局最大值。
+\end{proof}
+
+完整前沿 DP 尚未落地。当前实现使用更便宜的部分骨架乐观上界：已确定顶点与闭合边取精确值；每个未来顶点取当前可能类型的最大顶点值；每条未闭合边按已知端点取最大兼容值，两个端点未知时取全部类型对最大值；同一个剩余组件允许被乐观重复使用。任意真实后代的逐项贡献均不超过这些最大值，忽略库存竞争只会抬高结果，所以
+\[
+P(L)\le U_{\mathrm{partial}}.
+\]
+程序只在 $U_{\mathrm{partial}}$ 严格低于排行榜门槛时剪枝。
+
+设被剪枝前缀还有 $m$ 个非固定骨架位置，第 $t$ 种组件再使用 $n_t$ 个，则其有标签位置数为
+\[
+\frac{m!}{(m-\sum_t n_t)!\prod_t n_t!}.
+\]
+\texttt{count\_remaining\_layouts} 以等价的逐类型组合递推跟踪总棒数和燃料存在性，并对最终空位数乘以 \texttt{count\_cooling\_completions}，故它精确计数整个被剪枝完整布局子树。
+
+若骨架标签数为 $k$，库存向量可能值数为 $B\le\prod_t(c_t+1)$，槽位数为 $n=hw$，则
+\[
+T_{DP}=O(nBk^{h+1}),
+\qquad
+M_{DP}=O(Bk^h).
+\]
+直接骨架枚举为 $O(k^n)$。高度固定为 6 时，动态规划消除了骨架上界计算对列数的指数项；这不意味着完整热学可实现性问题也变成多项式时间。
+
+\section{带证书的最优搜索}
+
+算法维护具有精确 DP 功率上界 $U$ 的未决子问题优先队列，以及已经精确验证的可行下界 $P^*$。骨架子问题只按固定槽位或库存限制等可由 DP 状态表达的条件分裂；冷却 no-good 只排除当前固定骨架下已经精确验证失败的冷却赋值，不改变骨架上界。每次处理最大 $U$ 的子问题，依次应用有限反射板、热守恒、槽位下界和必要条件松弛；候选由精确模拟复核。无法证明的分支最终回退到完整冷却生成。当最大未决上界满足 $U_{\max}\le P^*$ 时停止。
+
+\begin{theorem}[构造式求解器全局最优性]
+若 DP 上界精确，所有排除证书可靠，所有可行见证通过精确模拟，并且未被证明排除的分支最终被验证或保持未决，则在 $U_{\max}\le P^*$ 时返回的布局是边界 $T$ 下的全局最优 Mark I。
+\end{theorem}
+
+\begin{proof}
+任意尚未验证的可行布局属于某个未决子问题，其功率不超过该子问题上界，故不超过 $U_{\max}\le P^*$。已关闭分支由可靠证书证明不可行或不可能超过下界。返回布局已经精确验证且取得 $P^*$，所以不存在更高功率的可行布局。
+\end{proof}
+
+\begin{remark}[完备性边界]
+固定点、热守恒和静态热流约束都不是完整的 Mark I 判定。全局完备性来自精确回退。若关闭回退，结果只能标记为当前最佳证书布局，不得设置 \texttt{proven\_global}。
+\end{remark}
+
+\section{新增算法的效率边界}
+
+令 $N$ 为完整库存有效布局数，$M$ 为新算法精确模拟的不同布局数，$B_c$ 为由目标上界、数学证书或可靠 \texttt{UNSAT} 结论关闭而无需模拟的布局数。在实现不重复模拟且保留完整回退时，概念上
+\[
+N=M+B_c,
+\qquad M\le N.
+\]
+若 $B_c>0$，则精确模拟次数严格减少。设一次模拟平均成本为 $C_t$，动态规划、约束求解和调度额外成本为 $C_o$，相对完整模拟的严格墙钟加速条件为
+\[
+(N-M)C_t>C_o.
+\]
+因此可以证明 DP 的骨架上界复杂度改进和精确模拟次数不增加；不能无条件证明每个输入的总墙钟时间严格缩短。最坏情况下证书均无效，算法仍可能回退到组合搜索。
+
+只有满足以下条件才可报告全局证明：DP 状态包含完整前沿与库存；上界不低估；\texttt{SAT} 候选精确复核；\texttt{UNKNOWN} 不关闭分支；no-good 只排除已有证明的赋值；镜像不共享热学证书；停止时不存在上界高于 $P^*$ 的未决分支。
+
+第一阶段实现基准使用 3 列、单铀一个、铱反射板一个、普通散热片一个、单工作进程和 40000 反应堆周期边界。完整空间为 5526；加入证书前执行 5526 次精确模拟、约 70.9 秒，加入热守恒与乐观热流证书后执行 802 次模拟并证明排除 4724 个布局、约 1.0 秒，二者最优值均为 5 EU/t。该数据证明此输入上的模拟次数减少约 85.5\%，不构成对所有输入的统一加速保证。
+
+\section{程序映射}
+
+\begin{longtable}{p{0.34\textwidth}p{0.56\textwidth}}
+\toprule
+数学对象或定理 & 程序实现 \\
+\midrule
+约化状态 $S$ & \texttt{ReactorSimulator.state\_signature} \\
+固定点快进 & \texttt{ReactorSimulator.\_fast\_forward\_fixed\_state} \\
+发电骨架 $P(L)$ & \texttt{power\_skeleton} \\
+骨架功率 & \texttt{skeleton\_eu\_per\_tick} \\
+二层双射枚举 & \texttt{\_run\_mark\_i\_two\_level\_shard} \\
+冷却子树组合数 & \texttt{count\_cooling\_completions} \\
+有限反射板引理 & \texttt{has\_degrading\_power\_component} \\
+多进程门槛 & \texttt{shared\_power\_floor} \\
+进程级结果证书 & \texttt{\_fixed\_point\_certificate} \\
+启发式重复布局缓存 & \texttt{OptimizationJob.\_heuristic\_cache} \\
+骨架精确产热 & \texttt{skeleton\_heat\_per\_tick} \\
+持续散热上界 & \texttt{sustainable\_vent\_upper\_bound} \\
+乐观持续热流 & \texttt{sustainable\_heat\_flow\_upper\_bound} \\
+部分骨架功率上界 & \texttt{optimistic\_power\_bound}（二层生成器内部） \\
+部分骨架完整计数 & \texttt{count\_remaining\_layouts}（二层生成器内部） \\
+拟实现：骨架功率 DP & 前沿 DP 的顶点项、边项与库存状态 \\
+拟实现：冷却约束合成 & 必要条件松弛；\texttt{SAT} 后调用精确模拟 \\
+拟实现：最优停止证书 & $U_{\max}\le P^*$ 且未决分支为空 \\
+\bottomrule
+\end{longtable}
+
+\end{document}

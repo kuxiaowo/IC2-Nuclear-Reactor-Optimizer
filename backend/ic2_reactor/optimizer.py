@@ -8,7 +8,8 @@ import threading
 import time
 import uuid
 from concurrent.futures import ProcessPoolExecutor, TimeoutError, as_completed
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from functools import lru_cache
 
 from .components import COMPONENTS
 from .engine import ReactorSimulator, SimulationOptions
@@ -28,13 +29,8 @@ class CandidateResult:
     canonical: str
 
     def score(self) -> tuple:
-        return (
-            self.average_eu_per_tick,
-            self.total_eu,
-            self.safe_game_ticks,
-            self.safety_margin,
-            -self.component_count,
-        )
+        """Rank candidates strictly by average generation power."""
+        return (self.average_eu_per_tick,)
 
     def public_dict(self, columns: int) -> dict:
         return {
@@ -66,6 +62,295 @@ def canonical_tuple(layout: tuple[str, ...], columns: int) -> tuple[str, ...]:
     return min(_transform(layout, columns, h, v) for h in (False, True) for v in (False, True))
 
 
+def power_skeleton(layout: tuple[str, ...]) -> tuple[str, ...]:
+    """Keep only components that directly participate in EU pulse production."""
+    return tuple(
+        item if COMPONENTS[item].kind in {"fuel", "reflector"} else "empty"
+        for item in layout
+    )
+
+
+@lru_cache(maxsize=131_072)
+def skeleton_eu_per_tick(skeleton: tuple[str, ...], columns: int) -> float:
+    """Calculate exact steady EU/t for an unchanged fuel/reflector skeleton."""
+    pulses = 0
+    for index, item in enumerate(skeleton):
+        spec = COMPONENTS[item]
+        if spec.kind != "fuel":
+            continue
+        row, column = divmod(index, columns)
+        neighbors: list[int] = []
+        if column > 0:
+            neighbors.append(index - 1)
+        if column + 1 < columns:
+            neighbors.append(index + 1)
+        if row > 0:
+            neighbors.append(index - columns)
+        if row < 5:
+            neighbors.append(index + columns)
+        neighbor_pulses = sum(
+            COMPONENTS[skeleton[neighbor]].kind in {"fuel", "reflector"}
+            for neighbor in neighbors
+        )
+        pulses += spec.rod_count * (spec.internal_pulses + neighbor_pulses)
+    return pulses * ReactorSimulator.EU_PER_PULSE
+
+
+def _power_vertex_value(item: str) -> int:
+    spec = COMPONENTS[item]
+    return (
+        int(ReactorSimulator.EU_PER_PULSE) * spec.rod_count * spec.internal_pulses
+        if spec.kind == "fuel"
+        else 0
+    )
+
+
+def _power_edge_value(first: str, second: str) -> int:
+    first_spec = COMPONENTS[first]
+    second_spec = COMPONENTS[second]
+    pulses = 0
+    if first_spec.kind == "fuel" and second_spec.kind in {"fuel", "reflector"}:
+        pulses += first_spec.rod_count
+    if second_spec.kind == "fuel" and first_spec.kind in {"fuel", "reflector"}:
+        pulses += second_spec.rod_count
+    return int(ReactorSimulator.EU_PER_PULSE) * pulses
+
+
+@lru_cache(maxsize=131_072)
+def skeleton_heat_per_tick(skeleton: tuple[str, ...], columns: int) -> int:
+    """Calculate exact heat generated each reactor tick by a static skeleton."""
+    total = 0
+    for index, item in enumerate(skeleton):
+        spec = COMPONENTS[item]
+        if spec.kind != "fuel":
+            continue
+        row, column = divmod(index, columns)
+        neighbors: list[int] = []
+        if column > 0:
+            neighbors.append(index - 1)
+        if column + 1 < columns:
+            neighbors.append(index + 1)
+        if row > 0:
+            neighbors.append(index - columns)
+        if row < 5:
+            neighbors.append(index + columns)
+        neighbor_pulses = sum(
+            COMPONENTS[skeleton[neighbor]].kind in {"fuel", "reflector"}
+            for neighbor in neighbors
+        )
+        pulses = spec.internal_pulses + neighbor_pulses
+        total += 2 * spec.rod_count * pulses * (pulses + 1)
+    return total
+
+
+@lru_cache(maxsize=131_072)
+def sustainable_vent_upper_bound(
+    skeleton: tuple[str, ...],
+    columns: int,
+    cooling_caps: tuple[tuple[str, int], ...],
+) -> int:
+    """Return an optimistic upper bound on indefinitely vented heat per tick.
+
+    Heat exchangers only move heat, while coolant cells, condensators and
+    plating provide finite storage.  A self vent cannot reject more than its
+    ``self_vent`` value.  A component vent is optimistically allowed to cool
+    every free neighboring slot, even if those slots cannot all be occupied by
+    coolable components.  Ignoring those conflicts can only overestimate the
+    realizable cooling rate, which makes ``generated > bound`` a sound Mark I
+    infeasibility certificate.
+    """
+    free_positions = tuple(index for index, item in enumerate(skeleton) if item == "empty")
+    if not free_positions:
+        return 0
+    free = set(free_positions)
+    max_free_degree = 0
+    for index in free_positions:
+        row, column = divmod(index, columns)
+        degree = 0
+        if column > 0 and index - 1 in free:
+            degree += 1
+        if column + 1 < columns and index + 1 in free:
+            degree += 1
+        if row > 0 and index - columns in free:
+            degree += 1
+        if row < 5 and index + columns in free:
+            degree += 1
+        max_free_degree = max(max_free_degree, degree)
+
+    optimistic_components: list[int] = []
+    for item, cap in cooling_caps:
+        spec = COMPONENTS[item]
+        if spec.kind != "vent" or cap <= 0:
+            continue
+        per_component = spec.self_vent + spec.side_vent * max_free_degree
+        if per_component > 0:
+            optimistic_components.extend([per_component] * min(cap, len(free_positions)))
+    optimistic_components.sort(reverse=True)
+    return sum(optimistic_components[:len(free_positions)])
+
+
+def _layout_neighbors(index: int, columns: int, slots: int) -> tuple[int, ...]:
+    row, column = divmod(index, columns)
+    values: list[int] = []
+    if column > 0:
+        values.append(index - 1)
+    if column + 1 < columns:
+        values.append(index + 1)
+    if row > 0:
+        values.append(index - columns)
+    if index + columns < slots:
+        values.append(index + columns)
+    return tuple(values)
+
+
+def _maximum_flow(node_count: int, edges: list[tuple[int, int, int]], source: int, sink: int) -> int:
+    """Small integer Dinic implementation used by the thermal relaxation."""
+    graph: list[list[list[int]]] = [[] for _ in range(node_count)]
+
+    def add_edge(start: int, end: int, capacity: int) -> None:
+        if capacity <= 0:
+            return
+        forward = [end, capacity, len(graph[end])]
+        reverse = [start, 0, len(graph[start])]
+        graph[start].append(forward)
+        graph[end].append(reverse)
+
+    for start, end, capacity in edges:
+        add_edge(start, end, capacity)
+
+    total = 0
+    while True:
+        level = [-1] * node_count
+        level[source] = 0
+        queue_values = [source]
+        for node in queue_values:
+            for end, capacity, _reverse in graph[node]:
+                if capacity > 0 and level[end] < 0:
+                    level[end] = level[node] + 1
+                    queue_values.append(end)
+        if level[sink] < 0:
+            return total
+
+        cursor = [0] * node_count
+
+        def send(node: int, amount: int) -> int:
+            if node == sink:
+                return amount
+            while cursor[node] < len(graph[node]):
+                edge = graph[node][cursor[node]]
+                end, capacity, reverse_index = edge
+                if capacity > 0 and level[end] == level[node] + 1:
+                    pushed = send(end, min(amount, capacity))
+                    if pushed:
+                        edge[1] -= pushed
+                        graph[end][reverse_index][1] += pushed
+                        return pushed
+                cursor[node] += 1
+            return 0
+
+        while True:
+            pushed = send(source, 10**9)
+            if not pushed:
+                break
+            total += pushed
+
+
+def sustainable_heat_flow_upper_bound(layout: tuple[str, ...], columns: int) -> int:
+    """Bound sustainable heat rejection while relaxing order and heat ratios.
+
+    The network preserves every hard per-tick transfer/vent limit but allows
+    heat to choose any favorable direction and ignores row-major ordering,
+    percentage thresholds and finite capacities.  Every safe periodic run
+    induces an average flow in this relaxed network.  Consequently a maximum
+    flow below generated heat is a sound infeasibility proof; reaching the
+    generated amount is only a necessary condition and still requires exact
+    simulation.
+    """
+    slots = len(layout)
+    generated = skeleton_heat_per_tick(power_skeleton(layout), columns)
+    if generated <= 0:
+        return 0
+
+    hull = 0
+    slot_node = lambda index: index + 1
+    source = slots + 1
+    sink = slots + 2
+    edges: list[tuple[int, int, int]] = []
+    infinite = generated
+
+    for index, item in enumerate(layout):
+        spec = COMPONENTS[item]
+        node = slot_node(index)
+        neighbors = _layout_neighbors(index, columns, slots)
+
+        if spec.kind == "fuel":
+            neighbor_pulses = sum(
+                COMPONENTS[layout[neighbor]].kind in {"fuel", "reflector"}
+                for neighbor in neighbors
+            )
+            pulses = spec.internal_pulses + neighbor_pulses
+            heat = 2 * spec.rod_count * pulses * (pulses + 1)
+            edges.append((source, node, heat))
+            edges.append((node, hull, infinite))
+            for neighbor in neighbors:
+                if COMPONENTS[layout[neighbor]].accepts_heat:
+                    edges.append((node, slot_node(neighbor), infinite))
+            continue
+
+        if spec.self_vent:
+            edges.append((node, sink, spec.self_vent))
+        if spec.hull_draw:
+            edges.append((hull, node, spec.hull_draw))
+        if spec.side_vent:
+            for neighbor in neighbors:
+                if COMPONENTS[layout[neighbor]].is_coolable:
+                    edges.append((slot_node(neighbor), sink, spec.side_vent))
+        if spec.kind == "exchanger":
+            if spec.exchange_hull:
+                # The official low-percentage branches use half of the side
+                # exchange range even for hull exchange.  That can exceed the
+                # nominal hull limit (e.g. 6 rather than 4 for the basic
+                # exchanger), so the relaxation must include that larger hard
+                # upper bound to avoid false infeasibility certificates.
+                hull_limit = max(spec.exchange_hull, spec.exchange_side // 2, 1)
+                edges.append((hull, node, hull_limit))
+                edges.append((node, hull, hull_limit))
+            if spec.exchange_side:
+                for neighbor in neighbors:
+                    if COMPONENTS[layout[neighbor]].accepts_heat:
+                        neighbor_node = slot_node(neighbor)
+                        edges.append((node, neighbor_node, spec.exchange_side))
+                        edges.append((neighbor_node, node, spec.exchange_side))
+
+    return _maximum_flow(slots + 3, edges, source, sink)
+
+
+def theoretical_eu_per_tick(layout: tuple[str, ...], columns: int) -> float:
+    """Return the power bound shared by all cooling completions of a skeleton."""
+    return skeleton_eu_per_tick(power_skeleton(layout), columns)
+
+
+def has_degrading_power_component(layout: tuple[str, ...], columns: int) -> bool:
+    """Whether a finite reflector is pulsed and therefore cannot be Mark I-I."""
+    for index, item in enumerate(layout):
+        spec = COMPONENTS[item]
+        if spec.kind != "reflector" or spec.max_damage <= 0:
+            continue
+        row, column = divmod(index, columns)
+        neighbors = []
+        if column > 0:
+            neighbors.append(index - 1)
+        if column + 1 < columns:
+            neighbors.append(index + 1)
+        if row > 0:
+            neighbors.append(index - columns)
+        if row < 5:
+            neighbors.append(index + columns)
+        if any(COMPONENTS[layout[neighbor]].kind == "fuel" for neighbor in neighbors):
+            return True
+    return False
+
+
 def _allowed_and_caps(request: OptimizationRequest) -> tuple[list[str], dict[str, int]]:
     slots = request.columns * 6
     if request.fuel.mode == "total_rods":
@@ -84,7 +369,11 @@ def _allowed_and_caps(request: OptimizationRequest) -> tuple[list[str], dict[str
     return [*fuels, *nonfuel], caps
 
 
-def _exhaustive_shards(request: OptimizationRequest) -> list[tuple[tuple[int, str], ...]]:
+def _exhaustive_shards(
+    request: OptimizationRequest,
+    *,
+    power_only: bool = False,
+) -> list[tuple[tuple[int, str], ...]]:
     """Split the search into disjoint assignments on two central cells.
 
     Central cells distribute the labelled search space more evenly than a
@@ -93,6 +382,8 @@ def _exhaustive_shards(request: OptimizationRequest) -> list[tuple[tuple[int, st
     columns = request.columns
     positions = (2 * columns + columns // 2, 3 * columns + columns // 2)
     allowed, caps = _allowed_and_caps(request)
+    if power_only:
+        allowed = [item for item in allowed if COMPONENTS[item].kind in {"fuel", "reflector"}]
     values = ["empty", *allowed]
     shards: list[tuple[tuple[int, str], ...]] = []
     for first in values:
@@ -145,7 +436,24 @@ def estimate_exhaustive_space(request: OptimizationRequest) -> int:
     return sum(ways for (_, _, has_fuel), ways in dp.items() if has_fuel)
 
 
-def evaluate_layout(
+@lru_cache(maxsize=16_384)
+def count_cooling_completions(free_slots: int, caps: tuple[int, ...]) -> int:
+    """Count labelled cooling assignments for a fixed power skeleton."""
+    dp: dict[int, int] = {0: 1}
+    for cap in caps:
+        next_dp: dict[int, int] = {}
+        for used, ways in dp.items():
+            for count in range(min(cap, free_slots - used) + 1):
+                occupied = used + count
+                next_dp[occupied] = (
+                    next_dp.get(occupied, 0)
+                    + ways * math.comb(free_slots - used, count)
+                )
+        dp = next_dp
+    return sum(dp.values())
+
+
+def _evaluate_layout_uncached(
     layout: tuple[str, ...],
     columns: int,
     max_reactor_ticks: int,
@@ -158,6 +466,7 @@ def evaluate_layout(
         auto_refuel=True,
         stop_on_stable=True,
         record_components=False,
+        record_history=False,
         cancel_check=cancel_check,
     ))
     safe_ticks = run.summary.first_intervention_tick or run.summary.game_ticks
@@ -173,6 +482,29 @@ def evaluate_layout(
     )
 
 
+@lru_cache(maxsize=8_192)
+def _fixed_point_certificate(
+    layout: tuple[str, ...],
+    columns: int,
+    max_reactor_ticks: int,
+) -> CandidateResult:
+    """Process-local bounded cache for previously proved simulation results."""
+    return _evaluate_layout_uncached(layout, columns, max_reactor_ticks)
+
+
+def evaluate_layout(
+    layout: tuple[str, ...],
+    columns: int,
+    max_reactor_ticks: int,
+    cancel_check=None,
+    use_certificate: bool = True,
+) -> CandidateResult:
+    """Evaluate a layout, reusing a bounded certificate when cancellation is absent."""
+    if cancel_check is None and use_certificate:
+        return _fixed_point_certificate(layout, columns, max_reactor_ticks)
+    return _evaluate_layout_uncached(layout, columns, max_reactor_ticks, cancel_check)
+
+
 def _rank_candidates(values: list[CandidateResult]) -> list[CandidateResult]:
     board: dict[str, CandidateResult] = {}
     for result in values:
@@ -184,15 +516,364 @@ def _rank_candidates(values: list[CandidateResult]) -> list[CandidateResult]:
     return ordered[:10]
 
 
+def _run_mark_i_two_level_shard(
+    request: OptimizationRequest,
+    shard_id: int,
+    fixed_items: tuple[tuple[int, str], ...],
+    progress_queue,
+    cancel_event,
+    shared_power_floor=None,
+) -> dict:
+    """Enumerate power skeletons first, then their cooling completions."""
+    allowed, caps = _allowed_and_caps(request)
+    power_items = [
+        item for item in allowed
+        if COMPONENTS[item].kind in {"fuel", "reflector"}
+    ]
+    power_items.sort(key=lambda item: (
+        COMPONENTS[item].kind != "fuel",
+        -COMPONENTS[item].rod_count,
+        item,
+    ))
+    cooling_items = [
+        item for item in allowed
+        if COMPONENTS[item].kind not in {"fuel", "reflector"}
+    ]
+    cooling_items.sort()
+    power_remaining = {item: caps[item] for item in power_items}
+    cooling_caps = tuple(caps[item] for item in cooling_items)
+    cooling_cap_items = tuple(zip(cooling_items, cooling_caps, strict=True))
+    cooling_remaining = dict(zip(cooling_items, cooling_caps, strict=True))
+    fixed = dict(fixed_items)
+    slots = request.columns * 6
+    power_caps = tuple(caps[item] for item in power_items)
+    skeleton = ["empty"] * slots
+    rods = 0
+    has_fuel = False
+    for position, item in fixed_items:
+        if item == "empty":
+            continue
+        skeleton[position] = item
+        power_remaining[item] -= 1
+        rods += COMPONENTS[item].rod_count
+        has_fuel = has_fuel or COMPONENTS[item].rod_count > 0
+
+    checked = 0
+    pruned = 0
+    evaluated = 0
+    visits = 0
+    last_report = time.monotonic()
+    cancelled = False
+    cancel_cache = False
+    last_cancel_check = 0.0
+    shared_floor_cache = -1.0
+    last_floor_check = 0.0
+    boards: dict[str, list[CandidateResult]] = {"I": []}
+    grid_edges = tuple(
+        (index, neighbor)
+        for index in range(slots)
+        for neighbor in (
+            *((index + 1,) if index % request.columns + 1 < request.columns else ()),
+            *((index + request.columns,) if index + request.columns < slots else ()),
+        )
+    )
+
+    def cancellation_requested() -> bool:
+        nonlocal cancel_cache, last_cancel_check
+        now = time.monotonic()
+        if now - last_cancel_check >= 0.1:
+            cancel_cache = cancel_event.is_set()
+            last_cancel_check = now
+        return cancel_cache
+
+    def current_power_floor() -> float:
+        nonlocal shared_floor_cache, last_floor_check
+        local_board = boards["I"]
+        local_floor = local_board[-1].average_eu_per_tick if len(local_board) >= 10 else -1.0
+        now = time.monotonic()
+        if shared_power_floor is not None and now - last_floor_check >= 0.1:
+            shared_floor_cache = shared_power_floor.value
+            last_floor_check = now
+        return max(local_floor, shared_floor_cache)
+
+    def report(force: bool = False) -> None:
+        nonlocal last_report
+        now = time.monotonic()
+        if force or now - last_report >= 0.25:
+            progress_queue.put(("progress", shard_id, checked, pruned, evaluated))
+            last_report = now
+
+    def accept_result(result: CandidateResult) -> None:
+        previous = boards["I"]
+        ranked = _rank_candidates([*previous, result])
+        if ranked != previous:
+            boards["I"] = ranked
+            progress_queue.put(("candidate", result))
+
+    def power_increment(position: int, item: str) -> int:
+        value = _power_vertex_value(item)
+        row, column = divmod(position, request.columns)
+        if column > 0:
+            value += _power_edge_value(skeleton[position - 1], item)
+        if row > 0:
+            value += _power_edge_value(skeleton[position - request.columns], item)
+        return value
+
+    def optimistic_power_bound(position: int, current_power: int, current_rods: int) -> int:
+        """Bound every unfinished skeleton without underestimating its power."""
+        options = ["empty"]
+        for item in power_items:
+            if power_remaining[item] <= 0:
+                continue
+            rod_cost = COMPONENTS[item].rod_count
+            if request.fuel.mode == "total_rods" and current_rods + rod_cost > request.fuel.total_rods:
+                continue
+            options.append(item)
+
+        def known_label(index: int) -> str | None:
+            if index < position or index in fixed:
+                return skeleton[index]
+            return None
+
+        upper = current_power
+        max_vertex = max(_power_vertex_value(item) for item in options)
+        for index in range(position, slots):
+            upper += (
+                _power_vertex_value(skeleton[index])
+                if index in fixed
+                else max_vertex
+            )
+
+        for first, second in grid_edges:
+            if second < position:
+                continue
+            first_label = known_label(first)
+            second_label = known_label(second)
+            if first_label is not None and second_label is not None:
+                upper += _power_edge_value(first_label, second_label)
+            elif first_label is not None:
+                upper += max(_power_edge_value(first_label, item) for item in options)
+            elif second_label is not None:
+                upper += max(_power_edge_value(item, second_label) for item in options)
+            else:
+                upper += max(_power_edge_value(a, b) for a in options for b in options)
+        return upper
+
+    def count_remaining_layouts(
+        position: int,
+        current_rods: int,
+        current_has_fuel: bool,
+    ) -> int:
+        """Count a pruned partial skeleton and every cooling completion below it."""
+        remaining_positions = sum(index not in fixed for index in range(position, slots))
+        used_power_slots = sum(
+            cap - power_remaining[item]
+            for item, cap in zip(power_items, power_caps, strict=True)
+        )
+        # (new power slots, new rods, has fuel) -> labelled assignments.
+        dp: dict[tuple[int, int, bool], int] = {(0, 0, current_has_fuel): 1}
+        for item in power_items:
+            spec = COMPONENTS[item]
+            cap = power_remaining[item]
+            next_dp: dict[tuple[int, int, bool], int] = {}
+            for (used, extra_rods, has_fuel), ways in dp.items():
+                for count in range(min(cap, remaining_positions - used) + 1):
+                    rods = extra_rods + count * spec.rod_count
+                    if (
+                        request.fuel.mode == "total_rods"
+                        and current_rods + rods > request.fuel.total_rods
+                    ):
+                        break
+                    key = (used + count, rods, has_fuel or (spec.kind == "fuel" and count > 0))
+                    next_dp[key] = (
+                        next_dp.get(key, 0)
+                        + ways * math.comb(remaining_positions - used, count)
+                    )
+            dp = next_dp
+
+        total = 0
+        for (additional_power, _extra_rods, has_fuel), ways in dp.items():
+            if not has_fuel:
+                continue
+            free_slots = slots - used_power_slots - additional_power
+            total += ways * count_cooling_completions(free_slots, cooling_caps)
+        return total
+
+    def generate_cooling(
+        layout: list[str],
+        free_positions: tuple[int, ...],
+        offset: int,
+        skeleton_power: float,
+        skeleton_heat: int,
+    ) -> None:
+        nonlocal checked, pruned, evaluated, visits, cancelled
+        visits += 1
+        if visits % 4096 == 0 and cancel_event.is_set():
+            cancelled = True
+            return
+        if cancelled:
+            return
+
+        floor = current_power_floor()
+        if floor >= 0 and skeleton_power < floor:
+            count = count_cooling_completions(
+                len(free_positions) - offset,
+                tuple(cooling_remaining[item] for item in cooling_items),
+            )
+            checked += count
+            pruned += count
+            report()
+            return
+
+        if offset == len(free_positions):
+            checked += 1
+            raw = tuple(layout)
+            if (
+                sustainable_heat_flow_upper_bound(raw, request.columns)
+                < skeleton_heat
+            ):
+                pruned += 1
+                report()
+                return
+            result = evaluate_layout(
+                raw,
+                request.columns,
+                request.max_reactor_ticks,
+                cancel_check=cancellation_requested,
+            )
+            if cancellation_requested():
+                cancelled = True
+                return
+            evaluated += 1
+            if mark_family(result.mark) == "I":
+                accept_result(result)
+            report()
+            return
+
+
+        position = free_positions[offset]
+        for item in ["empty", *cooling_items]:
+            if item == "empty":
+                layout[position] = "empty"
+                generate_cooling(layout, free_positions, offset + 1, skeleton_power, skeleton_heat)
+            elif cooling_remaining[item] > 0:
+                cooling_remaining[item] -= 1
+                layout[position] = item
+                generate_cooling(layout, free_positions, offset + 1, skeleton_power, skeleton_heat)
+                cooling_remaining[item] += 1
+            if cancelled:
+                break
+        layout[position] = "empty"
+
+    def finish_skeleton() -> None:
+        nonlocal checked, pruned
+        raw_skeleton = tuple(skeleton)
+        free_positions = tuple(index for index, item in enumerate(raw_skeleton) if item == "empty")
+        completion_count = count_cooling_completions(len(free_positions), cooling_caps)
+        skeleton_power = skeleton_eu_per_tick(raw_skeleton, request.columns)
+        skeleton_heat = skeleton_heat_per_tick(raw_skeleton, request.columns)
+        vent_upper = sustainable_vent_upper_bound(
+            raw_skeleton,
+            request.columns,
+            cooling_cap_items,
+        )
+        if (
+            has_degrading_power_component(raw_skeleton, request.columns)
+            or skeleton_heat > vent_upper
+            or (current_power_floor() >= 0 and skeleton_power < current_power_floor())
+        ):
+            checked += completion_count
+            pruned += completion_count
+            report()
+            return
+        layout = list(raw_skeleton)
+        generate_cooling(layout, free_positions, 0, skeleton_power, skeleton_heat)
+
+    def generate_skeleton(
+        position: int,
+        current_rods: int,
+        current_has_fuel: bool,
+        current_power: int,
+    ) -> None:
+        nonlocal checked, pruned, visits, cancelled
+        visits += 1
+        if visits % 4096 == 0 and cancel_event.is_set():
+            cancelled = True
+            return
+        if cancelled:
+            return
+        floor = current_power_floor()
+        if floor >= 0 and optimistic_power_bound(position, current_power, current_rods) < floor:
+            count = count_remaining_layouts(position, current_rods, current_has_fuel)
+            checked += count
+            pruned += count
+            report()
+            return
+        if position == slots:
+            if current_has_fuel:
+                finish_skeleton()
+            return
+        if position in fixed:
+            generate_skeleton(
+                position + 1,
+                current_rods,
+                current_has_fuel,
+                current_power + power_increment(position, skeleton[position]),
+            )
+            return
+
+        for item in [*power_items, "empty"]:
+            if item == "empty":
+                skeleton[position] = "empty"
+                generate_skeleton(position + 1, current_rods, current_has_fuel, current_power)
+            elif power_remaining[item] > 0:
+                rod_cost = COMPONENTS[item].rod_count
+                if request.fuel.mode == "total_rods" and current_rods + rod_cost > request.fuel.total_rods:
+                    continue
+                power_remaining[item] -= 1
+                skeleton[position] = item
+                generate_skeleton(
+                    position + 1,
+                    current_rods + rod_cost,
+                    current_has_fuel or rod_cost > 0,
+                    current_power + power_increment(position, item),
+                )
+                power_remaining[item] += 1
+            if cancelled:
+                break
+        skeleton[position] = "empty"
+
+    generate_skeleton(0, rods, has_fuel, 0)
+    report(force=True)
+    return {
+        "shard_id": shard_id,
+        "checked": checked,
+        "pruned": pruned,
+        "evaluated": evaluated,
+        "boards": boards,
+        "cancelled": cancelled,
+    }
+
+
 def _run_exhaustive_shard(
     request_data: dict,
     shard_id: int,
     fixed_items: tuple[tuple[int, str], ...],
     progress_queue,
     cancel_event,
+    shared_power_floor=None,
 ) -> dict:
     """Process worker for one disjoint exhaustive-search shard."""
     request = OptimizationRequest.model_validate(request_data)
+    if request.marks == ["I"]:
+        return _run_mark_i_two_level_shard(
+            request,
+            shard_id,
+            fixed_items,
+            progress_queue,
+            cancel_event,
+            shared_power_floor,
+        )
     allowed, remaining = _allowed_and_caps(request)
     fixed = dict(fixed_items)
     slots = request.columns * 6
@@ -256,7 +937,9 @@ def _run_exhaustive_shard(
             if family in boards:
                 previous = boards[family]
                 ranked = _rank_candidates([*previous, result])
-                if [item.canonical for item in ranked] != [item.canonical for item in previous]:
+                # A later mirrored direction can replace an earlier result
+                # without changing the canonical-key sequence.
+                if ranked != previous:
                     boards[family] = ranked
                     progress_queue.put(("candidate", result))
             report()
@@ -267,9 +950,11 @@ def _run_exhaustive_shard(
             generate(position + 1, current_rods, current_has_fuel)
             return
 
-        layout[position] = "empty"
-        generate(position + 1, current_rods, current_has_fuel)
-        for item in allowed:
+        for item in ["empty", *allowed]:
+            if item == "empty":
+                layout[position] = "empty"
+                generate(position + 1, current_rods, current_has_fuel)
+                continue
             if cancelled or remaining[item] <= 0:
                 continue
             rod_cost = COMPONENTS[item].rod_count
@@ -311,6 +996,7 @@ class OptimizationJob:
         self.exhaustive_estimate = estimate_exhaustive_space(request) if request.solver == "exhaustive" else None
         self.cancel_event = threading.Event()
         self.process_cancel_event = None
+        self._heuristic_cache: dict[tuple[str, ...], CandidateResult | None] = {}
         self.leaderboards: dict[str, list[CandidateResult]] = {mark: [] for mark in request.marks}
 
     def snapshot(self) -> dict:
@@ -438,19 +1124,38 @@ class OptimizationJob:
                 break
             self.generation = generation + 1
             population = [layout for island in islands for layout in island]
+            unique_population = list(dict.fromkeys(population))
             scored: list[tuple[tuple, tuple[str, ...]]] = []
             if executor is None:
-                for layout in population:
+                for layout in unique_population:
                     if self.cancel_event.is_set() or time.time() >= deadline:
                         break
-                    result = self._evaluate(layout)
-                    self._accept(result)
+                    if layout in self._heuristic_cache:
+                        result = self._heuristic_cache[layout]
+                    else:
+                        result = self._evaluate(layout)
+                        self._heuristic_cache[layout] = result
+                        self._accept(result)
                     scored.append((result.score() if result else (-1,), layout))
             else:
-                valid = [layout for layout in population if self._within_limits(layout)]
+                valid = [layout for layout in unique_population if self._within_limits(layout)]
+                unseen: list[tuple[str, ...]] = []
+                for layout in valid:
+                    if layout in self._heuristic_cache:
+                        result = self._heuristic_cache[layout]
+                        scored.append((result.score() if result else (-1,), layout))
+                    else:
+                        unseen.append(layout)
                 futures = {
-                    executor.submit(evaluate_layout, layout, self.request.columns, self.request.max_reactor_ticks): layout
-                    for layout in valid
+                    executor.submit(
+                        evaluate_layout,
+                        layout,
+                        self.request.columns,
+                        self.request.max_reactor_ticks,
+                        None,
+                        False,
+                    ): layout
+                    for layout in unseen
                 }
                 try:
                     for future in as_completed(futures, timeout=max(0.01, deadline - time.time())):
@@ -459,6 +1164,7 @@ class OptimizationJob:
                         result = future.result()
                         if mark_family(result.mark) not in self.request.marks:
                             result = None
+                        self._heuristic_cache[futures[future]] = result
                         self._accept(result)
                         scored.append((result.score() if result else (-1,), futures[future]))
                 except TimeoutError:
@@ -494,7 +1200,8 @@ class OptimizationJob:
     def _run_exhaustive(self) -> None:
         estimate = self.exhaustive_estimate or 0
         total = max(1, estimate)
-        shards = _exhaustive_shards(self.request)
+        mark_i_two_level = self.request.marks == ["I"]
+        shards = _exhaustive_shards(self.request, power_only=mark_i_two_level)
         worker_count = min(self.request.cpu_workers, len(shards))
         request_data = self.request.model_dump(mode="json")
         shard_progress: dict[int, tuple[int, int, int]] = {}
@@ -508,12 +1215,13 @@ class OptimizationJob:
             self.progress = min(0.999, self.checked / total)
             self.message = (
                 f"{worker_count} 进程并行枚举 · 已检查 {self.checked:,} 个方案"
-                f" · 模拟 {self.evaluated:,} 个有标签布局"
+                f" · 热学模拟 {self.evaluated:,} 个 · 数学跳过 {self.pruned:,} 个"
             )
 
         manager = multiprocessing.Manager()
         progress_queue = manager.Queue()
         self.process_cancel_event = manager.Event()
+        shared_power_floor = manager.Value("d", -1.0) if mark_i_two_level else None
         executor = ProcessPoolExecutor(max_workers=worker_count)
         futures = {
             executor.submit(
@@ -523,6 +1231,7 @@ class OptimizationJob:
                 shard,
                 progress_queue,
                 self.process_cancel_event,
+                shared_power_floor,
             ): shard_id
             for shard_id, shard in enumerate(shards)
         }
@@ -534,6 +1243,8 @@ class OptimizationJob:
                 update_progress(shard_id, checked, pruned, evaluated)
             elif message[0] == "candidate":
                 self._accept(message[1], count_evaluation=False)
+                if shared_power_floor is not None and len(self.leaderboards["I"]) >= 10:
+                    shared_power_floor.value = self.leaderboards["I"][-1].average_eu_per_tick
 
         try:
             while pending:
@@ -558,6 +1269,8 @@ class OptimizationJob:
                     for values in result["boards"].values():
                         for candidate in values:
                             self._accept(candidate, count_evaluation=False)
+                    if shared_power_floor is not None and len(self.leaderboards["I"]) >= 10:
+                        shared_power_floor.value = self.leaderboards["I"][-1].average_eu_per_tick
 
             while True:
                 try:

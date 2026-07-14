@@ -14,5 +14,6 @@ public/ic2-2.8.221.jar
 *.h5
 *.hdf5
 .conda/
+.venv/
 .env
 .idea/
