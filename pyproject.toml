@@ -15,6 +15,9 @@ dependencies = [
   "h5py>=3.12",
 ]
 
+[project.optional-dependencies]
+cuda = ["numba-cuda[cu13]>=0.30"]
+
 [project.scripts]
 ic2-reactor = "ic2_reactor.__main__:main"
 
@@ -27,4 +30,3 @@ where = ["backend"]
 [tool.pytest.ini_options]
 pythonpath = ["backend"]
 testpaths = ["tests"]
-

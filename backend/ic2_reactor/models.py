@@ -110,6 +110,11 @@ class OptimizationRequest(BaseModel):
     generations: Annotated[int, Field(ge=1, le=10_000)] = 100
     population: Annotated[int, Field(ge=10, le=2_000)] = 100
     cpu_workers: Annotated[int, Field(ge=1, le=64)] = max(1, (os.cpu_count() or 2) - 1)
+    accelerator: Literal["auto", "cpu", "cuda", "cuda_full"] = "auto"
+    gpu_batch_multiplier: Annotated[int, Field(ge=1, le=128)] = 32
+    gpu_exhaustive_batch_size: Annotated[int, Field(ge=256, le=131_072)] = 8_192
+    gpu_ticks_per_launch: Annotated[int, Field(ge=16, le=2_048)] = 256
+    result_limit: Annotated[int, Field(ge=1, le=10)] = 1
     seed: int = 221
     max_reactor_ticks: Annotated[int, Field(ge=2_000, le=1_000_000)] = 40_000
 

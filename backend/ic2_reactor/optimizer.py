@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import heapq
 import math
 import multiprocessing
 import queue
@@ -13,8 +14,18 @@ from functools import lru_cache
 
 from .components import COMPONENTS
 from .engine import ReactorSimulator, SimulationOptions
-from .mark import mark_family
+from .gpu_acceleration import (
+    CudaBatchScorer,
+    CudaBatchScores,
+    CudaFixedPointCertificate,
+    CudaFixedPointEvaluator,
+    cuda_device_info,
+    select_screened_layouts,
+)
+from .gpu_full_simulation import CudaFullSimulator, CudaSimulationResult
+from .mark import FUEL_CYCLE_REACTOR_TICKS, classify_mark, mark_family
 from .models import Layout, OptimizationRequest
+from .skeleton_table import POWER_EMPTY, SkeletonPowerTable, SkeletonSearchNode
 
 
 @dataclass(slots=True)
@@ -94,26 +105,6 @@ def skeleton_eu_per_tick(skeleton: tuple[str, ...], columns: int) -> float:
         )
         pulses += spec.rod_count * (spec.internal_pulses + neighbor_pulses)
     return pulses * ReactorSimulator.EU_PER_PULSE
-
-
-def _power_vertex_value(item: str) -> int:
-    spec = COMPONENTS[item]
-    return (
-        int(ReactorSimulator.EU_PER_PULSE) * spec.rod_count * spec.internal_pulses
-        if spec.kind == "fuel"
-        else 0
-    )
-
-
-def _power_edge_value(first: str, second: str) -> int:
-    first_spec = COMPONENTS[first]
-    second_spec = COMPONENTS[second]
-    pulses = 0
-    if first_spec.kind == "fuel" and second_spec.kind in {"fuel", "reflector"}:
-        pulses += first_spec.rod_count
-    if second_spec.kind == "fuel" and first_spec.kind in {"fuel", "reflector"}:
-        pulses += second_spec.rod_count
-    return int(ReactorSimulator.EU_PER_PULSE) * pulses
 
 
 @lru_cache(maxsize=131_072)
@@ -363,9 +354,16 @@ def _allowed_and_caps(request: OptimizationRequest) -> tuple[list[str], dict[str
             "uranium_quad": request.fuel.quad,
         }
         fuels = [item for item, limit in fuel_limits.items() if limit > 0]
-        caps = {item: fuel_limits[item] for item in fuels}
+        caps = {item: min(fuel_limits[item], slots) for item in fuels}
     nonfuel = [item for item, limit in request.component_limits.items() if limit > 0]
-    caps.update({item: request.component_limits[item] for item in nonfuel})
+    # Every enumerated layout must contain fuel, so no individual non-fuel
+    # component can occupy more than ``slots - 1`` cells.  Normalizing here
+    # keeps equivalent oversized requests on the same DP/counting state space.
+    max_nonfuel = max(0, slots - 1)
+    caps.update({
+        item: min(request.component_limits[item], max_nonfuel)
+        for item in nonfuel
+    })
     return [*fuels, *nonfuel], caps
 
 
@@ -373,42 +371,72 @@ def _exhaustive_shards(
     request: OptimizationRequest,
     *,
     power_only: bool = False,
+    target_shards: int | None = None,
 ) -> list[tuple[tuple[int, str], ...]]:
-    """Split the search into disjoint assignments on two central cells.
+    """Split the labelled layout space into disjoint fixed-cell prefixes.
 
-    Central cells distribute the labelled search space more evenly than a
-    top-left prefix does.
+    Without a target the legacy two-centre-cell split is retained.  Mark I
+    search supplies a target based on CPU workers and keeps expanding cells
+    from the centre outwards until there are enough independent tasks.  When
+    cooling items are included, completions of the same power skeleton land in
+    different shards and can therefore use the whole process pool.
     """
     columns = request.columns
-    positions = (2 * columns + columns // 2, 3 * columns + columns // 2)
     allowed, caps = _allowed_and_caps(request)
     if power_only:
         allowed = [item for item in allowed if COMPONENTS[item].kind in {"fuel", "reflector"}]
-    values = ["empty", *allowed]
-    shards: list[tuple[tuple[int, str], ...]] = []
-    for first in values:
-        for second in values:
+    empty_value = POWER_EMPTY if power_only else "empty"
+    values = [empty_value, *allowed]
+    slots = columns * 6
+    if target_shards is None:
+        positions = (2 * columns + columns // 2, 3 * columns + columns // 2)
+    else:
+        center_row = 2.5
+        center_column = (columns - 1) / 2
+        positions = tuple(sorted(
+            range(slots),
+            key=lambda index: (
+                abs(index // columns - center_row) + abs(index % columns - center_column),
+                index,
+            ),
+        ))
+
+    prefixes: list[tuple[tuple[int, str], ...]] = [()]
+    required = max(1, target_shards or 1)
+    minimum_depth = 2 if target_shards is None else 1
+    for depth, position in enumerate(positions, start=1):
+        expanded: list[tuple[tuple[int, str], ...]] = []
+        for prefix in prefixes:
             used: dict[str, int] = {}
             rods = 0
-            valid = True
-            for item in (first, second):
-                if item == "empty":
+            for _, item in prefix:
+                if item in {"empty", POWER_EMPTY}:
                     continue
                 used[item] = used.get(item, 0) + 1
                 rods += COMPONENTS[item].rod_count
-                if used[item] > caps[item]:
-                    valid = False
-            if request.fuel.mode == "total_rods" and rods > request.fuel.total_rods:
-                valid = False
-            if valid:
-                shards.append(((positions[0], first), (positions[1], second)))
+            for item in values:
+                if item not in {"empty", POWER_EMPTY} and used.get(item, 0) >= caps[item]:
+                    continue
+                next_rods = rods + (
+                    0 if item == POWER_EMPTY else COMPONENTS[item].rod_count
+                )
+                if request.fuel.mode == "total_rods" and next_rods > request.fuel.total_rods:
+                    continue
+                expanded.append((*prefix, (position, item)))
+        prefixes = expanded
+        if depth >= minimum_depth and len(prefixes) >= required:
+            break
+
     # Prefer fuel-bearing assignments so leaderboards begin producing useful
     # results immediately. Every shard is still evaluated in full.
-    shards.sort(key=lambda shard: (
-        not any(COMPONENTS[item].rod_count for _, item in shard),
+    prefixes.sort(key=lambda shard: (
+        not any(
+            item != POWER_EMPTY and COMPONENTS[item].rod_count
+            for _, item in shard
+        ),
         shard,
     ))
-    return shards
+    return prefixes
 
 
 def estimate_exhaustive_space(request: OptimizationRequest) -> int:
@@ -460,6 +488,9 @@ def _evaluate_layout_uncached(
     cancel_check=None,
 ) -> CandidateResult:
     """Process-safe full candidate evaluation used by heuristic worker processes."""
+    certificate = prove_simple_fixed_point(layout, columns, max_reactor_ticks)
+    if certificate is not None:
+        return certificate
     simulator = ReactorSimulator(Layout(columns=columns, initial_hull_heat=0, slots=list(layout)))
     run = simulator.simulate(SimulationOptions(
         max_game_ticks=max_reactor_ticks * 20,
@@ -480,6 +511,56 @@ def _evaluate_layout_uncached(
         component_count=sum(item != "empty" for item in layout),
         canonical=canonical_layout(layout, columns),
     )
+
+
+@lru_cache(maxsize=8_192)
+def prove_simple_fixed_point(
+    layout: tuple[str, ...],
+    columns: int,
+    max_reactor_ticks: int,
+) -> CandidateResult | None:
+    """Prove a simple complete layout reaches a safe period-one thermal state.
+
+    The verifier executes the production transition exactly; it does not use
+    nominal cooling sums.  It is deliberately restricted to layouts without
+    exchangers or finite heat stores and returns ``None`` whenever it cannot
+    prove a fixed point quickly.  ``None`` therefore means unknown, never
+    infeasible, and callers must retain the normal simulator fallback.
+    """
+    stable_reactor_ticks = 2 * FUEL_CYCLE_REACTOR_TICKS
+    if max_reactor_ticks < stable_reactor_ticks:
+        return None
+    simple_kinds = {"empty", "fuel", "vent", "plating", "reflector"}
+    if any(COMPONENTS[item].kind not in simple_kinds for item in layout):
+        return None
+
+    simulator = ReactorSimulator(Layout(columns=columns, initial_hull_heat=0, slots=list(layout)))
+    previous_state = simulator.state_signature(include_fuel_damage=False)
+    eu_per_tick = 0.0
+    for _ in range(4):
+        eu_per_tick, _generated, _vented = simulator.step(auto_refuel=True)
+        if (
+            simulator.first_critical_tick is not None
+            or simulator.first_component_break_tick is not None
+            or simulator.meltdown_tick is not None
+        ):
+            return None
+        current_state = simulator.state_signature(include_fuel_damage=False)
+        if current_state == previous_state:
+            safe_game_ticks = stable_reactor_ticks * 20
+            mark = classify_mark(None, None, True, simulator.uses_single_use_coolant)
+            return CandidateResult(
+                layout=layout,
+                mark=mark or "未分类",
+                average_eu_per_tick=eu_per_tick,
+                total_eu=eu_per_tick * safe_game_ticks,
+                safe_game_ticks=safe_game_ticks,
+                safety_margin=1.0 - simulator.peak_hull_heat / simulator.max_hull_heat,
+                component_count=sum(item != "empty" for item in layout),
+                canonical=canonical_layout(layout, columns),
+            )
+        previous_state = current_state
+    return None
 
 
 @lru_cache(maxsize=8_192)
@@ -505,7 +586,52 @@ def evaluate_layout(
     return _evaluate_layout_uncached(layout, columns, max_reactor_ticks, cancel_check)
 
 
-def _rank_candidates(values: list[CandidateResult]) -> list[CandidateResult]:
+def candidate_from_cuda_fixed_point(
+    layout: tuple[str, ...],
+    columns: int,
+    certificate: CudaFixedPointCertificate,
+) -> CandidateResult:
+    """Convert an exact CUDA fixed-point proof into the public candidate form."""
+    power = certificate.average_eu_per_tick
+    return CandidateResult(
+        layout=layout,
+        mark="Mark I-I",
+        average_eu_per_tick=power,
+        total_eu=power * certificate.safe_game_ticks,
+        safe_game_ticks=certificate.safe_game_ticks,
+        safety_margin=(
+            1.0 - certificate.peak_hull_heat / certificate.max_hull_heat
+        ),
+        component_count=sum(item != "empty" for item in layout),
+        canonical=canonical_layout(layout, columns),
+    )
+
+
+def candidate_from_cuda_simulation(
+    layout: tuple[str, ...],
+    columns: int,
+    simulation: CudaSimulationResult,
+) -> CandidateResult:
+    """Convert a complete per-thread CUDA simulation into a candidate."""
+    power = simulation.average_eu_per_tick
+    return CandidateResult(
+        layout=layout,
+        mark=simulation.mark or "未分类",
+        average_eu_per_tick=power,
+        total_eu=power * simulation.safe_game_ticks,
+        safe_game_ticks=simulation.safe_game_ticks,
+        safety_margin=(
+            1.0 - simulation.peak_hull_heat / simulation.max_hull_heat
+        ),
+        component_count=sum(item != "empty" for item in layout),
+        canonical=canonical_layout(layout, columns),
+    )
+
+
+def _rank_candidates(
+    values: list[CandidateResult],
+    limit: int = 10,
+) -> list[CandidateResult]:
     board: dict[str, CandidateResult] = {}
     for result in values:
         previous = board.get(result.canonical)
@@ -513,7 +639,112 @@ def _rank_candidates(values: list[CandidateResult]) -> list[CandidateResult]:
             board[result.canonical] = result
     ordered = sorted(board.values(), key=lambda item: item.canonical)
     ordered.sort(key=lambda item: item.score(), reverse=True)
-    return ordered[:10]
+    return ordered[:limit]
+
+
+def construct_simple_cooling_candidates(
+    base_layout: tuple[str, ...],
+    columns: int,
+    free_positions: tuple[int, ...],
+    cooling_remaining: dict[str, int],
+    generated_heat: int,
+    max_reactor_ticks: int,
+    target_count: int,
+) -> list[CandidateResult]:
+    """Construct a few direct-vent layouts and retain only proved fixed points.
+
+    This is a witness finder, not an infeasibility solver.  Returning an empty
+    list never authorizes pruning; the exhaustive cooling generator remains
+    the mandatory fallback.
+    """
+    if target_count <= 0:
+        return []
+
+    fuel_heat: dict[int, int] = {}
+    for index, item in enumerate(base_layout):
+        spec = COMPONENTS[item]
+        if spec.kind != "fuel":
+            continue
+        neighbors = _layout_neighbors(index, columns, len(base_layout))
+        pulses = spec.internal_pulses + sum(
+            COMPONENTS[base_layout[neighbor]].kind in {"fuel", "reflector"}
+            for neighbor in neighbors
+        )
+        fuel_heat[index] = 2 * spec.rod_count * pulses * (pulses + 1)
+
+    adjacency_heat = {
+        position: sum(
+            heat
+            for fuel_position, heat in fuel_heat.items()
+            if position in _layout_neighbors(fuel_position, columns, len(base_layout))
+        )
+        for position in free_positions
+    }
+    position_orders = [
+        tuple(sorted(free_positions, key=lambda p: (-adjacency_heat[p], p))),
+        tuple(sorted(free_positions, key=lambda p: (-adjacency_heat[p], -p))),
+        tuple(sorted(free_positions, key=lambda p: (adjacency_heat[p], p))),
+        tuple(sorted(free_positions, reverse=True)),
+    ]
+
+    fixed_nominal_vent = sum(
+        COMPONENTS[item].self_vent
+        for item in base_layout
+        if COMPONENTS[item].kind == "vent"
+    )
+    attempted: set[tuple[str, ...]] = set()
+    proved_by_canonical: dict[str, CandidateResult] = {}
+    attempt_budget = 12
+
+    def try_layout(layout: tuple[str, ...]) -> None:
+        nonlocal attempt_budget
+        if attempt_budget <= 0 or layout in attempted:
+            return
+        attempted.add(layout)
+        attempt_budget -= 1
+        result = prove_simple_fixed_point(layout, columns, max_reactor_ticks)
+        if result is not None:
+            proved_by_canonical.setdefault(result.canonical, result)
+
+    if fixed_nominal_vent >= generated_heat:
+        try_layout(base_layout)
+
+    vent_instances = [
+        item
+        for item, count in cooling_remaining.items()
+        if COMPONENTS[item].kind == "vent" and COMPONENTS[item].self_vent > 0
+        for _ in range(min(count, len(free_positions)))
+    ]
+    if not vent_instances or len(proved_by_canonical) >= target_count:
+        return list(proved_by_canonical.values())[:target_count]
+    component_orders = [
+        tuple(sorted(vent_instances, key=lambda item: (-COMPONENTS[item].self_vent, item))),
+        tuple(sorted(
+            vent_instances,
+            key=lambda item: (
+                COMPONENTS[item].hull_draw == 0,
+                -min(COMPONENTS[item].self_vent, COMPONENTS[item].hull_draw or COMPONENTS[item].self_vent),
+                item,
+            ),
+        )),
+    ]
+
+    for positions in position_orders:
+        for components in component_orders:
+            if attempt_budget <= 0 or len(proved_by_canonical) >= target_count:
+                break
+            layout = list(base_layout)
+            nominal_vent = fixed_nominal_vent
+            for position, item in zip(positions, components, strict=False):
+                layout[position] = item
+                nominal_vent += COMPONENTS[item].self_vent
+                if nominal_vent >= generated_heat:
+                    try_layout(tuple(layout))
+                if attempt_budget <= 0 or len(proved_by_canonical) >= target_count:
+                    break
+        if attempt_budget <= 0 or len(proved_by_canonical) >= target_count:
+            break
+    return list(proved_by_canonical.values())[:target_count]
 
 
 def _run_mark_i_two_level_shard(
@@ -525,6 +756,24 @@ def _run_mark_i_two_level_shard(
     shared_power_floor=None,
 ) -> dict:
     """Enumerate power skeletons first, then their cooling completions."""
+    gpu_evaluator: CudaFixedPointEvaluator | None = None
+    gpu_full_simulator: CudaFullSimulator | None = None
+    gpu_error: str | None = None
+    if request.accelerator == "cuda_full":
+        try:
+            gpu_full_simulator = CudaFullSimulator(
+                ticks_per_launch=request.gpu_ticks_per_launch
+            )
+        except Exception as exc:
+            gpu_error = str(exc)
+            raise
+    elif request.accelerator != "cpu":
+        try:
+            gpu_evaluator = CudaFixedPointEvaluator()
+        except Exception as exc:
+            gpu_error = str(exc)
+            if request.accelerator == "cuda":
+                raise
     allowed, caps = _allowed_and_caps(request)
     power_items = [
         item for item in allowed
@@ -540,27 +789,44 @@ def _run_mark_i_two_level_shard(
         if COMPONENTS[item].kind not in {"fuel", "reflector"}
     ]
     cooling_items.sort()
-    power_remaining = {item: caps[item] for item in power_items}
-    cooling_caps = tuple(caps[item] for item in cooling_items)
-    cooling_cap_items = tuple(zip(cooling_items, cooling_caps, strict=True))
-    cooling_remaining = dict(zip(cooling_items, cooling_caps, strict=True))
-    fixed = dict(fixed_items)
+    initial_cooling_caps = tuple(caps[item] for item in cooling_items)
+    cooling_cap_items = tuple(zip(cooling_items, initial_cooling_caps, strict=True))
+    cooling_remaining = dict(zip(cooling_items, initial_cooling_caps, strict=True))
+    fixed = {
+        position: item
+        for position, item in fixed_items
+        if item != POWER_EMPTY
+    }
     slots = request.columns * 6
     power_caps = tuple(caps[item] for item in power_items)
-    skeleton = ["empty"] * slots
-    rods = 0
-    has_fuel = False
+    fixed_skeleton = ["empty"] * slots
     for position, item in fixed_items:
-        if item == "empty":
+        if item in {"empty", POWER_EMPTY}:
             continue
-        skeleton[position] = item
-        power_remaining[item] -= 1
-        rods += COMPONENTS[item].rod_count
-        has_fuel = has_fuel or COMPONENTS[item].rod_count > 0
+        if COMPONENTS[item].kind in {"fuel", "reflector"}:
+            fixed_skeleton[position] = item
+        else:
+            cooling_remaining[item] -= 1
+    cooling_caps = tuple(cooling_remaining[item] for item in cooling_items)
+    power_table = SkeletonPowerTable(
+        columns=request.columns,
+        power_items=tuple(power_items),
+        power_caps=power_caps,
+        fixed_items=fixed_items,
+        total_rods=(
+            request.fuel.total_rods
+            if request.fuel.mode == "total_rods"
+            else None
+        ),
+    )
 
     checked = 0
     pruned = 0
     evaluated = 0
+    gpu_certified = 0
+    gpu_fallback = 0
+    gpu_batches = 0
+    gpu_full_simulated = 0
     visits = 0
     last_report = time.monotonic()
     cancelled = False
@@ -569,14 +835,8 @@ def _run_mark_i_two_level_shard(
     shared_floor_cache = -1.0
     last_floor_check = 0.0
     boards: dict[str, list[CandidateResult]] = {"I": []}
-    grid_edges = tuple(
-        (index, neighbor)
-        for index in range(slots)
-        for neighbor in (
-            *((index + 1,) if index % request.columns + 1 < request.columns else ()),
-            *((index + request.columns,) if index + request.columns < slots else ()),
-        )
-    )
+    precertified_layouts: set[tuple[str, ...]] = set()
+    pending_layouts: list[tuple[str, ...]] = []
 
     def cancellation_requested() -> bool:
         nonlocal cancel_cache, last_cancel_check
@@ -589,115 +849,172 @@ def _run_mark_i_two_level_shard(
     def current_power_floor() -> float:
         nonlocal shared_floor_cache, last_floor_check
         local_board = boards["I"]
-        local_floor = local_board[-1].average_eu_per_tick if len(local_board) >= 10 else -1.0
+        local_floor = (
+            local_board[-1].average_eu_per_tick
+            if len(local_board) >= request.result_limit
+            else -1.0
+        )
         now = time.monotonic()
         if shared_power_floor is not None and now - last_floor_check >= 0.1:
             shared_floor_cache = shared_power_floor.value
             last_floor_check = now
         return max(local_floor, shared_floor_cache)
 
+    def cannot_enter_board(power_upper_bound: float, floor: float) -> bool:
+        """Return whether a branch cannot improve the requested leaderboard.
+
+        Top-1 only needs one globally optimal representative, so equality is
+        already dominated after the first candidate.  For top-K, equal-power
+        branches remain eligible because they can fill or reorder tied places.
+        """
+        if floor < 0:
+            return False
+        return (
+            power_upper_bound <= floor
+            if request.result_limit == 1
+            else power_upper_bound < floor
+        )
+
     def report(force: bool = False) -> None:
         nonlocal last_report
         now = time.monotonic()
         if force or now - last_report >= 0.25:
-            progress_queue.put(("progress", shard_id, checked, pruned, evaluated))
+            progress_queue.put((
+                "progress", shard_id, checked, pruned, evaluated,
+                gpu_certified, gpu_fallback, gpu_batches, gpu_full_simulated,
+            ))
             last_report = now
 
     def accept_result(result: CandidateResult) -> None:
         previous = boards["I"]
-        ranked = _rank_candidates([*previous, result])
+        ranked = _rank_candidates([*previous, result], request.result_limit)
         if ranked != previous:
             boards["I"] = ranked
             progress_queue.put(("candidate", result))
 
-    def power_increment(position: int, item: str) -> int:
-        value = _power_vertex_value(item)
-        row, column = divmod(position, request.columns)
-        if column > 0:
-            value += _power_edge_value(skeleton[position - 1], item)
-        if row > 0:
-            value += _power_edge_value(skeleton[position - request.columns], item)
-        return value
-
-    def optimistic_power_bound(position: int, current_power: int, current_rods: int) -> int:
-        """Bound every unfinished skeleton without underestimating its power."""
-        options = ["empty"]
-        for item in power_items:
-            if power_remaining[item] <= 0:
-                continue
-            rod_cost = COMPONENTS[item].rod_count
-            if request.fuel.mode == "total_rods" and current_rods + rod_cost > request.fuel.total_rods:
-                continue
-            options.append(item)
-
-        def known_label(index: int) -> str | None:
-            if index < position or index in fixed:
-                return skeleton[index]
-            return None
-
-        upper = current_power
-        max_vertex = max(_power_vertex_value(item) for item in options)
-        for index in range(position, slots):
-            upper += (
-                _power_vertex_value(skeleton[index])
-                if index in fixed
-                else max_vertex
+    def flush_pending() -> None:
+        nonlocal evaluated, cancelled
+        nonlocal gpu_certified, gpu_fallback, gpu_batches, gpu_full_simulated
+        if not pending_layouts or cancelled:
+            return
+        batch = pending_layouts[:]
+        pending_layouts.clear()
+        full_results: list[CudaSimulationResult] | None = None
+        if gpu_full_simulator is not None:
+            full_results = gpu_full_simulator.simulate(
+                batch,
+                request.columns,
+                request.max_reactor_ticks,
+                cancel_check=cancellation_requested,
             )
-
-        for first, second in grid_edges:
-            if second < position:
-                continue
-            first_label = known_label(first)
-            second_label = known_label(second)
-            if first_label is not None and second_label is not None:
-                upper += _power_edge_value(first_label, second_label)
-            elif first_label is not None:
-                upper += max(_power_edge_value(first_label, item) for item in options)
-            elif second_label is not None:
-                upper += max(_power_edge_value(item, second_label) for item in options)
+            if full_results is None:
+                cancelled = True
+                return
+            certificates = [None] * len(batch)
+            gpu_batches += 1
+        elif gpu_evaluator is not None:
+            certificates = gpu_evaluator.certify(
+                batch,
+                request.columns,
+                request.max_reactor_ticks,
+            )
+            gpu_batches += 1
+        else:
+            certificates = [None] * len(batch)
+        for index, (raw, certificate) in enumerate(zip(batch, certificates, strict=True)):
+            if cancellation_requested():
+                cancelled = True
+                break
+            if full_results is not None:
+                gpu_full_simulated += 1
+                result = candidate_from_cuda_simulation(
+                    raw,
+                    request.columns,
+                    full_results[index],
+                )
+            elif certificate is None:
+                if gpu_evaluator is not None:
+                    gpu_fallback += 1
+                result = evaluate_layout(
+                    raw,
+                    request.columns,
+                    request.max_reactor_ticks,
+                    cancel_check=cancellation_requested,
+                )
             else:
-                upper += max(_power_edge_value(a, b) for a in options for b in options)
-        return upper
+                gpu_certified += 1
+                result = candidate_from_cuda_fixed_point(
+                    raw,
+                    request.columns,
+                    certificate,
+                )
+            if cancellation_requested():
+                cancelled = True
+                break
+            evaluated += 1
+            if mark_family(result.mark) == "I":
+                accept_result(result)
+        report()
 
-    def count_remaining_layouts(
-        position: int,
-        current_rods: int,
-        current_has_fuel: bool,
+    @lru_cache(maxsize=None)
+    def count_power_subtree(
+        step: int,
+        remaining: tuple[int, ...],
+        used_power: int,
     ) -> int:
-        """Count a pruned partial skeleton and every cooling completion below it."""
-        remaining_positions = sum(index not in fixed for index in range(position, slots))
-        used_power_slots = sum(
-            cap - power_remaining[item]
-            for item, cap in zip(power_items, power_caps, strict=True)
-        )
-        # (new power slots, new rods, has fuel) -> labelled assignments.
-        dp: dict[tuple[int, int, bool], int] = {(0, 0, current_has_fuel): 1}
-        for item in power_items:
-            spec = COMPONENTS[item]
-            cap = power_remaining[item]
-            next_dp: dict[tuple[int, int, bool], int] = {}
-            for (used, extra_rods, has_fuel), ways in dp.items():
-                for count in range(min(cap, remaining_positions - used) + 1):
-                    rods = extra_rods + count * spec.rod_count
-                    if (
-                        request.fuel.mode == "total_rods"
-                        and current_rods + rods > request.fuel.total_rods
-                    ):
-                        break
-                    key = (used + count, rods, has_fuel or (spec.kind == "fuel" and count > 0))
-                    next_dp[key] = (
-                        next_dp.get(key, 0)
-                        + ways * math.comb(remaining_positions - used, count)
-                    )
-            dp = next_dp
-
+        """Count full labelled layouts below one power-table prefix exactly."""
+        if step == slots:
+            if not power_table.has_fuel(remaining):
+                return 0
+            nonfixed_power = used_power - power_table.fixed_power_count
+            free_slots = slots - power_table.fixed_cell_count - nonfixed_power
+            return count_cooling_completions(free_slots, cooling_caps)
         total = 0
-        for (additional_power, _extra_rods, has_fuel), ways in dp.items():
-            if not has_fuel:
-                continue
-            free_slots = slots - used_power_slots - additional_power
-            total += ways * count_cooling_completions(free_slots, cooling_caps)
+        for code in power_table.allowed_codes(step, remaining):
+            next_remaining = power_table.consume(code, remaining)
+            total += count_power_subtree(
+                step + 1,
+                next_remaining,
+                used_power + int(code != 0),
+            )
         return total
+
+    minimum_fuel_heat = min(
+        (
+            2
+            * COMPONENTS[item].rod_count
+            * COMPONENTS[item].internal_pulses
+            * (COMPONENTS[item].internal_pulses + 1)
+            for item in power_items
+            if COMPONENTS[item].kind == "fuel"
+        ),
+        default=0,
+    )
+    global_vent_upper = sustainable_vent_upper_bound(
+        tuple(fixed_skeleton),
+        request.columns,
+        cooling_cap_items,
+    )
+    if minimum_fuel_heat and global_vent_upper < minimum_fuel_heat:
+        count = count_power_subtree(0, power_table.initial_remaining, 0)
+        checked += count
+        pruned += count
+        report(force=True)
+        return {
+            "shard_id": shard_id,
+            "checked": checked,
+            "pruned": pruned,
+            "evaluated": evaluated,
+            "boards": boards,
+            "cancelled": cancelled,
+            "skeleton_table_states": 0,
+            "skeleton_table_cache_hit": False,
+            "gpu_certified": gpu_certified,
+            "gpu_fallback": gpu_fallback,
+            "gpu_batches": gpu_batches,
+            "gpu_full_simulated": gpu_full_simulated,
+            "gpu_error": gpu_error,
+        }
 
     def generate_cooling(
         layout: list[str],
@@ -715,7 +1032,7 @@ def _run_mark_i_two_level_shard(
             return
 
         floor = current_power_floor()
-        if floor >= 0 and skeleton_power < floor:
+        if cannot_enter_board(skeleton_power, floor):
             count = count_cooling_completions(
                 len(free_positions) - offset,
                 tuple(cooling_remaining[item] for item in cooling_items),
@@ -728,6 +1045,10 @@ def _run_mark_i_two_level_shard(
         if offset == len(free_positions):
             checked += 1
             raw = tuple(layout)
+            if raw in precertified_layouts:
+                precertified_layouts.remove(raw)
+                report()
+                return
             if (
                 sustainable_heat_flow_upper_bound(raw, request.columns)
                 < skeleton_heat
@@ -735,19 +1056,14 @@ def _run_mark_i_two_level_shard(
                 pruned += 1
                 report()
                 return
-            result = evaluate_layout(
-                raw,
-                request.columns,
-                request.max_reactor_ticks,
-                cancel_check=cancellation_requested,
+            pending_layouts.append(raw)
+            batch_size = (
+                request.gpu_exhaustive_batch_size
+                if gpu_evaluator is not None or gpu_full_simulator is not None
+                else 1
             )
-            if cancellation_requested():
-                cancelled = True
-                return
-            evaluated += 1
-            if mark_family(result.mark) == "I":
-                accept_result(result)
-            report()
+            if len(pending_layouts) >= batch_size:
+                flush_pending()
             return
 
 
@@ -765,10 +1081,13 @@ def _run_mark_i_two_level_shard(
                 break
         layout[position] = "empty"
 
-    def finish_skeleton() -> None:
-        nonlocal checked, pruned
-        raw_skeleton = tuple(skeleton)
-        free_positions = tuple(index for index, item in enumerate(raw_skeleton) if item == "empty")
+    def finish_skeleton(raw_skeleton: tuple[str, ...]) -> None:
+        nonlocal checked, pruned, evaluated
+        free_positions = tuple(
+            index
+            for index, item in enumerate(raw_skeleton)
+            if item == "empty" and index not in fixed
+        )
         completion_count = count_cooling_completions(len(free_positions), cooling_caps)
         skeleton_power = skeleton_eu_per_tick(raw_skeleton, request.columns)
         skeleton_heat = skeleton_heat_per_tick(raw_skeleton, request.columns)
@@ -780,71 +1099,81 @@ def _run_mark_i_two_level_shard(
         if (
             has_degrading_power_component(raw_skeleton, request.columns)
             or skeleton_heat > vent_upper
-            or (current_power_floor() >= 0 and skeleton_power < current_power_floor())
+            or cannot_enter_board(skeleton_power, current_power_floor())
         ):
             checked += completion_count
             pruned += completion_count
             report()
             return
         layout = list(raw_skeleton)
-        generate_cooling(layout, free_positions, 0, skeleton_power, skeleton_heat)
-
-    def generate_skeleton(
-        position: int,
-        current_rods: int,
-        current_has_fuel: bool,
-        current_power: int,
-    ) -> None:
-        nonlocal checked, pruned, visits, cancelled
-        visits += 1
-        if visits % 4096 == 0 and cancel_event.is_set():
-            cancelled = True
-            return
-        if cancelled:
-            return
-        floor = current_power_floor()
-        if floor >= 0 and optimistic_power_bound(position, current_power, current_rods) < floor:
-            count = count_remaining_layouts(position, current_rods, current_has_fuel)
-            checked += count
-            pruned += count
+        for position, item in fixed.items():
+            if item != "empty" and COMPONENTS[item].kind not in {"fuel", "reflector"}:
+                layout[position] = item
+        constructed = construct_simple_cooling_candidates(
+            tuple(layout),
+            request.columns,
+            free_positions,
+            cooling_remaining,
+            skeleton_heat,
+            request.max_reactor_ticks,
+            request.result_limit,
+        )
+        for result in constructed:
+            evaluated += 1
+            precertified_layouts.add(result.layout)
+            accept_result(result)
+        if request.result_limit == 1 and constructed:
+            # One proved witness realizes this skeleton's exact power.  Every
+            # other cooling completion can only tie it in a Top-1 request.
+            checked += completion_count
+            pruned += completion_count - 1
+            precertified_layouts.discard(constructed[0].layout)
             report()
             return
-        if position == slots:
-            if current_has_fuel:
-                finish_skeleton()
-            return
-        if position in fixed:
-            generate_skeleton(
-                position + 1,
-                current_rods,
-                current_has_fuel,
-                current_power + power_increment(position, skeleton[position]),
-            )
-            return
+        generate_cooling(layout, free_positions, 0, skeleton_power, skeleton_heat)
+        flush_pending()
 
-        for item in [*power_items, "empty"]:
-            if item == "empty":
-                skeleton[position] = "empty"
-                generate_skeleton(position + 1, current_rods, current_has_fuel, current_power)
-            elif power_remaining[item] > 0:
-                rod_cost = COMPONENTS[item].rod_count
-                if request.fuel.mode == "total_rods" and current_rods + rod_cost > request.fuel.total_rods:
-                    continue
-                power_remaining[item] -= 1
-                skeleton[position] = item
-                generate_skeleton(
-                    position + 1,
-                    current_rods + rod_cost,
-                    current_has_fuel or rod_cost > 0,
-                    current_power + power_increment(position, item),
+    try:
+        power_table.build(cancel_check=cancellation_requested)
+    except InterruptedError:
+        cancelled = True
+
+    heap: list[tuple[int, int, SkeletonSearchNode]] = []
+    serial = 0
+    root = None if cancelled else power_table.root()
+    if root is not None:
+        heapq.heappush(heap, (-root.bound, serial, root))
+    while heap and not cancelled:
+        _negative_bound, _serial, node = heapq.heappop(heap)
+        visits += 1
+        if visits % 4096 == 0 and cancellation_requested():
+            cancelled = True
+            break
+        floor = current_power_floor()
+        if cannot_enter_board(node.bound, floor):
+            pending = [node, *(entry[2] for entry in heap)]
+            count = sum(
+                count_power_subtree(
+                    item.step,
+                    item.remaining,
+                    item.power_components,
                 )
-                power_remaining[item] += 1
-            if cancelled:
-                break
-        skeleton[position] = "empty"
+                for item in pending
+            )
+            checked += count
+            pruned += count
+            heap.clear()
+            report()
+            break
+        if node.step == slots:
+            finish_skeleton(power_table.materialize(node.choices))
+            continue
+        for child in power_table.expand(node):
+            serial += 1
+            heapq.heappush(heap, (-child.bound, serial, child))
 
-    generate_skeleton(0, rods, has_fuel, 0)
     report(force=True)
+    flush_pending()
     return {
         "shard_id": shard_id,
         "checked": checked,
@@ -852,6 +1181,13 @@ def _run_mark_i_two_level_shard(
         "evaluated": evaluated,
         "boards": boards,
         "cancelled": cancelled,
+        "skeleton_table_states": len(power_table.memo),
+        "skeleton_table_cache_hit": power_table.loaded_from_disk,
+        "gpu_certified": gpu_certified,
+        "gpu_fallback": gpu_fallback,
+        "gpu_batches": gpu_batches,
+        "gpu_full_simulated": gpu_full_simulated,
+        "gpu_error": gpu_error,
     }
 
 
@@ -875,6 +1211,24 @@ def _run_exhaustive_shard(
             shared_power_floor,
         )
     allowed, remaining = _allowed_and_caps(request)
+    gpu_evaluator: CudaFixedPointEvaluator | None = None
+    gpu_full_simulator: CudaFullSimulator | None = None
+    gpu_error: str | None = None
+    if request.accelerator == "cuda_full":
+        try:
+            gpu_full_simulator = CudaFullSimulator(
+                ticks_per_launch=request.gpu_ticks_per_launch
+            )
+        except Exception as exc:
+            gpu_error = str(exc)
+            raise
+    elif request.accelerator != "cpu":
+        try:
+            gpu_evaluator = CudaFixedPointEvaluator()
+        except Exception as exc:
+            gpu_error = str(exc)
+            if request.accelerator == "cuda":
+                raise
     fixed = dict(fixed_items)
     slots = request.columns * 6
     layout = ["empty"] * slots
@@ -890,12 +1244,17 @@ def _run_exhaustive_shard(
     checked = 0
     pruned = 0
     evaluated = 0
+    gpu_certified = 0
+    gpu_fallback = 0
+    gpu_batches = 0
+    gpu_full_simulated = 0
     visits = 0
     last_report = time.monotonic()
     cancelled = False
     cancel_cache = False
     last_cancel_check = 0.0
     boards: dict[str, list[CandidateResult]] = {mark: [] for mark in request.marks}
+    pending_layouts: list[tuple[str, ...]] = []
 
     def cancellation_requested() -> bool:
         nonlocal cancel_cache, last_cancel_check
@@ -909,8 +1268,86 @@ def _run_exhaustive_shard(
         nonlocal last_report
         now = time.monotonic()
         if force or now - last_report >= 0.25:
-            progress_queue.put(("progress", shard_id, checked, pruned, evaluated))
+            progress_queue.put((
+                "progress", shard_id, checked, pruned, evaluated,
+                gpu_certified, gpu_fallback, gpu_batches, gpu_full_simulated,
+            ))
             last_report = now
+
+    def accept_result(result: CandidateResult) -> None:
+        family = mark_family(result.mark)
+        if family not in boards:
+            return
+        previous = boards[family]
+        ranked = _rank_candidates([*previous, result], request.result_limit)
+        if ranked != previous:
+            boards[family] = ranked
+            progress_queue.put(("candidate", result))
+
+    def flush_pending() -> None:
+        nonlocal checked, evaluated, cancelled
+        nonlocal gpu_certified, gpu_fallback, gpu_batches, gpu_full_simulated
+        if not pending_layouts or cancelled:
+            return
+        batch = pending_layouts[:]
+        pending_layouts.clear()
+        full_results: list[CudaSimulationResult] | None = None
+        certificates: list[CudaFixedPointCertificate | None]
+        if gpu_full_simulator is not None:
+            full_results = gpu_full_simulator.simulate(
+                batch,
+                request.columns,
+                request.max_reactor_ticks,
+                cancel_check=cancellation_requested,
+            )
+            if full_results is None:
+                cancelled = True
+                return
+            certificates = [None] * len(batch)
+            gpu_batches += 1
+        elif gpu_evaluator is not None:
+            certificates = gpu_evaluator.certify(
+                batch,
+                request.columns,
+                request.max_reactor_ticks,
+            )
+            gpu_batches += 1
+        else:
+            certificates = [None] * len(batch)
+        for index, (raw, certificate) in enumerate(zip(batch, certificates, strict=True)):
+            if cancellation_requested():
+                cancelled = True
+                break
+            checked += 1
+            if full_results is not None:
+                gpu_full_simulated += 1
+                result = candidate_from_cuda_simulation(
+                    raw,
+                    request.columns,
+                    full_results[index],
+                )
+            elif certificate is None:
+                if gpu_evaluator is not None:
+                    gpu_fallback += 1
+                result = evaluate_layout(
+                    raw,
+                    request.columns,
+                    request.max_reactor_ticks,
+                    cancel_check=cancellation_requested,
+                )
+            else:
+                gpu_certified += 1
+                result = candidate_from_cuda_fixed_point(
+                    raw,
+                    request.columns,
+                    certificate,
+                )
+            if cancellation_requested():
+                cancelled = True
+                break
+            evaluated += 1
+            accept_result(result)
+        report()
 
     def generate(position: int, current_rods: int, current_has_fuel: bool) -> None:
         nonlocal checked, pruned, evaluated, visits, cancelled
@@ -921,28 +1358,14 @@ def _run_exhaustive_shard(
         if position == slots:
             if not current_has_fuel:
                 return
-            checked += 1
-            raw = tuple(layout)
-            result = evaluate_layout(
-                raw,
-                request.columns,
-                request.max_reactor_ticks,
-                cancel_check=cancellation_requested,
+            pending_layouts.append(tuple(layout))
+            batch_size = (
+                request.gpu_exhaustive_batch_size
+                if gpu_evaluator is not None or gpu_full_simulator is not None
+                else 1
             )
-            if cancellation_requested():
-                cancelled = True
-                return
-            evaluated += 1
-            family = mark_family(result.mark)
-            if family in boards:
-                previous = boards[family]
-                ranked = _rank_candidates([*previous, result])
-                # A later mirrored direction can replace an earlier result
-                # without changing the canonical-key sequence.
-                if ranked != previous:
-                    boards[family] = ranked
-                    progress_queue.put(("candidate", result))
-            report()
+            if len(pending_layouts) >= batch_size:
+                flush_pending()
             return
         if cancelled:
             return
@@ -967,6 +1390,7 @@ def _run_exhaustive_shard(
         layout[position] = "empty"
 
     generate(0, rods, has_fuel)
+    flush_pending()
     report(force=True)
     return {
         "shard_id": shard_id,
@@ -975,6 +1399,11 @@ def _run_exhaustive_shard(
         "evaluated": evaluated,
         "boards": boards,
         "cancelled": cancelled,
+        "gpu_certified": gpu_certified,
+        "gpu_fallback": gpu_fallback,
+        "gpu_batches": gpu_batches,
+        "gpu_full_simulated": gpu_full_simulated,
+        "gpu_error": gpu_error,
     }
 
 
@@ -987,6 +1416,16 @@ class OptimizationJob:
         self.evaluated = 0
         self.checked = 0
         self.pruned = 0
+        self.skeleton_table_states = 0
+        self.skeleton_table_cache_hits = 0
+        self.accelerator = "cpu"
+        self.accelerator_detail: str | None = None
+        self.accelerator_fallback_reason: str | None = None
+        self.gpu_screened = 0
+        self.gpu_batches = 0
+        self.gpu_exhaustive_certified = 0
+        self.gpu_exhaustive_fallback = 0
+        self.gpu_full_simulated = 0
         self.generation = 0
         self.started_at: float | None = None
         self.finished_at: float | None = None
@@ -1013,6 +1452,18 @@ class OptimizationJob:
             "proven_global": self.proven_global,
             "estimate": str(self.exhaustive_estimate) if self.exhaustive_estimate is not None else None,
             "cpu_workers": self.request.cpu_workers,
+            "accelerator_requested": self.request.accelerator,
+            "accelerator": self.accelerator,
+            "accelerator_detail": self.accelerator_detail,
+            "accelerator_fallback_reason": self.accelerator_fallback_reason,
+            "gpu_screened": self.gpu_screened,
+            "gpu_batches": self.gpu_batches,
+            "gpu_exhaustive_certified": self.gpu_exhaustive_certified,
+            "gpu_exhaustive_fallback": self.gpu_exhaustive_fallback,
+            "gpu_full_simulated": self.gpu_full_simulated,
+            "result_limit": self.request.result_limit,
+            "skeleton_table_states": self.skeleton_table_states,
+            "skeleton_table_cache_hits": self.skeleton_table_cache_hits,
             "elapsed_seconds": (self.finished_at or time.time()) - self.started_at if self.started_at else 0,
             "leaderboards": {
                 mark: [candidate.public_dict(self.request.columns) for candidate in values]
@@ -1107,16 +1558,103 @@ class OptimizationJob:
         family = mark_family(result.mark)
         if family is None or family not in self.leaderboards:
             return
-        self.leaderboards[family] = _rank_candidates([*self.leaderboards[family], result])
+        self.leaderboards[family] = _rank_candidates(
+            [*self.leaderboards[family], result],
+            self.request.result_limit,
+        )
 
     def _run_heuristic(self) -> None:
         rng = random.Random(self.request.seed + self.evaluated)
-        island_count = min(self.request.cpu_workers, max(1, self.request.population // 10))
+        self.accelerator = "cpu"
+        self.accelerator_detail = None
+        self.accelerator_fallback_reason = None
+        gpu_scorer: CudaBatchScorer | None = None
+        if self.request.accelerator != "cpu":
+            info = cuda_device_info()
+            if info.available:
+                try:
+                    gpu_scorer = CudaBatchScorer()
+                    self.accelerator = "cuda"
+                    self.accelerator_detail = info.label
+                except Exception as exc:
+                    self.accelerator_fallback_reason = str(exc)
+            else:
+                self.accelerator_fallback_reason = info.reason
+            if gpu_scorer is None and self.request.accelerator == "cuda":
+                raise RuntimeError(self.accelerator_fallback_reason or "请求了 CUDA，但 CUDA 不可用")
+
+        # GPU mode uses a few larger islands. Tiny per-island batches waste most
+        # of a high-end GPU and do not improve genetic diversity in practice.
+        island_limit = 4 if gpu_scorer is not None else self.request.cpu_workers
+        island_count = min(island_limit, max(1, self.request.population // 10))
         base_size, remainder = divmod(self.request.population, island_count)
-        islands = [
-            [self._random_layout(rng) for _ in range(base_size + (island < remainder))]
-            for island in range(island_count)
-        ]
+        island_sizes = [base_size + (island < remainder) for island in range(island_count)]
+
+        def gpu_screen_pools(
+            pools: list[list[tuple[str, ...]]],
+            keeps: list[int],
+            preserved: list[list[tuple[str, ...]]] | None = None,
+        ) -> list[list[tuple[str, ...]]]:
+            if gpu_scorer is None:
+                return [pool[:keep] for pool, keep in zip(pools, keeps, strict=True)]
+            unique_pools = [list(dict.fromkeys(pool)) for pool in pools]
+            flattened = [layout for pool in unique_pools for layout in pool]
+            if not flattened:
+                return [[] for _ in pools]
+            scores = gpu_scorer.score(flattened, self.request.columns)
+            self.gpu_screened += len(flattened)
+            self.gpu_batches += 1
+            result: list[list[tuple[str, ...]]] = []
+            offset = 0
+            for pool_index, (pool, keep) in enumerate(zip(unique_pools, keeps, strict=True)):
+                end = offset + len(pool)
+                pool_scores = CudaBatchScores(
+                    scores.power[offset:end],
+                    scores.generated_heat[offset:end],
+                    scores.cooling_proxy[offset:end],
+                )
+                required = list(dict.fromkeys((preserved or [[] for _ in pools])[pool_index]))
+                required = required[:keep]
+                required_set = set(required)
+                candidates = [layout for layout in pool if layout not in required_set]
+                candidate_indices = [index for index, layout in enumerate(pool) if layout not in required_set]
+                candidate_scores = CudaBatchScores(
+                    pool_scores.power[candidate_indices],
+                    pool_scores.generated_heat[candidate_indices],
+                    pool_scores.cooling_proxy[candidate_indices],
+                )
+                selected = select_screened_layouts(
+                    candidates,
+                    candidate_scores,
+                    keep - len(required),
+                    mark_i_only=self.request.marks == ["I"],
+                )
+                result.append([*required, *selected])
+                offset = end
+            return result
+
+        if gpu_scorer is None:
+            islands = [
+                [self._random_layout(rng) for _ in range(size)]
+                for size in island_sizes
+            ]
+        else:
+            target_total = max(
+                4_096,
+                self.request.population * self.request.gpu_batch_multiplier,
+            )
+            pool_base, pool_remainder = divmod(target_total, island_count)
+            initial_pools = []
+            for island, size in enumerate(island_sizes):
+                pool = [self._random_layout(rng) for _ in range(size)]
+                target = pool_base + (island < pool_remainder)
+                while len(pool) < target:
+                    pool.append(self._mutate(rng.choice(pool), rng))
+                initial_pools.append(pool)
+            islands = gpu_screen_pools(initial_pools, island_sizes)
+            for island, size in zip(islands, island_sizes, strict=True):
+                while len(island) < size:
+                    island.append(self._random_layout(rng))
         deadline = time.time() + self.request.time_budget_seconds
         executor = ProcessPoolExecutor(max_workers=self.request.cpu_workers) if self.request.cpu_workers > 1 else None
         for generation in range(self.request.generations):
@@ -1173,6 +1711,8 @@ class OptimizationJob:
                     future.cancel()
             score_by_layout = {layout: score for score, layout in scored}
             next_islands: list[list[tuple[str, ...]]] = []
+            mutation_pools: list[list[tuple[str, ...]]] = []
+            preserved_elites: list[list[tuple[str, ...]]] = []
             leaders: list[tuple[str, ...]] = []
             for island in islands:
                 island_scored = sorted(
@@ -1183,28 +1723,81 @@ class OptimizationJob:
                 elite_count = max(2, len(island) // 5)
                 elites = [layout for _, layout in island_scored[:elite_count]]
                 leaders.append(elites[0])
-                next_island = list(elites)
-                while len(next_island) < len(island):
-                    next_island.append(self._mutate(rng.choice(elites), rng))
-                next_islands.append(next_island)
+                if gpu_scorer is None:
+                    next_island = list(elites)
+                    while len(next_island) < len(island):
+                        next_island.append(self._mutate(rng.choice(elites), rng))
+                    next_islands.append(next_island)
+                else:
+                    target = max(
+                        len(island) * self.request.gpu_batch_multiplier,
+                        4_096 // island_count,
+                    )
+                    pool = list(elites)
+                    while len(pool) < target:
+                        pool.append(self._mutate(rng.choice(elites), rng))
+                    mutation_pools.append(pool)
+                    preserved_elites.append(elites)
+            if gpu_scorer is not None:
+                next_islands = gpu_screen_pools(
+                    mutation_pools,
+                    [len(island) for island in islands],
+                    preserved_elites,
+                )
             # 每五代做环形迁移：各岛最佳个体替换下一岛的最后一个个体。
             if island_count > 1 and (generation + 1) % 5 == 0:
                 for island, leader in enumerate(leaders):
                     next_islands[(island + 1) % island_count][-1] = leader
             islands = next_islands
             self.progress = min(0.999, (generation + 1) / self.request.generations)
-            self.message = f"第 {generation + 1} 代 · {island_count} 个岛 · 已评估 {self.evaluated} 个布局"
+            gpu_status = f" · GPU 已筛选 {self.gpu_screened:,} 个" if gpu_scorer is not None else ""
+            self.message = (
+                f"第 {generation + 1} 代 · {island_count} 个岛 · "
+                f"已精确评估 {self.evaluated} 个布局{gpu_status}"
+            )
         if executor is not None:
             executor.shutdown(wait=False, cancel_futures=True)
 
     def _run_exhaustive(self) -> None:
+        self.accelerator = "cpu"
+        self.accelerator_detail = None
+        self.accelerator_fallback_reason = None
+        if self.request.accelerator != "cpu":
+            info = cuda_device_info()
+            if info.available:
+                self.accelerator = (
+                    "cuda_full"
+                    if self.request.accelerator == "cuda_full"
+                    else "cuda"
+                )
+                self.accelerator_detail = info.label
+            else:
+                self.accelerator_fallback_reason = info.reason
+                if self.request.accelerator in {"cuda", "cuda_full"}:
+                    raise RuntimeError(info.reason or "请求了 CUDA，但 CUDA 不可用")
         estimate = self.exhaustive_estimate or 0
         total = max(1, estimate)
         mark_i_two_level = self.request.marks == ["I"]
-        shards = _exhaustive_shards(self.request, power_only=mark_i_two_level)
-        worker_count = min(self.request.cpu_workers, len(shards))
+        shards = (
+            [()]
+            if self.accelerator in {"cuda", "cuda_full"}
+            else _exhaustive_shards(
+                self.request,
+                power_only=mark_i_two_level,
+                target_shards=self.request.cpu_workers * 4 if mark_i_two_level else None,
+            )
+        )
+        # One CUDA context owns large batches efficiently. Multiple WDDM
+        # processes contending for the same GPU are slower and waste VRAM.
+        worker_limit = (
+            1
+            if self.accelerator in {"cuda", "cuda_full"}
+            else self.request.cpu_workers
+        )
+        worker_count = min(worker_limit, len(shards))
         request_data = self.request.model_dump(mode="json")
         shard_progress: dict[int, tuple[int, int, int]] = {}
+        shard_gpu_progress: dict[int, tuple[int, int, int, int]] = {}
 
         def update_progress(shard_id: int, checked: int, pruned: int, evaluated: int) -> None:
             old_checked, old_pruned, old_evaluated = shard_progress.get(shard_id, (0, 0, 0))
@@ -1215,8 +1808,43 @@ class OptimizationJob:
             self.progress = min(0.999, self.checked / total)
             self.message = (
                 f"{worker_count} 进程并行枚举 · 已检查 {self.checked:,} 个方案"
-                f" · 热学模拟 {self.evaluated:,} 个 · 数学跳过 {self.pruned:,} 个"
+                f" · 精确验证 {self.evaluated:,} 个 · 数学跳过 {self.pruned:,} 个"
             )
+
+        def update_gpu_progress(
+            shard_id: int,
+            certified: int,
+            fallback: int,
+            batches: int,
+            full_simulated: int = 0,
+        ) -> None:
+            old_certified, old_fallback, old_batches, old_full_simulated = shard_gpu_progress.get(
+                shard_id, (0, 0, 0, 0)
+            )
+            self.gpu_exhaustive_certified += certified - old_certified
+            self.gpu_exhaustive_fallback += fallback - old_fallback
+            self.gpu_screened += (
+                certified + fallback + full_simulated
+                - old_certified - old_fallback - old_full_simulated
+            )
+            self.gpu_batches += batches - old_batches
+            self.gpu_full_simulated += full_simulated - old_full_simulated
+            shard_gpu_progress[shard_id] = (
+                certified, fallback, batches, full_simulated
+            )
+            if self.accelerator == "cuda_full":
+                self.message = (
+                    f"CUDA 完整模拟穷举 · 已检查 {self.checked:,} 个方案"
+                    f" · GPU 完整模拟 {self.gpu_full_simulated:,} 个"
+                    f" · 数学跳过 {self.pruned:,} 个"
+                )
+            elif self.accelerator == "cuda":
+                self.message = (
+                    f"CUDA 批量穷举 · 已检查 {self.checked:,} 个方案"
+                    f" · GPU 证书 {self.gpu_exhaustive_certified:,} 个"
+                    f" · CPU 回退 {self.gpu_exhaustive_fallback:,} 个"
+                    f" · 数学跳过 {self.pruned:,} 个"
+                )
 
         manager = multiprocessing.Manager()
         progress_queue = manager.Queue()
@@ -1239,11 +1867,16 @@ class OptimizationJob:
 
         def handle_message(message: tuple) -> None:
             if message[0] == "progress":
-                _, shard_id, checked, pruned, evaluated = message
+                _, shard_id, checked, pruned, evaluated, *gpu_values = message
                 update_progress(shard_id, checked, pruned, evaluated)
+                if gpu_values:
+                    update_gpu_progress(shard_id, *gpu_values)
             elif message[0] == "candidate":
                 self._accept(message[1], count_evaluation=False)
-                if shared_power_floor is not None and len(self.leaderboards["I"]) >= 10:
+                if (
+                    shared_power_floor is not None
+                    and len(self.leaderboards["I"]) >= self.request.result_limit
+                ):
                     shared_power_floor.value = self.leaderboards["I"][-1].average_eu_per_tick
 
         try:
@@ -1263,13 +1896,31 @@ class OptimizationJob:
                     if future.cancelled():
                         continue
                     result = future.result()
+                    self.skeleton_table_states += result.get("skeleton_table_states", 0)
+                    self.skeleton_table_cache_hits += int(
+                        result.get("skeleton_table_cache_hit", False)
+                    )
+                    update_gpu_progress(
+                        result["shard_id"],
+                        result.get("gpu_certified", 0),
+                        result.get("gpu_fallback", 0),
+                        result.get("gpu_batches", 0),
+                        result.get("gpu_full_simulated", 0),
+                    )
+                    if result.get("gpu_error") and self.request.accelerator == "auto":
+                        self.accelerator = "cpu"
+                        self.accelerator_detail = None
+                        self.accelerator_fallback_reason = result["gpu_error"]
                     update_progress(
                         result["shard_id"], result["checked"], result["pruned"], result["evaluated"]
                     )
                     for values in result["boards"].values():
                         for candidate in values:
                             self._accept(candidate, count_evaluation=False)
-                    if shared_power_floor is not None and len(self.leaderboards["I"]) >= 10:
+                    if (
+                        shared_power_floor is not None
+                        and len(self.leaderboards["I"]) >= self.request.result_limit
+                    ):
                         shared_power_floor.value = self.leaderboards["I"][-1].average_eu_per_tick
 
             while True:
