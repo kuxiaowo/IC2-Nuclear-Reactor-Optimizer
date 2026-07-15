@@ -221,3 +221,10 @@ def test_critical_at_85_percent_and_meltdown_at_100_percent():
 def test_plating_changes_hull_capacity():
     simulator = ReactorSimulator(layout("reactor_plating", "heat_capacity_plating", "containment_plating"))
     assert simulator.max_hull_heat == 13_500
+
+
+def test_exchange_preserves_locked_double_truncation_boundary():
+    # The algebraic real-valued base is 16, but the locked double operation
+    # produces 15.999... before Java/Python-style truncation.  A symbolic
+    # backend must preserve this finite rule, not silently rationalize it.
+    assert ReactorSimulator._exchange_amount(0.4, 1.4, 1_000, 36) == -15

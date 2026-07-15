@@ -1,0 +1,97 @@
+{
+  "scope": "CPU-only low-load microbenchmark; no GPU and no full optimisation",
+  "problem": {
+    "rows": 6,
+    "columns": 9,
+    "rod_budget": 25,
+    "incumbent_lower_bound": 380,
+    "static_upper_bound": 455
+  },
+  "input_envelope": {
+    "open_power_tiers": [
+      385,
+      390,
+      395,
+      400,
+      405,
+      410,
+      415,
+      420,
+      425,
+      430,
+      435,
+      440,
+      445,
+      450,
+      455
+    ],
+    "frontier_state_bound": 22343750,
+    "frontier_transition_bound": 111718750,
+    "rod_feasible_power_skeletons": 3734458236477762229335924670464,
+    "rod_feasible_full_layouts": 82823472932956273539011403336334808857617737214069738617765015823377028
+  },
+  "safe_witness_periodic_prefix": {
+    "samples": 1,
+    "minimum_seconds": 0.04534839999905671,
+    "median_seconds": 0.04534839999905671,
+    "maximum_seconds": 0.04534839999905671
+  },
+  "safe_witness_exact_cycle": {
+    "samples": 1,
+    "minimum_seconds": 0.04644940000071074,
+    "median_seconds": 0.04644940000071074,
+    "maximum_seconds": 0.04644940000071074
+  },
+  "reference_capacity_at_30_workers_70pct_efficiency": {
+    "periodic_prefix_units_in_six_hours": 10002557,
+    "known_safe_cycle_units_in_six_hours": 9765465,
+    "warning": "reference throughput only; unresolved master branches and long UNKNOWN trajectories are not represented"
+  },
+  "aggregate_455": {
+    "seconds": 3.7877305000001797,
+    "patterns": 670,
+    "overload_survivors": 3,
+    "structural_survivors": 3,
+    "route_profile_counts": [
+      30,
+      48,
+      60
+    ],
+    "route_minimum_margins": [
+      -48,
+      4,
+      16
+    ],
+    "route_conditioned_survivors": 1
+  },
+  "geometry_455": {
+    "samples": 3,
+    "minimum_seconds": 0.024328600000444567,
+    "median_seconds": 0.031234500000209664,
+    "maximum_seconds": 0.3251464000004489
+  },
+  "prefix_cut_model_build": {
+    "0": {
+      "seconds": 0.028040800001690513,
+      "variables": 2234,
+      "constraints": 1264
+    },
+    "1": {
+      "seconds": 0.20946300000105111,
+      "variables": 2823,
+      "constraints": 1854
+    },
+    "4": {
+      "seconds": 0.586001399999077,
+      "variables": 2826,
+      "constraints": 1860
+    }
+  },
+  "embedded_periodic_model_build": {
+    "seconds": 0.41917560000001686,
+    "variables": 9644,
+    "constraints": 14723
+  },
+  "six_hour_projection": null,
+  "six_hour_projection_reason": "the post-cut remaining equivalence-class count is not yet measured; microbenchmark speed alone cannot prove a six-hour bound"
+}

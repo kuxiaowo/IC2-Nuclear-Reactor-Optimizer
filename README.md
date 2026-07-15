@@ -81,8 +81,22 @@ python scripts/benchmark_gpu_exhaustive.py
 
 测试覆盖官方字节码燃料金标准、组件参数、容量与即时移除边界、槽位顺序、反射板脉冲损耗、耗尽/续棒、临界/融毁、Mark 边界、HDF5 game-tick 展开、库存约束和完整有标签空间枚举。
 
-规则、参数出处与已知边界见 [docs/RULES.md](docs/RULES.md)。Mark I 固定点快进、二层枚举完整性、最优解不遗漏和性能边界的结构化证明见 [Markdown 证明文档](docs/MARK_I_MATHEMATICAL_ANALYSIS.md)，可编译的正式公式稿见 [LaTeX 源文件](docs/MARK_I_OPTIMIZATION_PROOFS.tex)。长轨迹写入 Git 忽略的 `.data/traces/`。
+规则、参数出处与已知边界见 [docs/RULES.md](docs/RULES.md)。参数化数学模型、anytime 算法、
+全局证明条件和六小时配置见 [通用数学优化文档](docs/GENERAL_MATHEMATICAL_OPTIMIZER.md)；固定
+54 格、25 棒、无限库存实例目前有严格证据 `380 <= P* <= 455 EU/t`，尚未声称二者相等。
+Mark I 固定点快进、二层枚举完整性、最优解不遗漏和性能边界的结构化证明见
+[Markdown 证明文档](docs/MARK_I_MATHEMATICAL_ANALYSIS.md)，可编译的正式公式稿见
+[LaTeX 源文件](docs/MARK_I_OPTIMIZATION_PROOFS.tex)。长轨迹写入 Git 忽略的 `.data/traces/`。
 
 ## 重要说明
 
 “启发式最优”只表示当前预算内找到的最佳解。排行榜严格按平均 EU/t 排序。全局穷举不使用时间、代数、种群或随机种子预算，只选择计算后端、GPU 批大小或 CPU 工作进程数；镜像方向会分别检查，仅在排行榜展示时归组。Mark I 搜索先计算燃料与反射板组成的发电骨架，低于当前榜单功率下界的完整布局由数学上界证明跳过热学模拟；其余布局由 CPU、GPU 精确证书或 GPU 完整状态机验证。取消后只保留当前最佳，只有完整有标签空间全部完成精确验证或上界证明后才显示“已证明全局最优”。本项目暂不附带开源许可证；这不等于默认允许复制、修改或再发布。
+## 通用优化模型
+
+本仓库新增了一套与固定 54 格、25 棒数据解耦的数学优化核心。模型、严格 k-best anytime 算法、Logic-based Benders 全局证明框架及其适用边界见 [通用数学模型](docs/UNIVERSAL_OPTIMIZATION_MODEL.md)。具体 IC2 数据只作为规则适配器和最终验收实例。
+
+面向“最少计算而不是更快穷举”的未来等价、Pareto 反链、对称性边界和割自动机方案见 [最小算力精确算法](docs/MINIMUM_COMPUTE_EXACT_ALGORITHM.md)。
+不求具体最优布局的跨尺寸状态增长、严格后缀上界削减和 6×9 局部因子标签商实测见
+[算法缩放审计](artifacts/algorithm_scaling_audit.md)；该审计明确区分结构削减证据与尚未满足的六小时证明。
+原始两项目标逐项完成状态、可证明的算法最优边界和仍缺的六小时证据见
+[通用算法完成性审计](artifacts/general_algorithm_completion_audit.md)。

@@ -1,0 +1,9074 @@
+[
+  {
+    "center": 10,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0543796000056318
+  },
+  {
+    "center": 10,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05688690000533825
+  },
+  {
+    "center": 10,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06652250000479398
+  },
+  {
+    "center": 10,
+    "special": 3,
+    "status": "UNKNOWN",
+    "elapsed": 30.024979099995107
+  },
+  {
+    "center": 10,
+    "special": 4,
+    "status": "UNKNOWN",
+    "elapsed": 30.02688230000058
+  },
+  {
+    "center": 10,
+    "special": 5,
+    "status": "UNKNOWN",
+    "elapsed": 30.023533400002634
+  },
+  {
+    "center": 10,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.025857999993605
+  },
+  {
+    "center": 10,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.02361689999816
+  },
+  {
+    "center": 10,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.051835999998729676
+  },
+  {
+    "center": 10,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0692367000010563
+  },
+  {
+    "center": 10,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.055912300005729776
+  },
+  {
+    "center": 10,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06952430000092136
+  },
+  {
+    "center": 10,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.13208250000025146
+  },
+  {
+    "center": 10,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14323119999608025
+  },
+  {
+    "center": 10,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1790192999978899
+  },
+  {
+    "center": 10,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17290720000164583
+  },
+  {
+    "center": 10,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16404419999889797
+  },
+  {
+    "center": 10,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17350649999571033
+  },
+  {
+    "center": 10,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0730487999971956
+  },
+  {
+    "center": 10,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07935390000056941
+  },
+  {
+    "center": 10,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07325630000559613
+  },
+  {
+    "center": 10,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.185195099998964
+  },
+  {
+    "center": 10,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2196604999990086
+  },
+  {
+    "center": 10,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.21298530000058236
+  },
+  {
+    "center": 10,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.22240810000221245
+  },
+  {
+    "center": 10,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2625324000036926
+  },
+  {
+    "center": 10,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.316354800001136
+  },
+  {
+    "center": 10,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.41318000000319444
+  },
+  {
+    "center": 10,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.42501659999834374
+  },
+  {
+    "center": 10,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.36852429999999003
+  },
+  {
+    "center": 10,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3223077000002377
+  },
+  {
+    "center": 10,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.34156000000075437
+  },
+  {
+    "center": 10,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.39036180000402965
+  },
+  {
+    "center": 10,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6037215000033029
+  },
+  {
+    "center": 10,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.8316978000002564
+  },
+  {
+    "center": 10,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 1.6415296999985003
+  },
+  {
+    "center": 10,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 5.034042399995087
+  },
+  {
+    "center": 10,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 4.430867099996249
+  },
+  {
+    "center": 10,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 4.035304100005305
+  },
+  {
+    "center": 10,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 5.06450130000303
+  },
+  {
+    "center": 10,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 10.485087400003977
+  },
+  {
+    "center": 10,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 17.13637100000051
+  },
+  {
+    "center": 10,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 25.91860959999758
+  },
+  {
+    "center": 10,
+    "special": 43,
+    "status": "UNKNOWN",
+    "elapsed": 30.017200200003572
+  },
+  {
+    "center": 10,
+    "special": 44,
+    "status": "UNKNOWN",
+    "elapsed": 30.02187870000489
+  },
+  {
+    "center": 10,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04859550000401214
+  },
+  {
+    "center": 10,
+    "special": 46,
+    "status": "UNKNOWN",
+    "elapsed": 30.020011000000522
+  },
+  {
+    "center": 10,
+    "special": 47,
+    "status": "UNKNOWN",
+    "elapsed": 30.015849999996135
+  },
+  {
+    "center": 10,
+    "special": 48,
+    "status": "UNKNOWN",
+    "elapsed": 30.013866100001906
+  },
+  {
+    "center": 10,
+    "special": 49,
+    "status": "UNKNOWN",
+    "elapsed": 30.01964610000141
+  },
+  {
+    "center": 10,
+    "special": 50,
+    "status": "UNKNOWN",
+    "elapsed": 30.019309599992994
+  },
+  {
+    "center": 10,
+    "special": 51,
+    "status": "UNKNOWN",
+    "elapsed": 30.01651440000569
+  },
+  {
+    "center": 10,
+    "special": 52,
+    "status": "UNKNOWN",
+    "elapsed": 30.014289999999164
+  },
+  {
+    "center": 10,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05403230000229087
+  },
+  {
+    "center": 11,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.044425200001569465
+  },
+  {
+    "center": 11,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05832119999831775
+  },
+  {
+    "center": 11,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06933139999455307
+  },
+  {
+    "center": 11,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07422270000097342
+  },
+  {
+    "center": 11,
+    "special": 4,
+    "status": "UNKNOWN",
+    "elapsed": 30.01398109999718
+  },
+  {
+    "center": 11,
+    "special": 5,
+    "status": "UNKNOWN",
+    "elapsed": 30.013273999997182
+  },
+  {
+    "center": 11,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.01610310000251
+  },
+  {
+    "center": 11,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.016650700003083
+  },
+  {
+    "center": 11,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05474649999814574
+  },
+  {
+    "center": 11,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0686790000036126
+  },
+  {
+    "center": 11,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06206769999698736
+  },
+  {
+    "center": 11,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.057062200001382735
+  },
+  {
+    "center": 11,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06013939999684226
+  },
+  {
+    "center": 11,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.13362319999578176
+  },
+  {
+    "center": 11,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14453789999970468
+  },
+  {
+    "center": 11,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16119669999898179
+  },
+  {
+    "center": 11,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17382379999617115
+  },
+  {
+    "center": 11,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18031069999415195
+  },
+  {
+    "center": 11,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19085739999718498
+  },
+  {
+    "center": 11,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07955329999822425
+  },
+  {
+    "center": 11,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07562509999843314
+  },
+  {
+    "center": 11,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06911350000154926
+  },
+  {
+    "center": 11,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1810036000024411
+  },
+  {
+    "center": 11,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18004060000384925
+  },
+  {
+    "center": 11,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1667983999941498
+  },
+  {
+    "center": 11,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20810999999957858
+  },
+  {
+    "center": 11,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3044013999970048
+  },
+  {
+    "center": 11,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.33572589999675984
+  },
+  {
+    "center": 11,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3714862999986508
+  },
+  {
+    "center": 11,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.37430460000177845
+  },
+  {
+    "center": 11,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3435488999966765
+  },
+  {
+    "center": 11,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.351726900000358
+  },
+  {
+    "center": 11,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3339778000008664
+  },
+  {
+    "center": 11,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3795375000045169
+  },
+  {
+    "center": 11,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5889850999956252
+  },
+  {
+    "center": 11,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 1.2048767999949632
+  },
+  {
+    "center": 11,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 2.820695299997169
+  },
+  {
+    "center": 11,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 2.185636299996986
+  },
+  {
+    "center": 11,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 1.8020354000036605
+  },
+  {
+    "center": 11,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 2.4808040999996592
+  },
+  {
+    "center": 11,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 2.710026300002937
+  },
+  {
+    "center": 11,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 7.489164799997525
+  },
+  {
+    "center": 11,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 11.714399899996351
+  },
+  {
+    "center": 11,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 20.97156779999932
+  },
+  {
+    "center": 11,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 27.835429400001885
+  },
+  {
+    "center": 11,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06791779999912251
+  },
+  {
+    "center": 11,
+    "special": 46,
+    "status": "UNKNOWN",
+    "elapsed": 30.01695810000092
+  },
+  {
+    "center": 11,
+    "special": 47,
+    "status": "UNKNOWN",
+    "elapsed": 30.01740129999962
+  },
+  {
+    "center": 11,
+    "special": 48,
+    "status": "UNKNOWN",
+    "elapsed": 30.017208799996297
+  },
+  {
+    "center": 11,
+    "special": 49,
+    "status": "UNKNOWN",
+    "elapsed": 30.022623900003964
+  },
+  {
+    "center": 11,
+    "special": 50,
+    "status": "UNKNOWN",
+    "elapsed": 30.022300199998426
+  },
+  {
+    "center": 11,
+    "special": 51,
+    "status": "UNKNOWN",
+    "elapsed": 30.025434900002438
+  },
+  {
+    "center": 11,
+    "special": 52,
+    "status": "UNKNOWN",
+    "elapsed": 30.017205600001034
+  },
+  {
+    "center": 11,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07340410000324482
+  },
+  {
+    "center": 12,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05321340000227792
+  },
+  {
+    "center": 12,
+    "special": 1,
+    "status": "UNKNOWN",
+    "elapsed": 30.017195899999933
+  },
+  {
+    "center": 12,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06711689999792725
+  },
+  {
+    "center": 12,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.09935810000024503
+  },
+  {
+    "center": 12,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07390770000347402
+  },
+  {
+    "center": 12,
+    "special": 5,
+    "status": "UNKNOWN",
+    "elapsed": 30.02777259999857
+  },
+  {
+    "center": 12,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.02402129999973
+  },
+  {
+    "center": 12,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.019436299997324
+  },
+  {
+    "center": 12,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05053830000542803
+  },
+  {
+    "center": 12,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.024592100002337
+  },
+  {
+    "center": 12,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.017677099996945
+  },
+  {
+    "center": 12,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06782890000613406
+  },
+  {
+    "center": 12,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08313310000085039
+  },
+  {
+    "center": 12,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05891610000253422
+  },
+  {
+    "center": 12,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.12424900000041816
+  },
+  {
+    "center": 12,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1394542999987607
+  },
+  {
+    "center": 12,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17189100000541657
+  },
+  {
+    "center": 12,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16907219999848166
+  },
+  {
+    "center": 12,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20314549999602605
+  },
+  {
+    "center": 12,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17870630000106758
+  },
+  {
+    "center": 12,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07759680000162916
+  },
+  {
+    "center": 12,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07207629999902565
+  },
+  {
+    "center": 12,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06283770000300137
+  },
+  {
+    "center": 12,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1848764999958803
+  },
+  {
+    "center": 12,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.181900499999756
+  },
+  {
+    "center": 12,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17454509999515722
+  },
+  {
+    "center": 12,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2290013000019826
+  },
+  {
+    "center": 12,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2665855000013835
+  },
+  {
+    "center": 12,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.30928210000274703
+  },
+  {
+    "center": 12,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2913766999990912
+  },
+  {
+    "center": 12,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.32401060000120196
+  },
+  {
+    "center": 12,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3407528000025195
+  },
+  {
+    "center": 12,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3786796999993385
+  },
+  {
+    "center": 12,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.35375200000271434
+  },
+  {
+    "center": 12,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3845919000013964
+  },
+  {
+    "center": 12,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6127519000001485
+  },
+  {
+    "center": 12,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 1.1564564000000246
+  },
+  {
+    "center": 12,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 1.1027146999986144
+  },
+  {
+    "center": 12,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 1.5477977999980794
+  },
+  {
+    "center": 12,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 1.777527199999895
+  },
+  {
+    "center": 12,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 3.103539900002943
+  },
+  {
+    "center": 12,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 4.12606070000038
+  },
+  {
+    "center": 12,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 7.107361199996376
+  },
+  {
+    "center": 12,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 10.438115000004473
+  },
+  {
+    "center": 12,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 20.168684099997336
+  },
+  {
+    "center": 12,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05195360000652727
+  },
+  {
+    "center": 12,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 21.04071760000079
+  },
+  {
+    "center": 12,
+    "special": 47,
+    "status": "UNKNOWN",
+    "elapsed": 30.020471300005738
+  },
+  {
+    "center": 12,
+    "special": 48,
+    "status": "UNKNOWN",
+    "elapsed": 30.024797999998555
+  },
+  {
+    "center": 12,
+    "special": 49,
+    "status": "UNKNOWN",
+    "elapsed": 30.023244899995916
+  },
+  {
+    "center": 12,
+    "special": 50,
+    "status": "UNKNOWN",
+    "elapsed": 30.019793100000243
+  },
+  {
+    "center": 12,
+    "special": 51,
+    "status": "UNKNOWN",
+    "elapsed": 30.020027399994433
+  },
+  {
+    "center": 12,
+    "special": 52,
+    "status": "UNKNOWN",
+    "elapsed": 30.0169717999961
+  },
+  {
+    "center": 12,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06700650000129826
+  },
+  {
+    "center": 13,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05865600000106497
+  },
+  {
+    "center": 13,
+    "special": 1,
+    "status": "UNKNOWN",
+    "elapsed": 30.02056120000634
+  },
+  {
+    "center": 13,
+    "special": 2,
+    "status": "UNKNOWN",
+    "elapsed": 30.020926899996994
+  },
+  {
+    "center": 13,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06364520000352059
+  },
+  {
+    "center": 13,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06200420000095619
+  },
+  {
+    "center": 13,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08046350000222446
+  },
+  {
+    "center": 13,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.02448639999784
+  },
+  {
+    "center": 13,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.02476779999415
+  },
+  {
+    "center": 13,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.047667400001955684
+  },
+  {
+    "center": 13,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.024439799999527
+  },
+  {
+    "center": 13,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.01693879999948
+  },
+  {
+    "center": 13,
+    "special": 11,
+    "status": "UNKNOWN",
+    "elapsed": 30.01747189999878
+  },
+  {
+    "center": 13,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08570789999794215
+  },
+  {
+    "center": 13,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06251049999991665
+  },
+  {
+    "center": 13,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08679149999807123
+  },
+  {
+    "center": 13,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14311689999885857
+  },
+  {
+    "center": 13,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 0.135258000002068
+  },
+  {
+    "center": 13,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2244185000017751
+  },
+  {
+    "center": 13,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18107020000024932
+  },
+  {
+    "center": 13,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20274159999826225
+  },
+  {
+    "center": 13,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1865932000000612
+  },
+  {
+    "center": 13,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06774639999639476
+  },
+  {
+    "center": 13,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.09478780000063125
+  },
+  {
+    "center": 13,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07326969999849098
+  },
+  {
+    "center": 13,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18364440000004834
+  },
+  {
+    "center": 13,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17611670000042068
+  },
+  {
+    "center": 13,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.21642850000353064
+  },
+  {
+    "center": 13,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2698755000019446
+  },
+  {
+    "center": 13,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2606660000019474
+  },
+  {
+    "center": 13,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.30756149999797344
+  },
+  {
+    "center": 13,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.31944620000285795
+  },
+  {
+    "center": 13,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.32739199999923585
+  },
+  {
+    "center": 13,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.34125689999928
+  },
+  {
+    "center": 13,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.38324399999692105
+  },
+  {
+    "center": 13,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4090252000023611
+  },
+  {
+    "center": 13,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.538565999995626
+  },
+  {
+    "center": 13,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0746923000042443
+  },
+  {
+    "center": 13,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.8154575000007753
+  },
+  {
+    "center": 13,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.9005696000021999
+  },
+  {
+    "center": 13,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 1.1592779999991762
+  },
+  {
+    "center": 13,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 3.055538599997817
+  },
+  {
+    "center": 13,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 3.458318600001803
+  },
+  {
+    "center": 13,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 3.4166097000052105
+  },
+  {
+    "center": 13,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 8.688859100002446
+  },
+  {
+    "center": 13,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 12.002129800006514
+  },
+  {
+    "center": 13,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05911809999815887
+  },
+  {
+    "center": 13,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 20.411647000000812
+  },
+  {
+    "center": 13,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 26.288152299996
+  },
+  {
+    "center": 13,
+    "special": 48,
+    "status": "UNKNOWN",
+    "elapsed": 30.023545600000944
+  },
+  {
+    "center": 13,
+    "special": 49,
+    "status": "UNKNOWN",
+    "elapsed": 30.018961400004628
+  },
+  {
+    "center": 13,
+    "special": 50,
+    "status": "UNKNOWN",
+    "elapsed": 30.01931820000027
+  },
+  {
+    "center": 13,
+    "special": 51,
+    "status": "UNKNOWN",
+    "elapsed": 30.018364000003203
+  },
+  {
+    "center": 13,
+    "special": 52,
+    "status": "UNKNOWN",
+    "elapsed": 30.018007400001807
+  },
+  {
+    "center": 13,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05072279999876628
+  },
+  {
+    "center": 14,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0675864000004367
+  },
+  {
+    "center": 14,
+    "special": 1,
+    "status": "UNKNOWN",
+    "elapsed": 30.019384200000786
+  },
+  {
+    "center": 14,
+    "special": 2,
+    "status": "UNKNOWN",
+    "elapsed": 30.0184567000033
+  },
+  {
+    "center": 14,
+    "special": 3,
+    "status": "UNKNOWN",
+    "elapsed": 30.022947700002987
+  },
+  {
+    "center": 14,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07208630000241101
+  },
+  {
+    "center": 14,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0641996000049403
+  },
+  {
+    "center": 14,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08962910000263946
+  },
+  {
+    "center": 14,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.02613399999973
+  },
+  {
+    "center": 14,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05772479999723146
+  },
+  {
+    "center": 14,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.063255500004743
+  },
+  {
+    "center": 14,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.07872320000024
+  },
+  {
+    "center": 14,
+    "special": 11,
+    "status": "UNKNOWN",
+    "elapsed": 30.027921500004595
+  },
+  {
+    "center": 14,
+    "special": 12,
+    "status": "UNKNOWN",
+    "elapsed": 30.019533600003342
+  },
+  {
+    "center": 14,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.103593700005149
+  },
+  {
+    "center": 14,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08415410000452539
+  },
+  {
+    "center": 14,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.09786090000125114
+  },
+  {
+    "center": 14,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19213749999471474
+  },
+  {
+    "center": 14,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17029789999651257
+  },
+  {
+    "center": 14,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2499695000005886
+  },
+  {
+    "center": 14,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19336199999816017
+  },
+  {
+    "center": 14,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2129354000062449
+  },
+  {
+    "center": 14,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19736050000210525
+  },
+  {
+    "center": 14,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0635993000032613
+  },
+  {
+    "center": 14,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08888440000009723
+  },
+  {
+    "center": 14,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0640616999953636
+  },
+  {
+    "center": 14,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2176580000013928
+  },
+  {
+    "center": 14,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17615169999771751
+  },
+  {
+    "center": 14,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.24534780000249157
+  },
+  {
+    "center": 14,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19383290000405395
+  },
+  {
+    "center": 14,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.24806909999460913
+  },
+  {
+    "center": 14,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.29272499999933643
+  },
+  {
+    "center": 14,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3212630000052741
+  },
+  {
+    "center": 14,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.36823130000266246
+  },
+  {
+    "center": 14,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.36747379999724217
+  },
+  {
+    "center": 14,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.46077949999744305
+  },
+  {
+    "center": 14,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5048019000023487
+  },
+  {
+    "center": 14,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.747604100004537
+  },
+  {
+    "center": 14,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6683457999970415
+  },
+  {
+    "center": 14,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.8393794000003254
+  },
+  {
+    "center": 14,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 1.051290399998834
+  },
+  {
+    "center": 14,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 1.464876899997762
+  },
+  {
+    "center": 14,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 2.5236608999985037
+  },
+  {
+    "center": 14,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 2.2211843999975827
+  },
+  {
+    "center": 14,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 4.272425700000895
+  },
+  {
+    "center": 14,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 6.912711300006777
+  },
+  {
+    "center": 14,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05102980000083335
+  },
+  {
+    "center": 14,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 14.366514200002712
+  },
+  {
+    "center": 14,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 17.746305900000152
+  },
+  {
+    "center": 14,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 27.808369300000777
+  },
+  {
+    "center": 14,
+    "special": 49,
+    "status": "UNKNOWN",
+    "elapsed": 30.02348080000229
+  },
+  {
+    "center": 14,
+    "special": 50,
+    "status": "UNKNOWN",
+    "elapsed": 30.01746180000191
+  },
+  {
+    "center": 14,
+    "special": 51,
+    "status": "UNKNOWN",
+    "elapsed": 30.017870899995614
+  },
+  {
+    "center": 14,
+    "special": 52,
+    "status": "UNKNOWN",
+    "elapsed": 30.018919000001915
+  },
+  {
+    "center": 14,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06235079999896698
+  },
+  {
+    "center": 15,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04546280000067782
+  },
+  {
+    "center": 15,
+    "special": 1,
+    "status": "UNKNOWN",
+    "elapsed": 30.027302099995723
+  },
+  {
+    "center": 15,
+    "special": 2,
+    "status": "UNKNOWN",
+    "elapsed": 30.01861149999604
+  },
+  {
+    "center": 15,
+    "special": 3,
+    "status": "UNKNOWN",
+    "elapsed": 30.01721440000256
+  },
+  {
+    "center": 15,
+    "special": 4,
+    "status": "UNKNOWN",
+    "elapsed": 30.020748099996126
+  },
+  {
+    "center": 15,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06278110000130255
+  },
+  {
+    "center": 15,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06039559999771882
+  },
+  {
+    "center": 15,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06300069999997504
+  },
+  {
+    "center": 15,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05042469999898458
+  },
+  {
+    "center": 15,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.02068010000221
+  },
+  {
+    "center": 15,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.01657559999876
+  },
+  {
+    "center": 15,
+    "special": 11,
+    "status": "UNKNOWN",
+    "elapsed": 30.02716170000349
+  },
+  {
+    "center": 15,
+    "special": 12,
+    "status": "UNKNOWN",
+    "elapsed": 30.017074600000342
+  },
+  {
+    "center": 15,
+    "special": 13,
+    "status": "UNKNOWN",
+    "elapsed": 30.01763519999804
+  },
+  {
+    "center": 15,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0903766000046744
+  },
+  {
+    "center": 15,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07725360000040382
+  },
+  {
+    "center": 15,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08688889999757521
+  },
+  {
+    "center": 15,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07704170000215527
+  },
+  {
+    "center": 15,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18014160000166157
+  },
+  {
+    "center": 15,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18832360000669723
+  },
+  {
+    "center": 15,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20967620000010356
+  },
+  {
+    "center": 15,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17379190000065137
+  },
+  {
+    "center": 15,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.22096630000305595
+  },
+  {
+    "center": 15,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0757681999966735
+  },
+  {
+    "center": 15,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07230539999727625
+  },
+  {
+    "center": 15,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0931946999990032
+  },
+  {
+    "center": 15,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20116860000416636
+  },
+  {
+    "center": 15,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2017753999971319
+  },
+  {
+    "center": 15,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17557619999570306
+  },
+  {
+    "center": 15,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20676600000297185
+  },
+  {
+    "center": 15,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.22593780000170227
+  },
+  {
+    "center": 15,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.31871729999693343
+  },
+  {
+    "center": 15,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3421876000065822
+  },
+  {
+    "center": 15,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.36427330000151414
+  },
+  {
+    "center": 15,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.38024550000409363
+  },
+  {
+    "center": 15,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6088076000014553
+  },
+  {
+    "center": 15,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6570563000059337
+  },
+  {
+    "center": 15,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5864484999983688
+  },
+  {
+    "center": 15,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6088821000012103
+  },
+  {
+    "center": 15,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6661373000024469
+  },
+  {
+    "center": 15,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 1.1035544000042137
+  },
+  {
+    "center": 15,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 1.3362376000004588
+  },
+  {
+    "center": 15,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 1.8466114000038942
+  },
+  {
+    "center": 15,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 3.1978985000023386
+  },
+  {
+    "center": 15,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 4.767425600002753
+  },
+  {
+    "center": 15,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07156019999820273
+  },
+  {
+    "center": 15,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 10.540292599995155
+  },
+  {
+    "center": 15,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 12.35823900000105
+  },
+  {
+    "center": 15,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 18.57219289999921
+  },
+  {
+    "center": 15,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 20.382152099999075
+  },
+  {
+    "center": 15,
+    "special": 50,
+    "status": "UNKNOWN",
+    "elapsed": 30.02592519999598
+  },
+  {
+    "center": 15,
+    "special": 51,
+    "status": "UNKNOWN",
+    "elapsed": 30.02196240000194
+  },
+  {
+    "center": 15,
+    "special": 52,
+    "status": "UNKNOWN",
+    "elapsed": 30.017904099993757
+  },
+  {
+    "center": 15,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0512585999967996
+  },
+  {
+    "center": 16,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07102440000016941
+  },
+  {
+    "center": 16,
+    "special": 1,
+    "status": "UNKNOWN",
+    "elapsed": 30.017856099999335
+  },
+  {
+    "center": 16,
+    "special": 2,
+    "status": "UNKNOWN",
+    "elapsed": 30.01891419999447
+  },
+  {
+    "center": 16,
+    "special": 3,
+    "status": "UNKNOWN",
+    "elapsed": 30.021738000003097
+  },
+  {
+    "center": 16,
+    "special": 4,
+    "status": "UNKNOWN",
+    "elapsed": 30.021209299993643
+  },
+  {
+    "center": 16,
+    "special": 5,
+    "status": "UNKNOWN",
+    "elapsed": 30.02114750000328
+  },
+  {
+    "center": 16,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06897680000110995
+  },
+  {
+    "center": 16,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 0.10913779999827966
+  },
+  {
+    "center": 16,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0678574000048684
+  },
+  {
+    "center": 16,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.02745590000268
+  },
+  {
+    "center": 16,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.018110800003342
+  },
+  {
+    "center": 16,
+    "special": 11,
+    "status": "UNKNOWN",
+    "elapsed": 30.025142800004687
+  },
+  {
+    "center": 16,
+    "special": 12,
+    "status": "UNKNOWN",
+    "elapsed": 30.026032699999632
+  },
+  {
+    "center": 16,
+    "special": 13,
+    "status": "UNKNOWN",
+    "elapsed": 30.019766999997955
+  },
+  {
+    "center": 16,
+    "special": 14,
+    "status": "UNKNOWN",
+    "elapsed": 30.052326900004118
+  },
+  {
+    "center": 16,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08063840000249911
+  },
+  {
+    "center": 16,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08841530000063358
+  },
+  {
+    "center": 16,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 0.09137800000462448
+  },
+  {
+    "center": 16,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15293960000417428
+  },
+  {
+    "center": 16,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14889689999836264
+  },
+  {
+    "center": 16,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1784743000025628
+  },
+  {
+    "center": 16,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.21894710000196937
+  },
+  {
+    "center": 16,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.21481599999970058
+  },
+  {
+    "center": 16,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2207330000019283
+  },
+  {
+    "center": 16,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07565299999987474
+  },
+  {
+    "center": 16,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06775170000037178
+  },
+  {
+    "center": 16,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06283560000156285
+  },
+  {
+    "center": 16,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.23254389999783598
+  },
+  {
+    "center": 16,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19438049999735085
+  },
+  {
+    "center": 16,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17696980000619078
+  },
+  {
+    "center": 16,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2516373999969801
+  },
+  {
+    "center": 16,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2618683000036981
+  },
+  {
+    "center": 16,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3428920999940601
+  },
+  {
+    "center": 16,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3647780999963288
+  },
+  {
+    "center": 16,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5333972000007634
+  },
+  {
+    "center": 16,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.596767600000021
+  },
+  {
+    "center": 16,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7468683999977657
+  },
+  {
+    "center": 16,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6983959999997751
+  },
+  {
+    "center": 16,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.74811249999766
+  },
+  {
+    "center": 16,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.9224736999967718
+  },
+  {
+    "center": 16,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0263833999997587
+  },
+  {
+    "center": 16,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 1.1066800000044168
+  },
+  {
+    "center": 16,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 2.1720268999997643
+  },
+  {
+    "center": 16,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 3.651347799997893
+  },
+  {
+    "center": 16,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 6.597500600000785
+  },
+  {
+    "center": 16,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04930009999952745
+  },
+  {
+    "center": 16,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 9.223753600002965
+  },
+  {
+    "center": 16,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 12.82146360000479
+  },
+  {
+    "center": 16,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 16.411245399998734
+  },
+  {
+    "center": 16,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 26.159985600002983
+  },
+  {
+    "center": 16,
+    "special": 50,
+    "status": "UNKNOWN",
+    "elapsed": 30.021173599998292
+  },
+  {
+    "center": 16,
+    "special": 51,
+    "status": "UNKNOWN",
+    "elapsed": 30.022945800003072
+  },
+  {
+    "center": 16,
+    "special": 52,
+    "status": "UNKNOWN",
+    "elapsed": 30.020277099996747
+  },
+  {
+    "center": 16,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05070999999588821
+  },
+  {
+    "center": 19,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05322390000219457
+  },
+  {
+    "center": 19,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08021349999762606
+  },
+  {
+    "center": 19,
+    "special": 2,
+    "status": "UNKNOWN",
+    "elapsed": 30.018278499999724
+  },
+  {
+    "center": 19,
+    "special": 3,
+    "status": "UNKNOWN",
+    "elapsed": 30.017552700002852
+  },
+  {
+    "center": 19,
+    "special": 4,
+    "status": "UNKNOWN",
+    "elapsed": 30.025984599997173
+  },
+  {
+    "center": 19,
+    "special": 5,
+    "status": "UNKNOWN",
+    "elapsed": 30.01819269999396
+  },
+  {
+    "center": 19,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.015039900004922
+  },
+  {
+    "center": 19,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.014752999995835
+  },
+  {
+    "center": 19,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06260199999815086
+  },
+  {
+    "center": 19,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0805908999973326
+  },
+  {
+    "center": 19,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08941220000269823
+  },
+  {
+    "center": 19,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06776009999884991
+  },
+  {
+    "center": 19,
+    "special": 12,
+    "status": "UNKNOWN",
+    "elapsed": 30.054102399997646
+  },
+  {
+    "center": 19,
+    "special": 13,
+    "status": "UNKNOWN",
+    "elapsed": 30.02015659999597
+  },
+  {
+    "center": 19,
+    "special": 14,
+    "status": "UNKNOWN",
+    "elapsed": 30.01765040000464
+  },
+  {
+    "center": 19,
+    "special": 15,
+    "status": "UNKNOWN",
+    "elapsed": 30.019379100005608
+  },
+  {
+    "center": 19,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.024034400004894
+  },
+  {
+    "center": 19,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.024094699998386
+  },
+  {
+    "center": 19,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06905820000247331
+  },
+  {
+    "center": 19,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06319709999661427
+  },
+  {
+    "center": 19,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06448120000277413
+  },
+  {
+    "center": 19,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1522664000003715
+  },
+  {
+    "center": 19,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.13435219999519177
+  },
+  {
+    "center": 19,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17398060000414262
+  },
+  {
+    "center": 19,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20011560000421014
+  },
+  {
+    "center": 19,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19498809999640798
+  },
+  {
+    "center": 19,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20269619999453425
+  },
+  {
+    "center": 19,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07880039999872679
+  },
+  {
+    "center": 19,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06907829999545356
+  },
+  {
+    "center": 19,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06371110000327462
+  },
+  {
+    "center": 19,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2057448999985354
+  },
+  {
+    "center": 19,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20822239999688463
+  },
+  {
+    "center": 19,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18384409999998752
+  },
+  {
+    "center": 19,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17072619999817107
+  },
+  {
+    "center": 19,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.22912750000250526
+  },
+  {
+    "center": 19,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.382448000003933
+  },
+  {
+    "center": 19,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4911424000019906
+  },
+  {
+    "center": 19,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6039770000061253
+  },
+  {
+    "center": 19,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5129949999973178
+  },
+  {
+    "center": 19,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5334108000024571
+  },
+  {
+    "center": 19,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4196105999944848
+  },
+  {
+    "center": 19,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.641031799998018
+  },
+  {
+    "center": 19,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6564576999953715
+  },
+  {
+    "center": 19,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.8639686000024085
+  },
+  {
+    "center": 19,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 1.503095799998846
+  },
+  {
+    "center": 19,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05164850000437582
+  },
+  {
+    "center": 19,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 3.0395401999994647
+  },
+  {
+    "center": 19,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 2.857021600000735
+  },
+  {
+    "center": 19,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 3.862741899996763
+  },
+  {
+    "center": 19,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 5.949246199998015
+  },
+  {
+    "center": 19,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 8.87503889999789
+  },
+  {
+    "center": 19,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 11.053771900005813
+  },
+  {
+    "center": 19,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 16.685158799999044
+  },
+  {
+    "center": 19,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05221220000385074
+  },
+  {
+    "center": 20,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06487660000129836
+  },
+  {
+    "center": 20,
+    "special": 1,
+    "status": "UNKNOWN",
+    "elapsed": 30.02154409999639
+  },
+  {
+    "center": 20,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0880070000057458
+  },
+  {
+    "center": 20,
+    "special": 3,
+    "status": "UNKNOWN",
+    "elapsed": 30.017744700002368
+  },
+  {
+    "center": 20,
+    "special": 4,
+    "status": "UNKNOWN",
+    "elapsed": 30.021240699999908
+  },
+  {
+    "center": 20,
+    "special": 5,
+    "status": "UNKNOWN",
+    "elapsed": 30.020391999998537
+  },
+  {
+    "center": 20,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.01598389999708
+  },
+  {
+    "center": 20,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.015602799998305
+  },
+  {
+    "center": 20,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07292830000369577
+  },
+  {
+    "center": 20,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.017291600001045
+  },
+  {
+    "center": 20,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06815350000397302
+  },
+  {
+    "center": 20,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0820811000012327
+  },
+  {
+    "center": 20,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07941910000226926
+  },
+  {
+    "center": 20,
+    "special": 13,
+    "status": "UNKNOWN",
+    "elapsed": 30.01870670000062
+  },
+  {
+    "center": 20,
+    "special": 14,
+    "status": "UNKNOWN",
+    "elapsed": 30.0185186000017
+  },
+  {
+    "center": 20,
+    "special": 15,
+    "status": "UNKNOWN",
+    "elapsed": 30.020402499998454
+  },
+  {
+    "center": 20,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.020100300003833
+  },
+  {
+    "center": 20,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.02337460000126
+  },
+  {
+    "center": 20,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08101699999679113
+  },
+  {
+    "center": 20,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05831970000144793
+  },
+  {
+    "center": 20,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06257409999670926
+  },
+  {
+    "center": 20,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08720950000133598
+  },
+  {
+    "center": 20,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18055330000061076
+  },
+  {
+    "center": 20,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.13152219999756198
+  },
+  {
+    "center": 20,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19684489999781363
+  },
+  {
+    "center": 20,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20934929999930318
+  },
+  {
+    "center": 20,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.178546399998595
+  },
+  {
+    "center": 20,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19915010000113398
+  },
+  {
+    "center": 20,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06516190000547795
+  },
+  {
+    "center": 20,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07964129999891156
+  },
+  {
+    "center": 20,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07009950000065146
+  },
+  {
+    "center": 20,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20132799999555573
+  },
+  {
+    "center": 20,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16914350000297418
+  },
+  {
+    "center": 20,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18960119999974268
+  },
+  {
+    "center": 20,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19238620000396622
+  },
+  {
+    "center": 20,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17823420000058832
+  },
+  {
+    "center": 20,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3985490999984904
+  },
+  {
+    "center": 20,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.37829469999996945
+  },
+  {
+    "center": 20,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4344500999941374
+  },
+  {
+    "center": 20,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3578990000023623
+  },
+  {
+    "center": 20,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.37285680000059074
+  },
+  {
+    "center": 20,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3587870999981533
+  },
+  {
+    "center": 20,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.42352370000298833
+  },
+  {
+    "center": 20,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.48379209999984596
+  },
+  {
+    "center": 20,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7437525000059395
+  },
+  {
+    "center": 20,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06111880000389647
+  },
+  {
+    "center": 20,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 1.3454166000010446
+  },
+  {
+    "center": 20,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 1.5446797000040533
+  },
+  {
+    "center": 20,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 1.5542811000050278
+  },
+  {
+    "center": 20,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 2.288624599998002
+  },
+  {
+    "center": 20,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 3.5078334999998333
+  },
+  {
+    "center": 20,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 4.840278900002886
+  },
+  {
+    "center": 20,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 6.308801200000744
+  },
+  {
+    "center": 20,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05549350000364939
+  },
+  {
+    "center": 21,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0639316999950097
+  },
+  {
+    "center": 21,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 20.53003319999698
+  },
+  {
+    "center": 21,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 26.5868496999974
+  },
+  {
+    "center": 21,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06103360000270186
+  },
+  {
+    "center": 21,
+    "special": 4,
+    "status": "UNKNOWN",
+    "elapsed": 30.01474600000074
+  },
+  {
+    "center": 21,
+    "special": 5,
+    "status": "UNKNOWN",
+    "elapsed": 30.021227400000498
+  },
+  {
+    "center": 21,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.01977690000058
+  },
+  {
+    "center": 21,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.021998000003805
+  },
+  {
+    "center": 21,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.046794000001682434
+  },
+  {
+    "center": 21,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.02188940000633
+  },
+  {
+    "center": 21,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.01860039999883
+  },
+  {
+    "center": 21,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05665840000438038
+  },
+  {
+    "center": 21,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06785369999852264
+  },
+  {
+    "center": 21,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08399610000196844
+  },
+  {
+    "center": 21,
+    "special": 14,
+    "status": "UNKNOWN",
+    "elapsed": 30.0184109000038
+  },
+  {
+    "center": 21,
+    "special": 15,
+    "status": "UNKNOWN",
+    "elapsed": 30.0165896000035
+  },
+  {
+    "center": 21,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.020758699996804
+  },
+  {
+    "center": 21,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.02086949999648
+  },
+  {
+    "center": 21,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.017009300005157
+  },
+  {
+    "center": 21,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.017191000006278
+  },
+  {
+    "center": 21,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06253960000321968
+  },
+  {
+    "center": 21,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08978629999910481
+  },
+  {
+    "center": 21,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.060957800000323914
+  },
+  {
+    "center": 21,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15715710000222316
+  },
+  {
+    "center": 21,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.13930880000407342
+  },
+  {
+    "center": 21,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1755492999946
+  },
+  {
+    "center": 21,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19372190000285627
+  },
+  {
+    "center": 21,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1837840999942273
+  },
+  {
+    "center": 21,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1999400999993668
+  },
+  {
+    "center": 21,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0638124000033713
+  },
+  {
+    "center": 21,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08701449999352917
+  },
+  {
+    "center": 21,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.061049700001603924
+  },
+  {
+    "center": 21,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19225899999582907
+  },
+  {
+    "center": 21,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19929360000242013
+  },
+  {
+    "center": 21,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17184690000431146
+  },
+  {
+    "center": 21,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.21157640000456013
+  },
+  {
+    "center": 21,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.30684190000465605
+  },
+  {
+    "center": 21,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3070923999985098
+  },
+  {
+    "center": 21,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3269099000026472
+  },
+  {
+    "center": 21,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3806923999945866
+  },
+  {
+    "center": 21,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3539581000004546
+  },
+  {
+    "center": 21,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.34728730000642827
+  },
+  {
+    "center": 21,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3636629000029643
+  },
+  {
+    "center": 21,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.442715599994699
+  },
+  {
+    "center": 21,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7180661999955191
+  },
+  {
+    "center": 21,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06856110000080662
+  },
+  {
+    "center": 21,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7405741999973543
+  },
+  {
+    "center": 21,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0875171000006958
+  },
+  {
+    "center": 21,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 1.4270873999994365
+  },
+  {
+    "center": 21,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 1.6560361000010744
+  },
+  {
+    "center": 21,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 2.631002599999192
+  },
+  {
+    "center": 21,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 3.0245676999984425
+  },
+  {
+    "center": 21,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 4.440417400001024
+  },
+  {
+    "center": 21,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0710107999984757
+  },
+  {
+    "center": 22,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05314709999947809
+  },
+  {
+    "center": 22,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 12.950365999997302
+  },
+  {
+    "center": 22,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 13.749660999994376
+  },
+  {
+    "center": 22,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 22.732641599999624
+  },
+  {
+    "center": 22,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0846732999998494
+  },
+  {
+    "center": 22,
+    "special": 5,
+    "status": "UNKNOWN",
+    "elapsed": 30.02145649999875
+  },
+  {
+    "center": 22,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.019218000001274
+  },
+  {
+    "center": 22,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.017681000004814
+  },
+  {
+    "center": 22,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.060865600004035514
+  },
+  {
+    "center": 22,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.02185780000582
+  },
+  {
+    "center": 22,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.014026700002432
+  },
+  {
+    "center": 22,
+    "special": 11,
+    "status": "UNKNOWN",
+    "elapsed": 30.044436800002586
+  },
+  {
+    "center": 22,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07267689999571303
+  },
+  {
+    "center": 22,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07939140000235057
+  },
+  {
+    "center": 22,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07726549999642884
+  },
+  {
+    "center": 22,
+    "special": 15,
+    "status": "UNKNOWN",
+    "elapsed": 30.019850299999234
+  },
+  {
+    "center": 22,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.014974499994423
+  },
+  {
+    "center": 22,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.01509210000222
+  },
+  {
+    "center": 22,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.019867299997713
+  },
+  {
+    "center": 22,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.018317200003366
+  },
+  {
+    "center": 22,
+    "special": 20,
+    "status": "UNKNOWN",
+    "elapsed": 30.01400840000133
+  },
+  {
+    "center": 22,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07798000000184402
+  },
+  {
+    "center": 22,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.09075060000031954
+  },
+  {
+    "center": 22,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06252640000457177
+  },
+  {
+    "center": 22,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15173830000276212
+  },
+  {
+    "center": 22,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14511629999469733
+  },
+  {
+    "center": 22,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19275570000172593
+  },
+  {
+    "center": 22,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17235749999963446
+  },
+  {
+    "center": 22,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18925560000207042
+  },
+  {
+    "center": 22,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17423910000070464
+  },
+  {
+    "center": 22,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07814620000135619
+  },
+  {
+    "center": 22,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06933399999979883
+  },
+  {
+    "center": 22,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07979340000019874
+  },
+  {
+    "center": 22,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1902577000000747
+  },
+  {
+    "center": 22,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16618780000135303
+  },
+  {
+    "center": 22,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.21214129999862053
+  },
+  {
+    "center": 22,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.22362430000066524
+  },
+  {
+    "center": 22,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.22618109999893932
+  },
+  {
+    "center": 22,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2749439999970491
+  },
+  {
+    "center": 22,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3094658000045456
+  },
+  {
+    "center": 22,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3241374999997788
+  },
+  {
+    "center": 22,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.36591259999840986
+  },
+  {
+    "center": 22,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3775228000013158
+  },
+  {
+    "center": 22,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.31855770000402117
+  },
+  {
+    "center": 22,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.38113719999819295
+  },
+  {
+    "center": 22,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0771695000003092
+  },
+  {
+    "center": 22,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6039575999966473
+  },
+  {
+    "center": 22,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6618469000022742
+  },
+  {
+    "center": 22,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.8631540999995195
+  },
+  {
+    "center": 22,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 1.4657662000026903
+  },
+  {
+    "center": 22,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 2.115623899997445
+  },
+  {
+    "center": 22,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 2.256931700001587
+  },
+  {
+    "center": 22,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 2.1643839000025764
+  },
+  {
+    "center": 22,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.048540999996475875
+  },
+  {
+    "center": 23,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05232699999760371
+  },
+  {
+    "center": 23,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 8.626470399998652
+  },
+  {
+    "center": 23,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 7.854276199999731
+  },
+  {
+    "center": 23,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 12.000405500002671
+  },
+  {
+    "center": 23,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 23.114551999999094
+  },
+  {
+    "center": 23,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08203640000283485
+  },
+  {
+    "center": 23,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.019220599999244
+  },
+  {
+    "center": 23,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.01604110000335
+  },
+  {
+    "center": 23,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04854180000256747
+  },
+  {
+    "center": 23,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.022106800002803
+  },
+  {
+    "center": 23,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.019016300000658
+  },
+  {
+    "center": 23,
+    "special": 11,
+    "status": "UNKNOWN",
+    "elapsed": 30.023356199999398
+  },
+  {
+    "center": 23,
+    "special": 12,
+    "status": "UNKNOWN",
+    "elapsed": 30.01758630000404
+  },
+  {
+    "center": 23,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0695622999992338
+  },
+  {
+    "center": 23,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05603559999872232
+  },
+  {
+    "center": 23,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07616070000221953
+  },
+  {
+    "center": 23,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.022608200000832
+  },
+  {
+    "center": 23,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.011087499995483
+  },
+  {
+    "center": 23,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.015743800002383
+  },
+  {
+    "center": 23,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.0190547999955
+  },
+  {
+    "center": 23,
+    "special": 20,
+    "status": "UNKNOWN",
+    "elapsed": 30.01449280000088
+  },
+  {
+    "center": 23,
+    "special": 21,
+    "status": "UNKNOWN",
+    "elapsed": 30.01416839999729
+  },
+  {
+    "center": 23,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05886409999948228
+  },
+  {
+    "center": 23,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0619624000028125
+  },
+  {
+    "center": 23,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05739259999973001
+  },
+  {
+    "center": 23,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.12128559999837307
+  },
+  {
+    "center": 23,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.11770060000708327
+  },
+  {
+    "center": 23,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.199963499995647
+  },
+  {
+    "center": 23,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1678749999991851
+  },
+  {
+    "center": 23,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1750326000037603
+  },
+  {
+    "center": 23,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1644287999952212
+  },
+  {
+    "center": 23,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06626719999621855
+  },
+  {
+    "center": 23,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.056270600005518645
+  },
+  {
+    "center": 23,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.087417100003222
+  },
+  {
+    "center": 23,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17787410000164527
+  },
+  {
+    "center": 23,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1845452000052319
+  },
+  {
+    "center": 23,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.21204910000233212
+  },
+  {
+    "center": 23,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2507008999964455
+  },
+  {
+    "center": 23,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.25451969999994617
+  },
+  {
+    "center": 23,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2759860000005574
+  },
+  {
+    "center": 23,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2879862999980105
+  },
+  {
+    "center": 23,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.30702679999376414
+  },
+  {
+    "center": 23,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.34664739999425365
+  },
+  {
+    "center": 23,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.38757710000209045
+  },
+  {
+    "center": 23,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3553957999974955
+  },
+  {
+    "center": 23,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06949900000472553
+  },
+  {
+    "center": 23,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5213567000027979
+  },
+  {
+    "center": 23,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6525288999982877
+  },
+  {
+    "center": 23,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5775266000055126
+  },
+  {
+    "center": 23,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 1.249083000002429
+  },
+  {
+    "center": 23,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 1.184681200000341
+  },
+  {
+    "center": 23,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 1.5415365000008023
+  },
+  {
+    "center": 23,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 2.407731999999669
+  },
+  {
+    "center": 23,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05744740000227466
+  },
+  {
+    "center": 24,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04853870000079041
+  },
+  {
+    "center": 24,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 5.366489000000001
+  },
+  {
+    "center": 24,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 5.344877600000473
+  },
+  {
+    "center": 24,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 6.69880629999534
+  },
+  {
+    "center": 24,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 10.240780200001609
+  },
+  {
+    "center": 24,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 19.473064600002544
+  },
+  {
+    "center": 24,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06492399999842746
+  },
+  {
+    "center": 24,
+    "special": 7,
+    "status": "UNKNOWN",
+    "elapsed": 30.020226300002832
+  },
+  {
+    "center": 24,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.061755700000503566
+  },
+  {
+    "center": 24,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.01854900000035
+  },
+  {
+    "center": 24,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.021172900000238
+  },
+  {
+    "center": 24,
+    "special": 11,
+    "status": "UNKNOWN",
+    "elapsed": 30.01528989999497
+  },
+  {
+    "center": 24,
+    "special": 12,
+    "status": "UNKNOWN",
+    "elapsed": 30.016641599999275
+  },
+  {
+    "center": 24,
+    "special": 13,
+    "status": "UNKNOWN",
+    "elapsed": 30.018256700001075
+  },
+  {
+    "center": 24,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.061400300000968855
+  },
+  {
+    "center": 24,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07898860000568675
+  },
+  {
+    "center": 24,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05809969999972964
+  },
+  {
+    "center": 24,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.01608930000657
+  },
+  {
+    "center": 24,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.015220000001136
+  },
+  {
+    "center": 24,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.019967500003986
+  },
+  {
+    "center": 24,
+    "special": 20,
+    "status": "UNKNOWN",
+    "elapsed": 30.01427259999764
+  },
+  {
+    "center": 24,
+    "special": 21,
+    "status": "UNKNOWN",
+    "elapsed": 30.017637999997532
+  },
+  {
+    "center": 24,
+    "special": 22,
+    "status": "UNKNOWN",
+    "elapsed": 30.01460390000284
+  },
+  {
+    "center": 24,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08115779999934603
+  },
+  {
+    "center": 24,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07802539999829605
+  },
+  {
+    "center": 24,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.056810499998391606
+  },
+  {
+    "center": 24,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.09532249999756459
+  },
+  {
+    "center": 24,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15110570000251755
+  },
+  {
+    "center": 24,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19166430000041146
+  },
+  {
+    "center": 24,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16252350000286242
+  },
+  {
+    "center": 24,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16707250000035856
+  },
+  {
+    "center": 24,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16842560000077356
+  },
+  {
+    "center": 24,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.062375100002100226
+  },
+  {
+    "center": 24,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06867899999633664
+  },
+  {
+    "center": 24,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07447350000438746
+  },
+  {
+    "center": 24,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18256460000702646
+  },
+  {
+    "center": 24,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18633280000358354
+  },
+  {
+    "center": 24,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15725470000325004
+  },
+  {
+    "center": 24,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16380329999810783
+  },
+  {
+    "center": 24,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.22831869999936316
+  },
+  {
+    "center": 24,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.24239289999968605
+  },
+  {
+    "center": 24,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2964215000029071
+  },
+  {
+    "center": 24,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.31875460000446765
+  },
+  {
+    "center": 24,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3315874999971129
+  },
+  {
+    "center": 24,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4724789999963832
+  },
+  {
+    "center": 24,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04224860000249464
+  },
+  {
+    "center": 24,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4287423999994644
+  },
+  {
+    "center": 24,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4468416999952751
+  },
+  {
+    "center": 24,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5026550999973551
+  },
+  {
+    "center": 24,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5248748000012711
+  },
+  {
+    "center": 24,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 1.072076399999787
+  },
+  {
+    "center": 24,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 1.1636159000045154
+  },
+  {
+    "center": 24,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 1.791145700000925
+  },
+  {
+    "center": 24,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.061187300001620315
+  },
+  {
+    "center": 25,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04895419999957085
+  },
+  {
+    "center": 25,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 7.238281400001142
+  },
+  {
+    "center": 25,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 7.734398100001272
+  },
+  {
+    "center": 25,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 8.837185199998203
+  },
+  {
+    "center": 25,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 12.967504799999006
+  },
+  {
+    "center": 25,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 17.506885999995575
+  },
+  {
+    "center": 25,
+    "special": 6,
+    "status": "UNKNOWN",
+    "elapsed": 30.016947600001004
+  },
+  {
+    "center": 25,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05961419999948703
+  },
+  {
+    "center": 25,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07079729999531992
+  },
+  {
+    "center": 25,
+    "special": 9,
+    "status": "UNKNOWN",
+    "elapsed": 30.01650260000315
+  },
+  {
+    "center": 25,
+    "special": 10,
+    "status": "UNKNOWN",
+    "elapsed": 30.020474199998716
+  },
+  {
+    "center": 25,
+    "special": 11,
+    "status": "UNKNOWN",
+    "elapsed": 30.01623069999914
+  },
+  {
+    "center": 25,
+    "special": 12,
+    "status": "UNKNOWN",
+    "elapsed": 30.01946070000122
+  },
+  {
+    "center": 25,
+    "special": 13,
+    "status": "UNKNOWN",
+    "elapsed": 30.015179799993348
+  },
+  {
+    "center": 25,
+    "special": 14,
+    "status": "UNKNOWN",
+    "elapsed": 30.01670390000072
+  },
+  {
+    "center": 25,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.058767400005308446
+  },
+  {
+    "center": 25,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05697370000416413
+  },
+  {
+    "center": 25,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07821949999924982
+  },
+  {
+    "center": 25,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.021086499997182
+  },
+  {
+    "center": 25,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.012917100000777
+  },
+  {
+    "center": 25,
+    "special": 20,
+    "status": "UNKNOWN",
+    "elapsed": 30.056412300000375
+  },
+  {
+    "center": 25,
+    "special": 21,
+    "status": "UNKNOWN",
+    "elapsed": 30.015250900003593
+  },
+  {
+    "center": 25,
+    "special": 22,
+    "status": "UNKNOWN",
+    "elapsed": 30.020636100001866
+  },
+  {
+    "center": 25,
+    "special": 23,
+    "status": "UNKNOWN",
+    "elapsed": 30.019735399997444
+  },
+  {
+    "center": 25,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06550000000424916
+  },
+  {
+    "center": 25,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.057456800001091324
+  },
+  {
+    "center": 25,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0550641000008909
+  },
+  {
+    "center": 25,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14379209999606246
+  },
+  {
+    "center": 25,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14601459999539657
+  },
+  {
+    "center": 25,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1692442999992636
+  },
+  {
+    "center": 25,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2024706000011065
+  },
+  {
+    "center": 25,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18012520000047516
+  },
+  {
+    "center": 25,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17046639999898616
+  },
+  {
+    "center": 25,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06868060000124387
+  },
+  {
+    "center": 25,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08600859999569366
+  },
+  {
+    "center": 25,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07988109999860171
+  },
+  {
+    "center": 25,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20100079999974696
+  },
+  {
+    "center": 25,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18253579999873182
+  },
+  {
+    "center": 25,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18209360000037123
+  },
+  {
+    "center": 25,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2492595000003348
+  },
+  {
+    "center": 25,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2825423999966006
+  },
+  {
+    "center": 25,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3501192000039737
+  },
+  {
+    "center": 25,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.375724600002286
+  },
+  {
+    "center": 25,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5498253999976441
+  },
+  {
+    "center": 25,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.538485999997647
+  },
+  {
+    "center": 25,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06423460000223713
+  },
+  {
+    "center": 25,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4898853999984567
+  },
+  {
+    "center": 25,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5089949000030174
+  },
+  {
+    "center": 25,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5502178000024287
+  },
+  {
+    "center": 25,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7097234999964712
+  },
+  {
+    "center": 25,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.9522319000025163
+  },
+  {
+    "center": 25,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 1.7956776000064565
+  },
+  {
+    "center": 25,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 3.265333900002588
+  },
+  {
+    "center": 25,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06041340000228956
+  },
+  {
+    "center": 28,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.053104099999472965
+  },
+  {
+    "center": 28,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 2.3211394000027212
+  },
+  {
+    "center": 28,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 1.8723918000032427
+  },
+  {
+    "center": 28,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 1.9832169000001159
+  },
+  {
+    "center": 28,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 2.864004000002751
+  },
+  {
+    "center": 28,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 2.735257999993337
+  },
+  {
+    "center": 28,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 3.502229099998658
+  },
+  {
+    "center": 28,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 6.207579299996723
+  },
+  {
+    "center": 28,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05651460000080988
+  },
+  {
+    "center": 28,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 20.687429000005068
+  },
+  {
+    "center": 28,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 14.206483199996
+  },
+  {
+    "center": 28,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 17.984973300001002
+  },
+  {
+    "center": 28,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 25.707111999996414
+  },
+  {
+    "center": 28,
+    "special": 13,
+    "status": "UNKNOWN",
+    "elapsed": 30.021771899999294
+  },
+  {
+    "center": 28,
+    "special": 14,
+    "status": "UNKNOWN",
+    "elapsed": 30.01780530000542
+  },
+  {
+    "center": 28,
+    "special": 15,
+    "status": "UNKNOWN",
+    "elapsed": 30.009433800005354
+  },
+  {
+    "center": 28,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.02000609999959
+  },
+  {
+    "center": 28,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.020268600004783
+  },
+  {
+    "center": 28,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08107179999933578
+  },
+  {
+    "center": 28,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0587909000023501
+  },
+  {
+    "center": 28,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.062365000005229376
+  },
+  {
+    "center": 28,
+    "special": 21,
+    "status": "UNKNOWN",
+    "elapsed": 30.01886309999827
+  },
+  {
+    "center": 28,
+    "special": 22,
+    "status": "UNKNOWN",
+    "elapsed": 30.01631350000389
+  },
+  {
+    "center": 28,
+    "special": 23,
+    "status": "UNKNOWN",
+    "elapsed": 30.016918900000746
+  },
+  {
+    "center": 28,
+    "special": 24,
+    "status": "UNKNOWN",
+    "elapsed": 30.02117040000303
+  },
+  {
+    "center": 28,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.01194640000176
+  },
+  {
+    "center": 28,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.01564530000178
+  },
+  {
+    "center": 28,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0746142999996664
+  },
+  {
+    "center": 28,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06346669999766164
+  },
+  {
+    "center": 28,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.053566199996566866
+  },
+  {
+    "center": 28,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.13816969999606954
+  },
+  {
+    "center": 28,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.13395839999429882
+  },
+  {
+    "center": 28,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18021479999879375
+  },
+  {
+    "center": 28,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15910430000076303
+  },
+  {
+    "center": 28,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2012373999968986
+  },
+  {
+    "center": 28,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19945910000387812
+  },
+  {
+    "center": 28,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08009170000150334
+  },
+  {
+    "center": 28,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06134880000172416
+  },
+  {
+    "center": 28,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06074899999657646
+  },
+  {
+    "center": 28,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19047180000052322
+  },
+  {
+    "center": 28,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17180350000126055
+  },
+  {
+    "center": 28,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19797939999989467
+  },
+  {
+    "center": 28,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.26063889999932144
+  },
+  {
+    "center": 28,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2730375000028289
+  },
+  {
+    "center": 28,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3797040999997989
+  },
+  {
+    "center": 28,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06216530000529019
+  },
+  {
+    "center": 28,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07073189999937313
+  },
+  {
+    "center": 28,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4270808000001125
+  },
+  {
+    "center": 28,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4019650999980513
+  },
+  {
+    "center": 28,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4185719000015524
+  },
+  {
+    "center": 28,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.45056040000054054
+  },
+  {
+    "center": 28,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5324666000014986
+  },
+  {
+    "center": 28,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.8716122999976506
+  },
+  {
+    "center": 28,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07278479999513365
+  },
+  {
+    "center": 29,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.050260800002433825
+  },
+  {
+    "center": 29,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 1.2992733999999473
+  },
+  {
+    "center": 29,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 1.276120999995328
+  },
+  {
+    "center": 29,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 1.1455716999989818
+  },
+  {
+    "center": 29,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0897101999944425
+  },
+  {
+    "center": 29,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 1.333023500003037
+  },
+  {
+    "center": 29,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 1.4888219999993453
+  },
+  {
+    "center": 29,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 2.5816788000011
+  },
+  {
+    "center": 29,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07886160000634845
+  },
+  {
+    "center": 29,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 8.659642099999473
+  },
+  {
+    "center": 29,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 8.80147429999488
+  },
+  {
+    "center": 29,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 8.19514199999685
+  },
+  {
+    "center": 29,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 11.199057099998754
+  },
+  {
+    "center": 29,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 29.918472900004417
+  },
+  {
+    "center": 29,
+    "special": 14,
+    "status": "UNKNOWN",
+    "elapsed": 30.01897530000133
+  },
+  {
+    "center": 29,
+    "special": 15,
+    "status": "UNKNOWN",
+    "elapsed": 30.01205339999433
+  },
+  {
+    "center": 29,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.014980599997216
+  },
+  {
+    "center": 29,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.017393699999957
+  },
+  {
+    "center": 29,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.020518400000583
+  },
+  {
+    "center": 29,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0628973999992013
+  },
+  {
+    "center": 29,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07655469999735942
+  },
+  {
+    "center": 29,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07333010000002105
+  },
+  {
+    "center": 29,
+    "special": 22,
+    "status": "UNKNOWN",
+    "elapsed": 30.021076899996842
+  },
+  {
+    "center": 29,
+    "special": 23,
+    "status": "UNKNOWN",
+    "elapsed": 30.01400730000023
+  },
+  {
+    "center": 29,
+    "special": 24,
+    "status": "UNKNOWN",
+    "elapsed": 30.010684200002288
+  },
+  {
+    "center": 29,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.0557908999981
+  },
+  {
+    "center": 29,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.01918370000203
+  },
+  {
+    "center": 29,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05718769999657525
+  },
+  {
+    "center": 29,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06637030000274535
+  },
+  {
+    "center": 29,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07819600000220817
+  },
+  {
+    "center": 29,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06856559999869205
+  },
+  {
+    "center": 29,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.11149650000152178
+  },
+  {
+    "center": 29,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1128785999972024
+  },
+  {
+    "center": 29,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1431317000024137
+  },
+  {
+    "center": 29,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1733858999941731
+  },
+  {
+    "center": 29,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16306400000030408
+  },
+  {
+    "center": 29,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19572820000030333
+  },
+  {
+    "center": 29,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05830250000144588
+  },
+  {
+    "center": 29,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07000049999624025
+  },
+  {
+    "center": 29,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.061221200005093124
+  },
+  {
+    "center": 29,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14939530000265222
+  },
+  {
+    "center": 29,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16158419999555917
+  },
+  {
+    "center": 29,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1606984000027296
+  },
+  {
+    "center": 29,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18334900000627385
+  },
+  {
+    "center": 29,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2365871000001789
+  },
+  {
+    "center": 29,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0649282000013045
+  },
+  {
+    "center": 29,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.30998340000223834
+  },
+  {
+    "center": 29,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0635489000051166
+  },
+  {
+    "center": 29,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.32377910000650445
+  },
+  {
+    "center": 29,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.377708399995754
+  },
+  {
+    "center": 29,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3448205000022426
+  },
+  {
+    "center": 29,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3742396000016015
+  },
+  {
+    "center": 29,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.40972120000515133
+  },
+  {
+    "center": 29,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04550669999298407
+  },
+  {
+    "center": 30,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.045399900001939386
+  },
+  {
+    "center": 30,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7216502000010223
+  },
+  {
+    "center": 30,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6693641000019852
+  },
+  {
+    "center": 30,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 1.000505099997099
+  },
+  {
+    "center": 30,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0694949999960954
+  },
+  {
+    "center": 30,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0319591000006767
+  },
+  {
+    "center": 30,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 1.1779377999991993
+  },
+  {
+    "center": 30,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 1.8086793999973452
+  },
+  {
+    "center": 30,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05345340000349097
+  },
+  {
+    "center": 30,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 3.6940700999984983
+  },
+  {
+    "center": 30,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 4.294319000000542
+  },
+  {
+    "center": 30,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 5.502742099997704
+  },
+  {
+    "center": 30,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 7.2581444999959785
+  },
+  {
+    "center": 30,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 26.58709649999946
+  },
+  {
+    "center": 30,
+    "special": 14,
+    "status": "UNKNOWN",
+    "elapsed": 30.02028910000081
+  },
+  {
+    "center": 30,
+    "special": 15,
+    "status": "UNKNOWN",
+    "elapsed": 30.019917199999327
+  },
+  {
+    "center": 30,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.019453000000794
+  },
+  {
+    "center": 30,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.01302630000282
+  },
+  {
+    "center": 30,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.01550000000134
+  },
+  {
+    "center": 30,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.02114160000201
+  },
+  {
+    "center": 30,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 0.060364999997545965
+  },
+  {
+    "center": 30,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07148210000013933
+  },
+  {
+    "center": 30,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08954200000152923
+  },
+  {
+    "center": 30,
+    "special": 23,
+    "status": "UNKNOWN",
+    "elapsed": 30.019056099998124
+  },
+  {
+    "center": 30,
+    "special": 24,
+    "status": "UNKNOWN",
+    "elapsed": 30.01667450000241
+  },
+  {
+    "center": 30,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.016763899999205
+  },
+  {
+    "center": 30,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.01832679999643
+  },
+  {
+    "center": 30,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.01137860000017
+  },
+  {
+    "center": 30,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.016297599999234
+  },
+  {
+    "center": 30,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05387419999897247
+  },
+  {
+    "center": 30,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07305189999897266
+  },
+  {
+    "center": 30,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07838630000333069
+  },
+  {
+    "center": 30,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.10713760000362527
+  },
+  {
+    "center": 30,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1165642999985721
+  },
+  {
+    "center": 30,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16122069999983069
+  },
+  {
+    "center": 30,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15151470000273548
+  },
+  {
+    "center": 30,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17870090000360506
+  },
+  {
+    "center": 30,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16822210000100313
+  },
+  {
+    "center": 30,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06450169999880018
+  },
+  {
+    "center": 30,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05205220000061672
+  },
+  {
+    "center": 30,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0680558000021847
+  },
+  {
+    "center": 30,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17504800000460818
+  },
+  {
+    "center": 30,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15424930000153836
+  },
+  {
+    "center": 30,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17191649999585934
+  },
+  {
+    "center": 30,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2269674000053783
+  },
+  {
+    "center": 30,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06255110000347486
+  },
+  {
+    "center": 30,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.29395439999643713
+  },
+  {
+    "center": 30,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.26079130000289297
+  },
+  {
+    "center": 30,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07318420000228798
+  },
+  {
+    "center": 30,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3062699000001885
+  },
+  {
+    "center": 30,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3030503000045428
+  },
+  {
+    "center": 30,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3140516999992542
+  },
+  {
+    "center": 30,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3156899000023259
+  },
+  {
+    "center": 30,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04212969999935012
+  },
+  {
+    "center": 31,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04450969999743393
+  },
+  {
+    "center": 31,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6120889000012539
+  },
+  {
+    "center": 31,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5415617000035127
+  },
+  {
+    "center": 31,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6931343999967794
+  },
+  {
+    "center": 31,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0112088000023505
+  },
+  {
+    "center": 31,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0659637999997358
+  },
+  {
+    "center": 31,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 1.392863799999759
+  },
+  {
+    "center": 31,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 2.1549796000035712
+  },
+  {
+    "center": 31,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04640839999774471
+  },
+  {
+    "center": 31,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 2.4043696000007913
+  },
+  {
+    "center": 31,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 2.245288599995547
+  },
+  {
+    "center": 31,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 3.5082209999964107
+  },
+  {
+    "center": 31,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 5.472462199999427
+  },
+  {
+    "center": 31,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 11.886001400001987
+  },
+  {
+    "center": 31,
+    "special": 14,
+    "status": "UNKNOWN",
+    "elapsed": 30.01785459999519
+  },
+  {
+    "center": 31,
+    "special": 15,
+    "status": "UNKNOWN",
+    "elapsed": 30.018319499999052
+  },
+  {
+    "center": 31,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.015592400006426
+  },
+  {
+    "center": 31,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.013646800005517
+  },
+  {
+    "center": 31,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.015736699999252
+  },
+  {
+    "center": 31,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.017653700000665
+  },
+  {
+    "center": 31,
+    "special": 20,
+    "status": "UNKNOWN",
+    "elapsed": 30.016755299999204
+  },
+  {
+    "center": 31,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07084670000040205
+  },
+  {
+    "center": 31,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07466449999628821
+  },
+  {
+    "center": 31,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06175429999711923
+  },
+  {
+    "center": 31,
+    "special": 24,
+    "status": "UNKNOWN",
+    "elapsed": 30.017179799993755
+  },
+  {
+    "center": 31,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.01945870000054
+  },
+  {
+    "center": 31,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.016972700002952
+  },
+  {
+    "center": 31,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.019415499999013
+  },
+  {
+    "center": 31,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.015446699995664
+  },
+  {
+    "center": 31,
+    "special": 29,
+    "status": "UNKNOWN",
+    "elapsed": 30.015821699998924
+  },
+  {
+    "center": 31,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06832130000111647
+  },
+  {
+    "center": 31,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06243920000270009
+  },
+  {
+    "center": 31,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07166879999567755
+  },
+  {
+    "center": 31,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.11462589999428019
+  },
+  {
+    "center": 31,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1127039999992121
+  },
+  {
+    "center": 31,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15837099999771453
+  },
+  {
+    "center": 31,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1810909999985597
+  },
+  {
+    "center": 31,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15574699999706354
+  },
+  {
+    "center": 31,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15706679999857442
+  },
+  {
+    "center": 31,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.059491400003025774
+  },
+  {
+    "center": 31,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06151970000064466
+  },
+  {
+    "center": 31,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05633579999994254
+  },
+  {
+    "center": 31,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14320829999633133
+  },
+  {
+    "center": 31,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17600970000057714
+  },
+  {
+    "center": 31,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17638450000231387
+  },
+  {
+    "center": 31,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04605499999888707
+  },
+  {
+    "center": 31,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2357322000025306
+  },
+  {
+    "center": 31,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.24181530000350904
+  },
+  {
+    "center": 31,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3089096999974572
+  },
+  {
+    "center": 31,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05860689999826718
+  },
+  {
+    "center": 31,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.31270629999926314
+  },
+  {
+    "center": 31,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3870965999958571
+  },
+  {
+    "center": 31,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3592662000010023
+  },
+  {
+    "center": 31,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04453999999532243
+  },
+  {
+    "center": 32,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04302560000360245
+  },
+  {
+    "center": 32,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.41241559999616584
+  },
+  {
+    "center": 32,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.46086239999567624
+  },
+  {
+    "center": 32,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6409746999997878
+  },
+  {
+    "center": 32,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6306744999965304
+  },
+  {
+    "center": 32,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 1.081661799995345
+  },
+  {
+    "center": 32,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0962036999990232
+  },
+  {
+    "center": 32,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 1.5924062999984017
+  },
+  {
+    "center": 32,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06070480000198586
+  },
+  {
+    "center": 32,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 2.5396000999971875
+  },
+  {
+    "center": 32,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 2.480622199997015
+  },
+  {
+    "center": 32,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 1.847403799998574
+  },
+  {
+    "center": 32,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 2.9728631999969366
+  },
+  {
+    "center": 32,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 9.497149899994838
+  },
+  {
+    "center": 32,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 10.334369099997275
+  },
+  {
+    "center": 32,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 23.57719449999422
+  },
+  {
+    "center": 32,
+    "special": 16,
+    "status": "UNKNOWN",
+    "elapsed": 30.013758200002485
+  },
+  {
+    "center": 32,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.018599399998493
+  },
+  {
+    "center": 32,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.015367799998785
+  },
+  {
+    "center": 32,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.01702340000338
+  },
+  {
+    "center": 32,
+    "special": 20,
+    "status": "UNKNOWN",
+    "elapsed": 30.019626599998446
+  },
+  {
+    "center": 32,
+    "special": 21,
+    "status": "UNKNOWN",
+    "elapsed": 30.011071799999627
+  },
+  {
+    "center": 32,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0633120999991661
+  },
+  {
+    "center": 32,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06034180000278866
+  },
+  {
+    "center": 32,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.060945899997022934
+  },
+  {
+    "center": 32,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.01691149999533
+  },
+  {
+    "center": 32,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.020159299994702
+  },
+  {
+    "center": 32,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.015476400003536
+  },
+  {
+    "center": 32,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.023296499995922
+  },
+  {
+    "center": 32,
+    "special": 29,
+    "status": "UNKNOWN",
+    "elapsed": 30.013070799999696
+  },
+  {
+    "center": 32,
+    "special": 30,
+    "status": "UNKNOWN",
+    "elapsed": 30.04607119999855
+  },
+  {
+    "center": 32,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07354309999936959
+  },
+  {
+    "center": 32,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05662039999879198
+  },
+  {
+    "center": 32,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06948729999567149
+  },
+  {
+    "center": 32,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.12690670000301907
+  },
+  {
+    "center": 32,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.12333999999827938
+  },
+  {
+    "center": 32,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.171262800002296
+  },
+  {
+    "center": 32,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.171814400004223
+  },
+  {
+    "center": 32,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15296049999597017
+  },
+  {
+    "center": 32,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16859489999478683
+  },
+  {
+    "center": 32,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07416579999699024
+  },
+  {
+    "center": 32,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.057407899999816436
+  },
+  {
+    "center": 32,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06180329999915557
+  },
+  {
+    "center": 32,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1732726999980514
+  },
+  {
+    "center": 32,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17577449999953387
+  },
+  {
+    "center": 32,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04618520000076387
+  },
+  {
+    "center": 32,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1912183999957051
+  },
+  {
+    "center": 32,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.24708329999702983
+  },
+  {
+    "center": 32,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2366965000037453
+  },
+  {
+    "center": 32,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.27715530000568833
+  },
+  {
+    "center": 32,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07781989999784855
+  },
+  {
+    "center": 32,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.35995009999896865
+  },
+  {
+    "center": 32,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.35389199999917764
+  },
+  {
+    "center": 32,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06489620000502327
+  },
+  {
+    "center": 33,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04132669999671634
+  },
+  {
+    "center": 33,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.42886830000497866
+  },
+  {
+    "center": 33,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.43372980000276584
+  },
+  {
+    "center": 33,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4520570000022417
+  },
+  {
+    "center": 33,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5313714000003529
+  },
+  {
+    "center": 33,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.502805799995258
+  },
+  {
+    "center": 33,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7060415000014473
+  },
+  {
+    "center": 33,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0906011000042781
+  },
+  {
+    "center": 33,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.050708400005532894
+  },
+  {
+    "center": 33,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 1.5729604000007384
+  },
+  {
+    "center": 33,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 1.133396699995501
+  },
+  {
+    "center": 33,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 1.2528070999978809
+  },
+  {
+    "center": 33,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 1.2904162999984692
+  },
+  {
+    "center": 33,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 3.565064100002928
+  },
+  {
+    "center": 33,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 7.863137199994526
+  },
+  {
+    "center": 33,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 12.51036049999675
+  },
+  {
+    "center": 33,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 23.877113599999575
+  },
+  {
+    "center": 33,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.01519030000054
+  },
+  {
+    "center": 33,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.010662100001355
+  },
+  {
+    "center": 33,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.01620450000337
+  },
+  {
+    "center": 33,
+    "special": 20,
+    "status": "UNKNOWN",
+    "elapsed": 30.014687900002173
+  },
+  {
+    "center": 33,
+    "special": 21,
+    "status": "UNKNOWN",
+    "elapsed": 30.009451799996896
+  },
+  {
+    "center": 33,
+    "special": 22,
+    "status": "UNKNOWN",
+    "elapsed": 30.017114700000093
+  },
+  {
+    "center": 33,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07977039999968838
+  },
+  {
+    "center": 33,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06824539999797707
+  },
+  {
+    "center": 33,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07201019999774871
+  },
+  {
+    "center": 33,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.0558605000042
+  },
+  {
+    "center": 33,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.00966789999802
+  },
+  {
+    "center": 33,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.013263000000734
+  },
+  {
+    "center": 33,
+    "special": 29,
+    "status": "UNKNOWN",
+    "elapsed": 30.016992000004393
+  },
+  {
+    "center": 33,
+    "special": 30,
+    "status": "UNKNOWN",
+    "elapsed": 30.013493699996616
+  },
+  {
+    "center": 33,
+    "special": 31,
+    "status": "UNKNOWN",
+    "elapsed": 30.01508340000146
+  },
+  {
+    "center": 33,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05791070000123
+  },
+  {
+    "center": 33,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05665259999659611
+  },
+  {
+    "center": 33,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07227930000226479
+  },
+  {
+    "center": 33,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07464630000322359
+  },
+  {
+    "center": 33,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16378039999835892
+  },
+  {
+    "center": 33,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17142170000443002
+  },
+  {
+    "center": 33,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17851799999334617
+  },
+  {
+    "center": 33,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15836290000152076
+  },
+  {
+    "center": 33,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18226509999658447
+  },
+  {
+    "center": 33,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06316370000422467
+  },
+  {
+    "center": 33,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05610750000050757
+  },
+  {
+    "center": 33,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06258630000229459
+  },
+  {
+    "center": 33,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18698830000357702
+  },
+  {
+    "center": 33,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05718999999953667
+  },
+  {
+    "center": 33,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15585969999665394
+  },
+  {
+    "center": 33,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19699229999969248
+  },
+  {
+    "center": 33,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.23456100000476
+  },
+  {
+    "center": 33,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.27512320000096224
+  },
+  {
+    "center": 33,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2962093000023742
+  },
+  {
+    "center": 33,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05910269999731099
+  },
+  {
+    "center": 33,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3520256999981939
+  },
+  {
+    "center": 33,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04461740000260761
+  },
+  {
+    "center": 34,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.045540899998741224
+  },
+  {
+    "center": 34,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.47945639999670675
+  },
+  {
+    "center": 34,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.42121659999975236
+  },
+  {
+    "center": 34,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4835920999976224
+  },
+  {
+    "center": 34,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5263784999988275
+  },
+  {
+    "center": 34,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7620423000043957
+  },
+  {
+    "center": 34,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.8683295999944676
+  },
+  {
+    "center": 34,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 1.3789944000018295
+  },
+  {
+    "center": 34,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04447779999463819
+  },
+  {
+    "center": 34,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 1.2175543999983347
+  },
+  {
+    "center": 34,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 1.7139385999980732
+  },
+  {
+    "center": 34,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 1.4155419999951846
+  },
+  {
+    "center": 34,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 1.2100468999997247
+  },
+  {
+    "center": 34,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 2.4241897000028985
+  },
+  {
+    "center": 34,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 6.544817399997555
+  },
+  {
+    "center": 34,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 10.867281599996204
+  },
+  {
+    "center": 34,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 16.162832800000615
+  },
+  {
+    "center": 34,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.011800100000983
+  },
+  {
+    "center": 34,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.055994499998633
+  },
+  {
+    "center": 34,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.01089640000282
+  },
+  {
+    "center": 34,
+    "special": 20,
+    "status": "UNKNOWN",
+    "elapsed": 30.089934300005552
+  },
+  {
+    "center": 34,
+    "special": 21,
+    "status": "UNKNOWN",
+    "elapsed": 30.017975199996727
+  },
+  {
+    "center": 34,
+    "special": 22,
+    "status": "UNKNOWN",
+    "elapsed": 30.01670500000182
+  },
+  {
+    "center": 34,
+    "special": 23,
+    "status": "UNKNOWN",
+    "elapsed": 30.01671879999776
+  },
+  {
+    "center": 34,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 0.057925500004785135
+  },
+  {
+    "center": 34,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06873110000015004
+  },
+  {
+    "center": 34,
+    "special": 26,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06527529999584658
+  },
+  {
+    "center": 34,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.010543100004725
+  },
+  {
+    "center": 34,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.019437299997662
+  },
+  {
+    "center": 34,
+    "special": 29,
+    "status": "UNKNOWN",
+    "elapsed": 30.018941299997095
+  },
+  {
+    "center": 34,
+    "special": 30,
+    "status": "UNKNOWN",
+    "elapsed": 30.019010300005903
+  },
+  {
+    "center": 34,
+    "special": 31,
+    "status": "UNKNOWN",
+    "elapsed": 30.01449059999868
+  },
+  {
+    "center": 34,
+    "special": 32,
+    "status": "UNKNOWN",
+    "elapsed": 30.019133100002364
+  },
+  {
+    "center": 34,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05851859999529552
+  },
+  {
+    "center": 34,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08053199999994831
+  },
+  {
+    "center": 34,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06284929999674205
+  },
+  {
+    "center": 34,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.12963809999928344
+  },
+  {
+    "center": 34,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.12326670000038575
+  },
+  {
+    "center": 34,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1808205999986967
+  },
+  {
+    "center": 34,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1790614999990794
+  },
+  {
+    "center": 34,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20171200000186218
+  },
+  {
+    "center": 34,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19410880000214092
+  },
+  {
+    "center": 34,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07627859999774955
+  },
+  {
+    "center": 34,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0781594000000041
+  },
+  {
+    "center": 34,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06742339999618707
+  },
+  {
+    "center": 34,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.045484700000088196
+  },
+  {
+    "center": 34,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20869419999507954
+  },
+  {
+    "center": 34,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1856612999981735
+  },
+  {
+    "center": 34,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.31531379999796627
+  },
+  {
+    "center": 34,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3333799999963958
+  },
+  {
+    "center": 34,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3690257000052952
+  },
+  {
+    "center": 34,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4082524999976158
+  },
+  {
+    "center": 34,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08242570000584237
+  },
+  {
+    "center": 34,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0631788000027882
+  },
+  {
+    "center": 37,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06479469999612775
+  },
+  {
+    "center": 37,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4967176999998628
+  },
+  {
+    "center": 37,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5095976000011433
+  },
+  {
+    "center": 37,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4556475999997929
+  },
+  {
+    "center": 37,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.593095699994592
+  },
+  {
+    "center": 37,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5877957999982755
+  },
+  {
+    "center": 37,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7111589999985881
+  },
+  {
+    "center": 37,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 1.033010999999533
+  },
+  {
+    "center": 37,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06801479999558069
+  },
+  {
+    "center": 37,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 1.7396692000038456
+  },
+  {
+    "center": 37,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 1.8484940999987884
+  },
+  {
+    "center": 37,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 1.5338407999952324
+  },
+  {
+    "center": 37,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 1.8313541999959853
+  },
+  {
+    "center": 37,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 1.8002336999998079
+  },
+  {
+    "center": 37,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 4.901117200002773
+  },
+  {
+    "center": 37,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 6.671798799994576
+  },
+  {
+    "center": 37,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 20.034129400002712
+  },
+  {
+    "center": 37,
+    "special": 17,
+    "status": "UNKNOWN",
+    "elapsed": 30.011035000003176
+  },
+  {
+    "center": 37,
+    "special": 18,
+    "status": "UNKNOWN",
+    "elapsed": 30.02313149999827
+  },
+  {
+    "center": 37,
+    "special": 19,
+    "status": "UNKNOWN",
+    "elapsed": 30.02340009999898
+  },
+  {
+    "center": 37,
+    "special": 20,
+    "status": "UNKNOWN",
+    "elapsed": 30.010532200001762
+  },
+  {
+    "center": 37,
+    "special": 21,
+    "status": "UNKNOWN",
+    "elapsed": 30.01762299999973
+  },
+  {
+    "center": 37,
+    "special": 22,
+    "status": "UNKNOWN",
+    "elapsed": 30.01580329999706
+  },
+  {
+    "center": 37,
+    "special": 23,
+    "status": "UNKNOWN",
+    "elapsed": 30.015379600001324
+  },
+  {
+    "center": 37,
+    "special": 24,
+    "status": "UNKNOWN",
+    "elapsed": 30.01592439999513
+  },
+  {
+    "center": 37,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.01450610000029
+  },
+  {
+    "center": 37,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.013353900001675
+  },
+  {
+    "center": 37,
+    "special": 27,
+    "status": "INFEASIBLE",
+    "elapsed": 0.057282699999632314
+  },
+  {
+    "center": 37,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.058417000000190455
+  },
+  {
+    "center": 37,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07323869999527233
+  },
+  {
+    "center": 37,
+    "special": 30,
+    "status": "UNKNOWN",
+    "elapsed": 30.011968399994657
+  },
+  {
+    "center": 37,
+    "special": 31,
+    "status": "UNKNOWN",
+    "elapsed": 30.020886899998004
+  },
+  {
+    "center": 37,
+    "special": 32,
+    "status": "UNKNOWN",
+    "elapsed": 30.018162799999118
+  },
+  {
+    "center": 37,
+    "special": 33,
+    "status": "UNKNOWN",
+    "elapsed": 30.018106700001226
+  },
+  {
+    "center": 37,
+    "special": 34,
+    "status": "UNKNOWN",
+    "elapsed": 30.010097600003064
+  },
+  {
+    "center": 37,
+    "special": 35,
+    "status": "UNKNOWN",
+    "elapsed": 30.01505090000137
+  },
+  {
+    "center": 37,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08708350000233622
+  },
+  {
+    "center": 37,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05636709999816958
+  },
+  {
+    "center": 37,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.058513900003163144
+  },
+  {
+    "center": 37,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1430640000035055
+  },
+  {
+    "center": 37,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1512287000005017
+  },
+  {
+    "center": 37,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15780970000196248
+  },
+  {
+    "center": 37,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16817070000251988
+  },
+  {
+    "center": 37,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16285030000290135
+  },
+  {
+    "center": 37,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18002240000350866
+  },
+  {
+    "center": 37,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06202500000654254
+  },
+  {
+    "center": 37,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0626267000043299
+  },
+  {
+    "center": 37,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07590369999525137
+  },
+  {
+    "center": 37,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17289400000299793
+  },
+  {
+    "center": 37,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.21205620000546332
+  },
+  {
+    "center": 37,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.27688940000371076
+  },
+  {
+    "center": 37,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.30078900000080466
+  },
+  {
+    "center": 37,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.32564950000232784
+  },
+  {
+    "center": 37,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05003740000393009
+  },
+  {
+    "center": 38,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05932339999708347
+  },
+  {
+    "center": 38,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3772575999973924
+  },
+  {
+    "center": 38,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.34619540000130655
+  },
+  {
+    "center": 38,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4111101000016788
+  },
+  {
+    "center": 38,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4081637999988743
+  },
+  {
+    "center": 38,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4055657999997493
+  },
+  {
+    "center": 38,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.45562690000224393
+  },
+  {
+    "center": 38,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4810503000044264
+  },
+  {
+    "center": 38,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.060739699998521246
+  },
+  {
+    "center": 38,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0035208000044804
+  },
+  {
+    "center": 38,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.9465943999966839
+  },
+  {
+    "center": 38,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6445767999975942
+  },
+  {
+    "center": 38,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0290558999986388
+  },
+  {
+    "center": 38,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.9605188999994425
+  },
+  {
+    "center": 38,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 1.305527099997562
+  },
+  {
+    "center": 38,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 2.7779186999978265
+  },
+  {
+    "center": 38,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 5.8883006000032765
+  },
+  {
+    "center": 38,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 11.775937899998098
+  },
+  {
+    "center": 38,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 24.089783700001135
+  },
+  {
+    "center": 38,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 18.48458799999935
+  },
+  {
+    "center": 38,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 19.38468339999963
+  },
+  {
+    "center": 38,
+    "special": 21,
+    "status": "UNKNOWN",
+    "elapsed": 30.01477010000235
+  },
+  {
+    "center": 38,
+    "special": 22,
+    "status": "UNKNOWN",
+    "elapsed": 30.012058499996783
+  },
+  {
+    "center": 38,
+    "special": 23,
+    "status": "UNKNOWN",
+    "elapsed": 30.01513729999715
+  },
+  {
+    "center": 38,
+    "special": 24,
+    "status": "UNKNOWN",
+    "elapsed": 30.014454000003752
+  },
+  {
+    "center": 38,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.018375699997705
+  },
+  {
+    "center": 38,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.014276200003223
+  },
+  {
+    "center": 38,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.011277300000074
+  },
+  {
+    "center": 38,
+    "special": 28,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0683294999980717
+  },
+  {
+    "center": 38,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05828899999323767
+  },
+  {
+    "center": 38,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06192890000238549
+  },
+  {
+    "center": 38,
+    "special": 31,
+    "status": "UNKNOWN",
+    "elapsed": 30.014792499998293
+  },
+  {
+    "center": 38,
+    "special": 32,
+    "status": "UNKNOWN",
+    "elapsed": 30.01312849999522
+  },
+  {
+    "center": 38,
+    "special": 33,
+    "status": "UNKNOWN",
+    "elapsed": 30.017685799997707
+  },
+  {
+    "center": 38,
+    "special": 34,
+    "status": "UNKNOWN",
+    "elapsed": 30.015358700002253
+  },
+  {
+    "center": 38,
+    "special": 35,
+    "status": "UNKNOWN",
+    "elapsed": 30.017360500001814
+  },
+  {
+    "center": 38,
+    "special": 36,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06944719999592053
+  },
+  {
+    "center": 38,
+    "special": 37,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05362489999970421
+  },
+  {
+    "center": 38,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.054964700000709854
+  },
+  {
+    "center": 38,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07551900000544265
+  },
+  {
+    "center": 38,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.11799449999671197
+  },
+  {
+    "center": 38,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.128627799997048
+  },
+  {
+    "center": 38,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17567679999774555
+  },
+  {
+    "center": 38,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17995380000502337
+  },
+  {
+    "center": 38,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20088830000167945
+  },
+  {
+    "center": 38,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0565991000039503
+  },
+  {
+    "center": 38,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08021439999720315
+  },
+  {
+    "center": 38,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05582020000292687
+  },
+  {
+    "center": 38,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06299070000386564
+  },
+  {
+    "center": 38,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16722300000401447
+  },
+  {
+    "center": 38,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18172250000498025
+  },
+  {
+    "center": 38,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20259909999731462
+  },
+  {
+    "center": 38,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2151170000070124
+  },
+  {
+    "center": 38,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.050512300003902055
+  },
+  {
+    "center": 39,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.047352600005979184
+  },
+  {
+    "center": 39,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.31866769999760436
+  },
+  {
+    "center": 39,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3467356000037398
+  },
+  {
+    "center": 39,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3446572000029846
+  },
+  {
+    "center": 39,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.38596490000054473
+  },
+  {
+    "center": 39,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3728817000010167
+  },
+  {
+    "center": 39,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.36640690000058385
+  },
+  {
+    "center": 39,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 0.48481680000259075
+  },
+  {
+    "center": 39,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05194599999958882
+  },
+  {
+    "center": 39,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5951088000001619
+  },
+  {
+    "center": 39,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.713624299998628
+  },
+  {
+    "center": 39,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5736090999998851
+  },
+  {
+    "center": 39,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.6764905999953044
+  },
+  {
+    "center": 39,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0501367000033497
+  },
+  {
+    "center": 39,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 1.408722600004694
+  },
+  {
+    "center": 39,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 2.2127848000018275
+  },
+  {
+    "center": 39,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 4.349873099999968
+  },
+  {
+    "center": 39,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 7.029381600004854
+  },
+  {
+    "center": 39,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 13.628469100003713
+  },
+  {
+    "center": 39,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 10.549349099994288
+  },
+  {
+    "center": 39,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 12.905512800003635
+  },
+  {
+    "center": 39,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 16.454205100002582
+  },
+  {
+    "center": 39,
+    "special": 22,
+    "status": "UNKNOWN",
+    "elapsed": 30.010771699999168
+  },
+  {
+    "center": 39,
+    "special": 23,
+    "status": "UNKNOWN",
+    "elapsed": 30.013275100005558
+  },
+  {
+    "center": 39,
+    "special": 24,
+    "status": "UNKNOWN",
+    "elapsed": 30.016249599997536
+  },
+  {
+    "center": 39,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.01754280000023
+  },
+  {
+    "center": 39,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.01310250000097
+  },
+  {
+    "center": 39,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.01355329999933
+  },
+  {
+    "center": 39,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.01424979999865
+  },
+  {
+    "center": 39,
+    "special": 29,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05490119999740273
+  },
+  {
+    "center": 39,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07513379999727476
+  },
+  {
+    "center": 39,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06889709999813931
+  },
+  {
+    "center": 39,
+    "special": 32,
+    "status": "UNKNOWN",
+    "elapsed": 30.011372600005416
+  },
+  {
+    "center": 39,
+    "special": 33,
+    "status": "UNKNOWN",
+    "elapsed": 30.013335600000573
+  },
+  {
+    "center": 39,
+    "special": 34,
+    "status": "UNKNOWN",
+    "elapsed": 30.016163499996765
+  },
+  {
+    "center": 39,
+    "special": 35,
+    "status": "UNKNOWN",
+    "elapsed": 30.015980500000296
+  },
+  {
+    "center": 39,
+    "special": 36,
+    "status": "UNKNOWN",
+    "elapsed": 30.013086200000544
+  },
+  {
+    "center": 39,
+    "special": 37,
+    "status": "UNKNOWN",
+    "elapsed": 30.015953699999955
+  },
+  {
+    "center": 39,
+    "special": 38,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08223630000429694
+  },
+  {
+    "center": 39,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06900319999840576
+  },
+  {
+    "center": 39,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08038709999527782
+  },
+  {
+    "center": 39,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1434910999960266
+  },
+  {
+    "center": 39,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.14177799999743002
+  },
+  {
+    "center": 39,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1836373000041931
+  },
+  {
+    "center": 39,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17017430000123568
+  },
+  {
+    "center": 39,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06628240000281949
+  },
+  {
+    "center": 39,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16060189999552676
+  },
+  {
+    "center": 39,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06130089999351185
+  },
+  {
+    "center": 39,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0698504000029061
+  },
+  {
+    "center": 39,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08383750000211876
+  },
+  {
+    "center": 39,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16815350000251783
+  },
+  {
+    "center": 39,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.22285090000514174
+  },
+  {
+    "center": 39,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17376759999751812
+  },
+  {
+    "center": 39,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05990569999994477
+  },
+  {
+    "center": 40,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05103899999812711
+  },
+  {
+    "center": 40,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3050814000016544
+  },
+  {
+    "center": 40,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.30207460000383435
+  },
+  {
+    "center": 40,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.335159800000838
+  },
+  {
+    "center": 40,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3366475000002538
+  },
+  {
+    "center": 40,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3341569000040181
+  },
+  {
+    "center": 40,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3517215000028955
+  },
+  {
+    "center": 40,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 0.38712439999653725
+  },
+  {
+    "center": 40,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05780679999588756
+  },
+  {
+    "center": 40,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5072558999963803
+  },
+  {
+    "center": 40,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4830366999958642
+  },
+  {
+    "center": 40,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.43067599999631057
+  },
+  {
+    "center": 40,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.555379699995683
+  },
+  {
+    "center": 40,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.9630362000025343
+  },
+  {
+    "center": 40,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 1.0679649000012432
+  },
+  {
+    "center": 40,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 1.2376261000026716
+  },
+  {
+    "center": 40,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 2.4456514999983483
+  },
+  {
+    "center": 40,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 3.335037700002431
+  },
+  {
+    "center": 40,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 5.733201199996984
+  },
+  {
+    "center": 40,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 5.437573600000178
+  },
+  {
+    "center": 40,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 7.474964300003194
+  },
+  {
+    "center": 40,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 13.753588700004912
+  },
+  {
+    "center": 40,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 18.66143739999825
+  },
+  {
+    "center": 40,
+    "special": 23,
+    "status": "UNKNOWN",
+    "elapsed": 30.010601900001348
+  },
+  {
+    "center": 40,
+    "special": 24,
+    "status": "UNKNOWN",
+    "elapsed": 30.036375900002895
+  },
+  {
+    "center": 40,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.01410880000185
+  },
+  {
+    "center": 40,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.01593370000046
+  },
+  {
+    "center": 40,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.016519500000868
+  },
+  {
+    "center": 40,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.018209200003184
+  },
+  {
+    "center": 40,
+    "special": 29,
+    "status": "UNKNOWN",
+    "elapsed": 30.02019399999699
+  },
+  {
+    "center": 40,
+    "special": 30,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08400509999773931
+  },
+  {
+    "center": 40,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05654919999506092
+  },
+  {
+    "center": 40,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08871849999559345
+  },
+  {
+    "center": 40,
+    "special": 33,
+    "status": "UNKNOWN",
+    "elapsed": 30.011363199999323
+  },
+  {
+    "center": 40,
+    "special": 34,
+    "status": "UNKNOWN",
+    "elapsed": 30.015240799999447
+  },
+  {
+    "center": 40,
+    "special": 35,
+    "status": "UNKNOWN",
+    "elapsed": 30.014638600005128
+  },
+  {
+    "center": 40,
+    "special": 36,
+    "status": "UNKNOWN",
+    "elapsed": 30.017496599997685
+  },
+  {
+    "center": 40,
+    "special": 37,
+    "status": "UNKNOWN",
+    "elapsed": 30.02082839999639
+  },
+  {
+    "center": 40,
+    "special": 38,
+    "status": "UNKNOWN",
+    "elapsed": 30.012132000003476
+  },
+  {
+    "center": 40,
+    "special": 39,
+    "status": "INFEASIBLE",
+    "elapsed": 0.09959890000027372
+  },
+  {
+    "center": 40,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05891890000202693
+  },
+  {
+    "center": 40,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07515380000404548
+  },
+  {
+    "center": 40,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.11586410000018077
+  },
+  {
+    "center": 40,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16385099999752128
+  },
+  {
+    "center": 40,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19503619999886723
+  },
+  {
+    "center": 40,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05554909999773372
+  },
+  {
+    "center": 40,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17616149999957997
+  },
+  {
+    "center": 40,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18782369999826187
+  },
+  {
+    "center": 40,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.10760920000029728
+  },
+  {
+    "center": 40,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06893810000474332
+  },
+  {
+    "center": 40,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07883649999712361
+  },
+  {
+    "center": 40,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17280749999918044
+  },
+  {
+    "center": 40,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18472399999882327
+  },
+  {
+    "center": 40,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06546309999976074
+  },
+  {
+    "center": 41,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04713839999749325
+  },
+  {
+    "center": 41,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2980786000043736
+  },
+  {
+    "center": 41,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2770531000060146
+  },
+  {
+    "center": 41,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.29770010000356706
+  },
+  {
+    "center": 41,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2947003000008408
+  },
+  {
+    "center": 41,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.336206799998763
+  },
+  {
+    "center": 41,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3703914000070654
+  },
+  {
+    "center": 41,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4145423000009032
+  },
+  {
+    "center": 41,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06361080000351649
+  },
+  {
+    "center": 41,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4526092999949469
+  },
+  {
+    "center": 41,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3719634999943082
+  },
+  {
+    "center": 41,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4029704999993555
+  },
+  {
+    "center": 41,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5157775999978185
+  },
+  {
+    "center": 41,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.5639557000031346
+  },
+  {
+    "center": 41,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7813339999993332
+  },
+  {
+    "center": 41,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.9631771999993362
+  },
+  {
+    "center": 41,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 1.1154759999990347
+  },
+  {
+    "center": 41,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 2.2692493999929866
+  },
+  {
+    "center": 41,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 2.900216800000635
+  },
+  {
+    "center": 41,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 2.69378929999948
+  },
+  {
+    "center": 41,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 2.5632601999968756
+  },
+  {
+    "center": 41,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 7.46735570000601
+  },
+  {
+    "center": 41,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 12.21469320000324
+  },
+  {
+    "center": 41,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 7.744826300004206
+  },
+  {
+    "center": 41,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 17.309814000000188
+  },
+  {
+    "center": 41,
+    "special": 25,
+    "status": "UNKNOWN",
+    "elapsed": 30.018448899994837
+  },
+  {
+    "center": 41,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.017691499997454
+  },
+  {
+    "center": 41,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.014850400002615
+  },
+  {
+    "center": 41,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.01161449999927
+  },
+  {
+    "center": 41,
+    "special": 29,
+    "status": "UNKNOWN",
+    "elapsed": 30.010650299998815
+  },
+  {
+    "center": 41,
+    "special": 30,
+    "status": "UNKNOWN",
+    "elapsed": 30.01477960000193
+  },
+  {
+    "center": 41,
+    "special": 31,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08682470000348985
+  },
+  {
+    "center": 41,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.057935500000894535
+  },
+  {
+    "center": 41,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0675859999973909
+  },
+  {
+    "center": 41,
+    "special": 34,
+    "status": "UNKNOWN",
+    "elapsed": 30.01487140000245
+  },
+  {
+    "center": 41,
+    "special": 35,
+    "status": "UNKNOWN",
+    "elapsed": 30.01684419999947
+  },
+  {
+    "center": 41,
+    "special": 36,
+    "status": "UNKNOWN",
+    "elapsed": 30.01107619999675
+  },
+  {
+    "center": 41,
+    "special": 37,
+    "status": "UNKNOWN",
+    "elapsed": 30.007126899996365
+  },
+  {
+    "center": 41,
+    "special": 38,
+    "status": "UNKNOWN",
+    "elapsed": 30.013451599996188
+  },
+  {
+    "center": 41,
+    "special": 39,
+    "status": "UNKNOWN",
+    "elapsed": 30.010972599993693
+  },
+  {
+    "center": 41,
+    "special": 40,
+    "status": "INFEASIBLE",
+    "elapsed": 0.056331200001295656
+  },
+  {
+    "center": 41,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07745509999949718
+  },
+  {
+    "center": 41,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08647070000006352
+  },
+  {
+    "center": 41,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1332232999993721
+  },
+  {
+    "center": 41,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.13472700000420446
+  },
+  {
+    "center": 41,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04838720000407193
+  },
+  {
+    "center": 41,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.16405780000059167
+  },
+  {
+    "center": 41,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17843129999528173
+  },
+  {
+    "center": 41,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1580580000008922
+  },
+  {
+    "center": 41,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05751410000084434
+  },
+  {
+    "center": 41,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07121699999697739
+  },
+  {
+    "center": 41,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06731429999490501
+  },
+  {
+    "center": 41,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17867520000436343
+  },
+  {
+    "center": 41,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04495889999816427
+  },
+  {
+    "center": 42,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.061403299994708505
+  },
+  {
+    "center": 42,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20868070000142325
+  },
+  {
+    "center": 42,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17240400000446243
+  },
+  {
+    "center": 42,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.22773980000056326
+  },
+  {
+    "center": 42,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2751155000005383
+  },
+  {
+    "center": 42,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.27671900000132155
+  },
+  {
+    "center": 42,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.30377800000132993
+  },
+  {
+    "center": 42,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3751999000014621
+  },
+  {
+    "center": 42,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05867170000419719
+  },
+  {
+    "center": 42,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3547459000037634
+  },
+  {
+    "center": 42,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4118832999956794
+  },
+  {
+    "center": 42,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.38597589999699267
+  },
+  {
+    "center": 42,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4046396000048844
+  },
+  {
+    "center": 42,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.45273189999716124
+  },
+  {
+    "center": 42,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7634080999996513
+  },
+  {
+    "center": 42,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 0.768325700002606
+  },
+  {
+    "center": 42,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 1.270227100001648
+  },
+  {
+    "center": 42,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 1.2330557000022964
+  },
+  {
+    "center": 42,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 1.8397645000004559
+  },
+  {
+    "center": 42,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 2.5842565999992075
+  },
+  {
+    "center": 42,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 2.9259391000014148
+  },
+  {
+    "center": 42,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 3.8984791000038967
+  },
+  {
+    "center": 42,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 7.083295000004
+  },
+  {
+    "center": 42,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 9.18666989999474
+  },
+  {
+    "center": 42,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 11.840178899998136
+  },
+  {
+    "center": 42,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 27.9070864000023
+  },
+  {
+    "center": 42,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.01025590000063
+  },
+  {
+    "center": 42,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.017973800000618
+  },
+  {
+    "center": 42,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.02675600000657
+  },
+  {
+    "center": 42,
+    "special": 29,
+    "status": "UNKNOWN",
+    "elapsed": 30.011630799999693
+  },
+  {
+    "center": 42,
+    "special": 30,
+    "status": "UNKNOWN",
+    "elapsed": 30.014563200005796
+  },
+  {
+    "center": 42,
+    "special": 31,
+    "status": "UNKNOWN",
+    "elapsed": 30.01383469999564
+  },
+  {
+    "center": 42,
+    "special": 32,
+    "status": "INFEASIBLE",
+    "elapsed": 0.085101399999985
+  },
+  {
+    "center": 42,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05540630000177771
+  },
+  {
+    "center": 42,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06641919999674428
+  },
+  {
+    "center": 42,
+    "special": 35,
+    "status": "UNKNOWN",
+    "elapsed": 30.013222900000983
+  },
+  {
+    "center": 42,
+    "special": 36,
+    "status": "UNKNOWN",
+    "elapsed": 30.010106599998835
+  },
+  {
+    "center": 42,
+    "special": 37,
+    "status": "UNKNOWN",
+    "elapsed": 30.011867000001075
+  },
+  {
+    "center": 42,
+    "special": 38,
+    "status": "UNKNOWN",
+    "elapsed": 30.011721900002158
+  },
+  {
+    "center": 42,
+    "special": 39,
+    "status": "UNKNOWN",
+    "elapsed": 30.011435499996878
+  },
+  {
+    "center": 42,
+    "special": 40,
+    "status": "UNKNOWN",
+    "elapsed": 30.0203388000009
+  },
+  {
+    "center": 42,
+    "special": 41,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07664929999737069
+  },
+  {
+    "center": 42,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06142589999944903
+  },
+  {
+    "center": 42,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06464280000363942
+  },
+  {
+    "center": 42,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07317699999839533
+  },
+  {
+    "center": 42,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06656689999363152
+  },
+  {
+    "center": 42,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18939220000174828
+  },
+  {
+    "center": 42,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.18171070000244072
+  },
+  {
+    "center": 42,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1623178999943775
+  },
+  {
+    "center": 42,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.19051980000222102
+  },
+  {
+    "center": 42,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0744023000006564
+  },
+  {
+    "center": 42,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.09367370000109076
+  },
+  {
+    "center": 42,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06813259999762522
+  },
+  {
+    "center": 42,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0461801000055857
+  },
+  {
+    "center": 43,
+    "special": 0,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05258400000457186
+  },
+  {
+    "center": 43,
+    "special": 1,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1807517999986885
+  },
+  {
+    "center": 43,
+    "special": 2,
+    "status": "INFEASIBLE",
+    "elapsed": 0.1905006000015419
+  },
+  {
+    "center": 43,
+    "special": 3,
+    "status": "INFEASIBLE",
+    "elapsed": 0.2566556999954628
+  },
+  {
+    "center": 43,
+    "special": 4,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3196918000030564
+  },
+  {
+    "center": 43,
+    "special": 5,
+    "status": "INFEASIBLE",
+    "elapsed": 0.29572499999630963
+  },
+  {
+    "center": 43,
+    "special": 6,
+    "status": "INFEASIBLE",
+    "elapsed": 0.3339479999995092
+  },
+  {
+    "center": 43,
+    "special": 7,
+    "status": "INFEASIBLE",
+    "elapsed": 0.39052040000387933
+  },
+  {
+    "center": 43,
+    "special": 8,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05855090000113705
+  },
+  {
+    "center": 43,
+    "special": 9,
+    "status": "INFEASIBLE",
+    "elapsed": 0.43139810000138823
+  },
+  {
+    "center": 43,
+    "special": 10,
+    "status": "INFEASIBLE",
+    "elapsed": 0.4499731000032625
+  },
+  {
+    "center": 43,
+    "special": 11,
+    "status": "INFEASIBLE",
+    "elapsed": 0.37794579999899724
+  },
+  {
+    "center": 43,
+    "special": 12,
+    "status": "INFEASIBLE",
+    "elapsed": 0.406152600000496
+  },
+  {
+    "center": 43,
+    "special": 13,
+    "status": "INFEASIBLE",
+    "elapsed": 0.548004199998104
+  },
+  {
+    "center": 43,
+    "special": 14,
+    "status": "INFEASIBLE",
+    "elapsed": 0.7047086000020499
+  },
+  {
+    "center": 43,
+    "special": 15,
+    "status": "INFEASIBLE",
+    "elapsed": 1.077185299996927
+  },
+  {
+    "center": 43,
+    "special": 16,
+    "status": "INFEASIBLE",
+    "elapsed": 1.3931993000005605
+  },
+  {
+    "center": 43,
+    "special": 17,
+    "status": "INFEASIBLE",
+    "elapsed": 1.8915645000015502
+  },
+  {
+    "center": 43,
+    "special": 18,
+    "status": "INFEASIBLE",
+    "elapsed": 2.6276968000020133
+  },
+  {
+    "center": 43,
+    "special": 19,
+    "status": "INFEASIBLE",
+    "elapsed": 1.9328993000017363
+  },
+  {
+    "center": 43,
+    "special": 20,
+    "status": "INFEASIBLE",
+    "elapsed": 2.6340863999939756
+  },
+  {
+    "center": 43,
+    "special": 21,
+    "status": "INFEASIBLE",
+    "elapsed": 4.043781099993794
+  },
+  {
+    "center": 43,
+    "special": 22,
+    "status": "INFEASIBLE",
+    "elapsed": 6.758795900001132
+  },
+  {
+    "center": 43,
+    "special": 23,
+    "status": "INFEASIBLE",
+    "elapsed": 11.877508799996576
+  },
+  {
+    "center": 43,
+    "special": 24,
+    "status": "INFEASIBLE",
+    "elapsed": 13.511519799998496
+  },
+  {
+    "center": 43,
+    "special": 25,
+    "status": "INFEASIBLE",
+    "elapsed": 23.326480599993374
+  },
+  {
+    "center": 43,
+    "special": 26,
+    "status": "UNKNOWN",
+    "elapsed": 30.015390799999295
+  },
+  {
+    "center": 43,
+    "special": 27,
+    "status": "UNKNOWN",
+    "elapsed": 30.013014800002566
+  },
+  {
+    "center": 43,
+    "special": 28,
+    "status": "UNKNOWN",
+    "elapsed": 30.016456799996377
+  },
+  {
+    "center": 43,
+    "special": 29,
+    "status": "UNKNOWN",
+    "elapsed": 30.011994300002698
+  },
+  {
+    "center": 43,
+    "special": 30,
+    "status": "UNKNOWN",
+    "elapsed": 30.01285569999891
+  },
+  {
+    "center": 43,
+    "special": 31,
+    "status": "UNKNOWN",
+    "elapsed": 30.012192599999253
+  },
+  {
+    "center": 43,
+    "special": 32,
+    "status": "UNKNOWN",
+    "elapsed": 30.010673400000087
+  },
+  {
+    "center": 43,
+    "special": 33,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07964739999442827
+  },
+  {
+    "center": 43,
+    "special": 34,
+    "status": "INFEASIBLE",
+    "elapsed": 0.0743367000031867
+  },
+  {
+    "center": 43,
+    "special": 35,
+    "status": "INFEASIBLE",
+    "elapsed": 0.07574690000183182
+  },
+  {
+    "center": 43,
+    "special": 36,
+    "status": "UNKNOWN",
+    "elapsed": 30.008274799998617
+  },
+  {
+    "center": 43,
+    "special": 37,
+    "status": "UNKNOWN",
+    "elapsed": 30.009371100000862
+  },
+  {
+    "center": 43,
+    "special": 38,
+    "status": "UNKNOWN",
+    "elapsed": 30.008557599998312
+  },
+  {
+    "center": 43,
+    "special": 39,
+    "status": "UNKNOWN",
+    "elapsed": 30.009420800000953
+  },
+  {
+    "center": 43,
+    "special": 40,
+    "status": "UNKNOWN",
+    "elapsed": 30.00860400000238
+  },
+  {
+    "center": 43,
+    "special": 41,
+    "status": "UNKNOWN",
+    "elapsed": 30.01042160000361
+  },
+  {
+    "center": 43,
+    "special": 42,
+    "status": "INFEASIBLE",
+    "elapsed": 0.054470800001581665
+  },
+  {
+    "center": 43,
+    "special": 43,
+    "status": "INFEASIBLE",
+    "elapsed": 0.08161790000303881
+  },
+  {
+    "center": 43,
+    "special": 44,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06427329999860376
+  },
+  {
+    "center": 43,
+    "special": 45,
+    "status": "INFEASIBLE",
+    "elapsed": 0.04826840000168886
+  },
+  {
+    "center": 43,
+    "special": 46,
+    "status": "INFEASIBLE",
+    "elapsed": 0.12627549999888288
+  },
+  {
+    "center": 43,
+    "special": 47,
+    "status": "INFEASIBLE",
+    "elapsed": 0.15940829999453854
+  },
+  {
+    "center": 43,
+    "special": 48,
+    "status": "INFEASIBLE",
+    "elapsed": 0.20789679999870714
+  },
+  {
+    "center": 43,
+    "special": 49,
+    "status": "INFEASIBLE",
+    "elapsed": 0.202595000002475
+  },
+  {
+    "center": 43,
+    "special": 50,
+    "status": "INFEASIBLE",
+    "elapsed": 0.17650960000173654
+  },
+  {
+    "center": 43,
+    "special": 51,
+    "status": "INFEASIBLE",
+    "elapsed": 0.061869600001955405
+  },
+  {
+    "center": 43,
+    "special": 52,
+    "status": "INFEASIBLE",
+    "elapsed": 0.06255019999662181
+  },
+  {
+    "center": 43,
+    "special": 53,
+    "status": "INFEASIBLE",
+    "elapsed": 0.05248840000422206
+  }
+]

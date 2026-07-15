@@ -1,0 +1,25 @@
+{
+  "rows": 6,
+  "columns": 9,
+  "rod_budget": 25,
+  "exact_rods": true,
+  "enabled_components": "all",
+  "component_limits": {},
+  "probe_layouts": [
+    {
+      "rows": [
+        "QQQQQQS..",
+        ".........",
+        ".........",
+        ".........",
+        ".........",
+        "........."
+      ],
+      "symbols": {
+        ".": "empty",
+        "S": "uranium_single",
+        "Q": "uranium_quad"
+      }
+    }
+  ]
+}

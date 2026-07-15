@@ -1,0 +1,422 @@
+{
+  "lower_bound": 380,
+  "upper_bound": 460,
+  "proven_global": false,
+  "stop_reason": "unknown_nodes",
+  "elapsed_seconds": 29.197505699999965,
+  "processed_nodes": 24,
+  "initial_upper_bound": 460,
+  "analytical_proof": {
+    "power_upper_bound": 460,
+    "excluded_power_levels": [
+      480,
+      475,
+      470,
+      465
+    ],
+    "assumptions": [
+      "54-cell undirected graph of maximum degree four",
+      "exactly 25 rods with IC2 S/D/Q bundle equations",
+      "all persistent vents remove at most 20 heat per occupied slot",
+      "two distinct cells share at most two neighbours",
+      "row-ordered overclocked hull draw is 36 and its best tight-tier sink is 24"
+    ],
+    "checks": {
+      "minimum_heat_480": 936,
+      "seven_active_cooling": 940,
+      "minimum_quad_heat": 96,
+      "best_quad_direct_sink": 88,
+      "minimum_heat_475": 920,
+      "seven_active_degree_sum": 7,
+      "aggregate_patterns_470": 13,
+      "minimum_470_relief_margin": 180,
+      "aggregate_patterns_465": 82,
+      "minimum_465_relief_margin": 40
+    },
+    "derivation": "discrete convexity fixes the tight heat budget; the 480 layer then has insufficient local quad cooling (including the only possible component-vent gain), while the final seven-active branch of the 475 layer violates the handshaking parity lemma; the 470 layer has only thirteen aggregate fuel-degree patterns, each of which requires more local overload relief than its cooling slack can buy; the same count-space proof closes 465 after generously crediting every directly-fed exchanger with 108/t"
+  },
+  "best_witness": {
+    "objective_value": 380,
+    "layout": [
+      "uranium_quad",
+      "component_heat_vent",
+      "overclocked_heat_vent",
+      "component_heat_exchanger",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "component_heat_vent",
+      "iridium_reflector",
+      "reactor_plating",
+      "empty",
+      "component_heat_vent",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "component_heat_vent",
+      "overclocked_heat_vent",
+      "iridium_reflector",
+      "uranium_single",
+      "iridium_reflector",
+      "reactor_plating",
+      "overclocked_heat_vent",
+      "uranium_quad",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "uranium_quad",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "component_heat_exchanger",
+      "component_heat_vent",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "component_heat_vent",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "component_heat_vent",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "uranium_quad",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "uranium_quad",
+      "overclocked_heat_vent",
+      "overclocked_heat_vent",
+      "uranium_quad",
+      "overclocked_heat_vent",
+      "component_heat_vent",
+      "overclocked_heat_vent",
+      "component_heat_vent",
+      "reactor_plating",
+      "overclocked_heat_vent",
+      "component_heat_vent",
+      "reactor_plating",
+      "overclocked_heat_vent",
+      "component_heat_vent"
+    ],
+    "cycle": {
+      "outcome": "safe_cycle",
+      "transient_length": 380,
+      "period_length": 18,
+      "checked_steps": 398
+    },
+    "proof": {
+      "kind": "reachable_safe_cycle",
+      "statement": "an exact integer state reachable from the prescribed initial state repeats without failure",
+      "data": {
+        "transient": 380,
+        "period": 18,
+        "checked_steps": 398
+      }
+    }
+  },
+  "open_nodes": [
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14/b15/b16/b17/b18/b19/b20/b21/b22/b23",
+      "strict_upper_bound": 460,
+      "iteration": 23,
+      "cut_count": 23,
+      "fixed_unknown_candidate": false
+    }
+  ],
+  "closed_nodes": [
+    {
+      "node_id": "ic2_root",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_c6474e031185ba09",
+          "iteration": 0
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_1de5f72fde11a5b9",
+          "iteration": 1
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_ae14bb3fae0e51f1",
+          "iteration": 2
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_be0a96dd8a4d12a1",
+          "iteration": 3
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_b51fc7d683744617",
+          "iteration": 4
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_63e8dc746b4a5e93",
+          "iteration": 5
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_99360fa5e0f05586",
+          "iteration": 6
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_45b88d82612cd8a3",
+          "iteration": 7
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_0114fa6eddfd7cc7",
+          "iteration": 8
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_6147e69d256a6e1e",
+          "iteration": 9
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_12f92c785886f28d",
+          "iteration": 10
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_543b8a8237fc5b0d",
+          "iteration": 11
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_6ce9a6e5f6e36493",
+          "iteration": 12
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_85873b8d249662eb",
+          "iteration": 13
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_0af2ee0a19866c01",
+          "iteration": 14
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14/b15",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_12e005a5f8edde23",
+          "iteration": 15
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14/b15/b16",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_51825effd4374613",
+          "iteration": 16
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14/b15/b16/b17",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_d932438a2f94cb7a",
+          "iteration": 17
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14/b15/b16/b17/b18",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_2f056d2376906f71",
+          "iteration": 18
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14/b15/b16/b17/b18/b19",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_83a22c8ee37c2377",
+          "iteration": 19
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14/b15/b16/b17/b18/b19/b20",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_c3c2fe331c64142b",
+          "iteration": 20
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14/b15/b16/b17/b18/b19/b20/b21",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_3dd4092350613968",
+          "iteration": 21
+        }
+      }
+    },
+    {
+      "node_id": "ic2_root/b1/b2/b3/b4/b5/b6/b7/b8/b9/b10/b11/b12/b13/b14/b15/b16/b17/b18/b19/b20/b21/b22",
+      "upper_bound": 460,
+      "reason": "partitioned",
+      "proof": {
+        "kind": "logic_benders_partition",
+        "statement": "the certified cut removes only the checked feasible singleton or a subproblem-proven infeasible region; the child is the exact residual",
+        "data": {
+          "cut_id": "thermal_cut_9afb9216b3882038",
+          "iteration": 22
+        }
+      }
+    }
+  ]
+}

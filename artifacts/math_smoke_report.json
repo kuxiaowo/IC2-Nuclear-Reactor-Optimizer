@@ -1,0 +1,175 @@
+{
+  "lower_bound": 380,
+  "upper_bound": 460,
+  "proven_global": false,
+  "best_layout": [
+    "uranium_quad",
+    "component_heat_vent",
+    "overclocked_heat_vent",
+    "component_heat_exchanger",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "component_heat_vent",
+    "iridium_reflector",
+    "reactor_plating",
+    "empty",
+    "component_heat_vent",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "component_heat_vent",
+    "overclocked_heat_vent",
+    "iridium_reflector",
+    "uranium_single",
+    "iridium_reflector",
+    "reactor_plating",
+    "overclocked_heat_vent",
+    "uranium_quad",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "uranium_quad",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "component_heat_exchanger",
+    "component_heat_vent",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "component_heat_vent",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "component_heat_vent",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "uranium_quad",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "uranium_quad",
+    "overclocked_heat_vent",
+    "overclocked_heat_vent",
+    "uranium_quad",
+    "overclocked_heat_vent",
+    "component_heat_vent",
+    "overclocked_heat_vent",
+    "component_heat_vent",
+    "reactor_plating",
+    "overclocked_heat_vent",
+    "component_heat_vent",
+    "reactor_plating",
+    "overclocked_heat_vent",
+    "component_heat_vent"
+  ],
+  "best_cycle": {
+    "outcome": "safe_cycle",
+    "safe": true,
+    "conclusive": true,
+    "power": 380,
+    "generated_heat": 616,
+    "transient_length": 380,
+    "period_length": 18,
+    "checked_ticks": 398,
+    "peak_hull_heat": 0,
+    "peak_component_heat": 396,
+    "failure_tick": null,
+    "failure_component": null
+  },
+  "closed_form_upper_bound": 480,
+  "static_master_upper_bound": 480,
+  "analytical_cut_upper_bound": 460,
+  "analytical_cuts": [
+    480,
+    475,
+    470,
+    465
+  ],
+  "closed_form_proof": {
+    "power_upper_bound": 480,
+    "pulse_units_upper_bound": 96,
+    "heat_at_bound": 936,
+    "cooling_upper_bound": 940,
+    "rods_used_for_bound": 25,
+    "minimum_fuel_cells": 7,
+    "derivation": "integer convexity of q(p)=heat_scale*p*(p+1), minimum fuel-cell count, and optimistic persistent-vent heat conservation"
+  },
+  "analytical_proof": {
+    "power_upper_bound": 460,
+    "excluded_power_levels": [
+      480,
+      475,
+      470,
+      465
+    ],
+    "assumptions": [
+      "54-cell undirected graph of maximum degree four",
+      "exactly 25 rods with IC2 S/D/Q bundle equations",
+      "all persistent vents remove at most 20 heat per occupied slot",
+      "two distinct cells share at most two neighbours",
+      "row-ordered overclocked hull draw is 36 and its best tight-tier sink is 24"
+    ],
+    "checks": [
+      [
+        "minimum_heat_480",
+        936
+      ],
+      [
+        "seven_active_cooling",
+        940
+      ],
+      [
+        "minimum_quad_heat",
+        96
+      ],
+      [
+        "best_quad_direct_sink",
+        88
+      ],
+      [
+        "minimum_heat_475",
+        920
+      ],
+      [
+        "seven_active_degree_sum",
+        7
+      ],
+      [
+        "aggregate_patterns_470",
+        13
+      ],
+      [
+        "minimum_470_relief_margin",
+        180
+      ],
+      [
+        "aggregate_patterns_465",
+        82
+      ],
+      [
+        "minimum_465_relief_margin",
+        40
+      ]
+    ],
+    "derivation": "discrete convexity fixes the tight heat budget; the 480 layer then has insufficient local quad cooling (including the only possible component-vent gain), while the final seven-active branch of the 475 layer violates the handshaking parity lemma; the 470 layer has only thirteen aggregate fuel-degree patterns, each of which requires more local overload relief than its cooling slack can buy; the same count-space proof closes 465 after generously crediting every directly-fed exchanger with 108/t"
+  },
+  "static_master_status": "UNKNOWN",
+  "static_master_proven_optimal": false,
+  "elapsed_seconds": 2.020986399999856,
+  "tiers": [],
+  "open_power_tiers": [
+    460,
+    455,
+    450,
+    445,
+    440,
+    435,
+    430,
+    425,
+    420,
+    415,
+    410,
+    405,
+    400,
+    395,
+    390,
+    385
+  ],
+  "statement": "certified interval: 380 <= optimum <= 460 EU/t; open tiers are not claimed infeasible"
+}

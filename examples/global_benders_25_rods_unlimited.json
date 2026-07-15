@@ -1,0 +1,35 @@
+{
+  "rows": 6,
+  "columns": 9,
+  "rod_budget": 25,
+  "exact_rods": true,
+  "enabled_components": "all",
+  "component_limits": {},
+  "time_limit_seconds": 21600,
+  "workers": 30,
+  "master_fraction": 0.95,
+  "thermal_horizon": 100000,
+  "known_layouts": [
+    {
+      "rows": [
+        "QCOXOOCRP",
+        ".COOCORSR",
+        "POQOOQOOX",
+        "COOCOOCOO",
+        "OQOOQOOQO",
+        "COCPOCPOC"
+      ],
+      "symbols": {
+        ".": "empty",
+        "S": "uranium_single",
+        "D": "uranium_dual",
+        "Q": "uranium_quad",
+        "R": "iridium_reflector",
+        "O": "overclocked_heat_vent",
+        "C": "component_heat_vent",
+        "X": "component_heat_exchanger",
+        "P": "reactor_plating"
+      }
+    }
+  ]
+}

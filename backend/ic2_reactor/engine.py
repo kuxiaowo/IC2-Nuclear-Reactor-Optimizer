@@ -425,6 +425,23 @@ class ReactorSimulator:
                 values.append(slot.damage)
         return tuple(values)
 
+    def thermal_state_signature(self) -> tuple[int, ...]:
+        """Minimal future-relevant key for a fixed auto-refuel layout.
+
+        Component ids are fixed within one trajectory.  Zero-capacity heat,
+        zero-durability damage and fuel damage cannot affect future thermal
+        transitions, so repeating them in every cycle key only wastes hashing
+        and memory.
+        """
+
+        values = [self.hull_heat]
+        for slot in self.slots:
+            if slot.spec.accepts_heat:
+                values.append(slot.heat)
+            if slot.spec.kind != "fuel" and slot.spec.max_damage > 0:
+                values.append(slot.damage)
+        return tuple(values)
+
     def _fast_forward_fixed_state(self, target_tick: int, eu_per_tick: float) -> None:
         """Advance a proven thermal fixed point without replaying every cycle.
 

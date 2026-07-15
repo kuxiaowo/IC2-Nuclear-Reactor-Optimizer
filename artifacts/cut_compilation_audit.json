@@ -1,0 +1,123 @@
+{
+  "scope": "fixed-skeleton partial evaluation and cut compilation only; no layout DP, objective search, cycle simulation, or GPU kernel",
+  "problem": {
+    "rows": 6,
+    "columns": 9,
+    "rod_budget": 25,
+    "labels": 22,
+    "probe_layouts": 1,
+    "conditioned_probe_index": 0,
+    "fixed_nonempty_power_cells": 7
+  },
+  "probe_cuts": {
+    "average_necessary_condition_satisfied": [
+      false
+    ],
+    "prefix_feasible": [
+      false
+    ]
+  },
+  "compilation": {
+    "proven": true,
+    "elapsed_seconds": 2.6727069999997184,
+    "stop_reason": "skeleton_conditioned_cuts_compiled",
+    "selection": {
+      "candidate_order_count": 4,
+      "placement_order": [
+        0,
+        9,
+        18,
+        27,
+        36,
+        45,
+        1,
+        10,
+        19,
+        28,
+        37,
+        46,
+        2,
+        11,
+        20,
+        29,
+        38,
+        47,
+        3,
+        12,
+        21,
+        30,
+        39,
+        48,
+        4,
+        13,
+        22,
+        31,
+        40,
+        49,
+        5,
+        14,
+        23,
+        32,
+        41,
+        50,
+        6,
+        15,
+        24,
+        33,
+        42,
+        51,
+        7,
+        16,
+        25,
+        34,
+        43,
+        52,
+        8,
+        17,
+        26,
+        35,
+        44,
+        53
+      ],
+      "structural_state_product_bound": 2,
+      "submitted_cut_count": 2,
+      "distinct_factor_constraint_count": 2,
+      "raw_factor_table_entries": 2860,
+      "quotient_factor_table_entries": 1403,
+      "per_variable_representations": 1,
+      "residual_function_representations": 0,
+      "submitted_layout_no_goods": 0,
+      "relevant_layout_no_goods": 0,
+      "no_good_trie_nodes": 0,
+      "joint_per_variable_representation": true,
+      "separate_constraint_state_bounds": [
+        2,
+        3
+      ],
+      "cut_score_chain_bounds": [
+        [
+          0,
+          1372
+        ],
+        [
+          0,
+          1372
+        ]
+      ],
+      "cut_score_antichain_width_bound": 1373,
+      "cut_score_antichain_width_exact": true,
+      "inventory_chain_bounds": [],
+      "resource_antichain_width_bound": 1373,
+      "resource_antichain_width_exact": true,
+      "peak_pareto_points_without_no_goods_bound": 2746,
+      "raw_transitions_without_no_goods_bound": 2342338,
+      "fixed_inventory_infeasible": false,
+      "specialized_factor_cache_hits": 0,
+      "specialized_factor_cache_misses": 162,
+      "specialized_factor_cache_entries": 162,
+      "specialized_factor_cache_limit": 20000,
+      "maximum_local_specializations_for_submitted_cuts": 6670,
+      "lower_order_factor_decompositions": 48
+    }
+  }
+}
