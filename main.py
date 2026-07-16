@@ -8,6 +8,17 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
+BACKEND_ROOT = PROJECT_ROOT / "backend"
+
+# Windows ``spawn`` executes this file as ``__mp_main__`` without calling
+# ``main()`` before unpickling worker functions.  The source checkout's
+# package directory therefore has to be registered at module import time.
+# Always import the package by its installed/canonical name afterwards so
+# Numba caches and child processes never see both ``backend.ic2_reactor`` and
+# ``ic2_reactor`` as different modules.
+backend_path = str(BACKEND_ROOT)
+if backend_path not in sys.path:
+    sys.path.insert(0, backend_path)
 
 
 def main() -> None:
@@ -15,8 +26,8 @@ def main() -> None:
     # directory from which ``python path/to/main.py`` was invoked.
     os.chdir(PROJECT_ROOT)
 
-    from backend.ic2_reactor.__main__ import argument_parser, serve
-    from backend.ic2_reactor.launcher import FrontendBuildError, prepare_frontend
+    from ic2_reactor.__main__ import argument_parser, serve
+    from ic2_reactor.launcher import FrontendBuildError, prepare_frontend
 
     parser = argument_parser()
     build_group = parser.add_mutually_exclusive_group()

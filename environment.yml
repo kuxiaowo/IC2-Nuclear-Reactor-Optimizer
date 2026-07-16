@@ -8,6 +8,7 @@ dependencies:
   - pydantic>=2.8
   - numpy>=2.0
   - numba>=0.61
+  - numba-cuda>=0.30
   - h5py>=3.12
   - httpx>=0.27
   - pytest>=8.3

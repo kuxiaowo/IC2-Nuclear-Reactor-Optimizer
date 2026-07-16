@@ -1,12 +1,33 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from functools import lru_cache
 from math import floor
 from typing import Callable
 
 from .components import COMPONENTS, ComponentSpec
 from .mark import FUEL_CYCLE_REACTOR_TICKS, classify_mark
 from .models import EventType, Layout, ReactorEvent, SimulationSummary, StopReason
+
+
+@lru_cache(maxsize=7)
+def _neighbor_table(columns: int) -> tuple[tuple[int, ...], ...]:
+    """Return the immutable six-row neighbor table for a chamber width."""
+    slots = columns * 6
+    table: list[tuple[int, ...]] = []
+    for index in range(slots):
+        row, col = divmod(index, columns)
+        neighbors: list[int] = []
+        if col > 0:
+            neighbors.append(index - 1)
+        if col + 1 < columns:
+            neighbors.append(index + 1)
+        if row > 0:
+            neighbors.append(index - columns)
+        if row < 5:
+            neighbors.append(index + columns)
+        table.append(tuple(neighbors))
+    return tuple(table)
 
 
 @dataclass(slots=True)
@@ -73,13 +94,41 @@ class ReactorSimulator:
     OFFICIAL_NEIGHBOR_ORDER = ("left", "right", "up", "down")
 
     def __init__(self, layout: Layout):
-        self.columns = layout.columns
-        self.slots = [SlotState(component_id=item) for item in layout.slots]
-        self._neighbor_indices = tuple(
-            self._calculate_neighbors(index) for index in range(len(self.slots))
+        self._initialize(layout.columns, layout.slots, layout.initial_hull_heat)
+
+    @classmethod
+    def from_slots(
+        cls,
+        columns: int,
+        component_ids: tuple[str, ...] | list[str],
+        initial_hull_heat: int = 0,
+    ) -> "ReactorSimulator":
+        """Construct a simulator from already validated optimizer data.
+
+        Search-generated layouts already satisfy the public ``Layout`` model.
+        This path avoids rebuilding a Pydantic model for every candidate and is
+        also the scalar reference entry point for a future packed batch kernel.
+        """
+        if len(component_ids) != columns * 6:
+            raise ValueError("component_ids length must equal 6 * columns")
+        simulator = cls.__new__(cls)
+        simulator._initialize(columns, component_ids, initial_hull_heat)
+        return simulator
+
+    def _initialize(
+        self,
+        columns: int,
+        component_ids: tuple[str, ...] | list[str],
+        initial_hull_heat: int,
+    ) -> None:
+        self.columns = columns
+        self.initial_component_ids = tuple(component_ids)
+        self.slots = [SlotState(component_id=item) for item in self.initial_component_ids]
+        self._nonfuel_indices = tuple(
+            index for index, slot in enumerate(self.slots) if slot.spec.kind != "fuel"
         )
-        self.initial_component_ids = tuple(layout.slots)
-        self.hull_heat = layout.initial_hull_heat
+        self._neighbor_indices = _neighbor_table(columns)
+        self.hull_heat = initial_hull_heat
         self.max_hull_heat = self.BASE_HULL_HEAT + sum(
             slot.spec.hull_capacity_bonus for slot in self.slots
         )
@@ -97,20 +146,6 @@ class ReactorSimulator:
             or (COMPONENTS[item].kind == "reflector" and COMPONENTS[item].max_damage > 0)
             for item in self.initial_component_ids
         )
-
-    def _calculate_neighbors(self, index: int) -> tuple[int, ...]:
-        row, col = divmod(index, self.columns)
-        result: list[int] = []
-        for direction in self.OFFICIAL_NEIGHBOR_ORDER:
-            if direction == "left" and col > 0:
-                result.append(index - 1)
-            elif direction == "right" and col + 1 < self.columns:
-                result.append(index + 1)
-            elif direction == "up" and row > 0:
-                result.append(index - self.columns)
-            elif direction == "down" and row < 5:
-                result.append(index + self.columns)
-        return tuple(result)
 
     def _neighbors(self, index: int) -> tuple[int, ...]:
         return self._neighbor_indices[index]
@@ -425,6 +460,28 @@ class ReactorSimulator:
                 values.append(slot.damage)
         return tuple(values)
 
+    def fixed_point_signature(self) -> int:
+        """Compact exact state used before any non-fuel intervention.
+
+        With optimizer auto-refuelling, fuel replacement preserves its component
+        id and fuel damage is thermally irrelevant.  Before the first non-fuel
+        break every other component id is also invariant, so only hull heat,
+        per-slot heat and non-fuel damage need comparing.  The full signature is
+        still used for general periodic-state detection after interventions.
+        """
+        # Every supported hull/component heat and damage field is below 2^20.
+        # Packing them into disjoint bit ranges is collision-free and avoids a
+        # short-lived Python tuple on every simulated reactor cycle.
+        signature = self.hull_heat
+        shift = 20
+        for slot in self.slots:
+            signature |= slot.heat << shift
+            shift += 20
+        for index in self._nonfuel_indices:
+            signature |= self.slots[index].damage << shift
+            shift += 20
+        return signature
+
     def _fast_forward_fixed_state(self, target_tick: int, eu_per_tick: float) -> None:
         """Advance a proven thermal fixed point without replaying every cycle.
 
@@ -468,7 +525,7 @@ class ReactorSimulator:
         safe_eu = 0.0
         safe_cycle_count = 0
         can_fast_forward = options.auto_refuel and options.stop_on_stable and not options.record_history
-        previous_thermal_state = self.state_signature(include_fuel_damage=False) if can_fast_forward else None
+        previous_thermal_state = self.fixed_point_signature() if can_fast_forward else None
 
         for cycle in range(max_reactor_ticks):
             # Cross-process event checks are comparatively expensive. Polling
@@ -504,12 +561,15 @@ class ReactorSimulator:
                 reason = StopReason.MELTDOWN
                 break
 
-            if (
+            current_thermal_state = None
+            can_check_fixed_point = (
                 can_fast_forward
                 and self.first_critical_tick is None
                 and self.first_component_break_tick is None
-                and self.state_signature(include_fuel_damage=False) == previous_thermal_state
-            ):
+            )
+            if can_check_fixed_point:
+                current_thermal_state = self.fixed_point_signature()
+            if can_check_fixed_point and current_thermal_state == previous_thermal_state:
                 interval = options.stable_check_interval
                 stable_tick = ((self.reactor_tick + interval - 1) // interval + 1) * interval
                 target_tick = min(stable_tick, max_reactor_ticks)
@@ -529,8 +589,10 @@ class ReactorSimulator:
                 else:
                     reason = StopReason.TICK_LIMIT
                 break
-            if can_fast_forward:
-                previous_thermal_state = self.state_signature(include_fuel_damage=False)
+            if can_check_fixed_point:
+                previous_thermal_state = current_thermal_state
+            elif can_fast_forward:
+                previous_thermal_state = None
             if options.auto_refuel and self.reactor_tick % options.stable_check_interval == 0:
                 signature = self.state_signature(include_fuel_damage=False)
                 if signature in signatures:

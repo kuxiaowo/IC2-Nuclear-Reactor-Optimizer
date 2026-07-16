@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from enum import StrEnum
-import os
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from .components import COMPONENTS, RULESET_VERSION
+from .cpu_scheduling import recommended_cpu_workers
 
 
 class StopReason(StrEnum):
@@ -94,6 +94,7 @@ class SimulationCreated(BaseModel):
 
 class FuelConstraint(BaseModel):
     mode: Literal["separate", "total_rods"] = "separate"
+    usage: Literal["exact", "maximum"] = "exact"
     single: Annotated[int, Field(ge=0, le=54)] = 1
     dual: Annotated[int, Field(ge=0, le=54)] = 0
     quad: Annotated[int, Field(ge=0, le=54)] = 0
@@ -109,9 +110,12 @@ class OptimizationRequest(BaseModel):
     time_budget_seconds: Annotated[int, Field(ge=1, le=86_400)] = 30
     generations: Annotated[int, Field(ge=1, le=10_000)] = 100
     population: Annotated[int, Field(ge=10, le=2_000)] = 100
-    cpu_workers: Annotated[int, Field(ge=1, le=64)] = max(1, (os.cpu_count() or 2) - 1)
+    cpu_workers: Annotated[int, Field(ge=1, le=64)] = recommended_cpu_workers(2)
+    compute_backend: Literal["scalar", "numba_cpu", "cuda"] = "scalar"
+    result_limit: Annotated[int, Field(ge=1, le=100)] = 10
     seed: int = 221
     max_reactor_ticks: Annotated[int, Field(ge=2_000, le=1_000_000)] = 40_000
+    unresolved_max_reactor_ticks: Annotated[int, Field(ge=2_000, le=5_000_000)] | None = None
 
     @field_validator("component_limits")
     @classmethod
@@ -127,3 +131,21 @@ class OptimizationRequest(BaseModel):
         if not value:
             raise ValueError("至少选择一个 Mark")
         return list(dict.fromkeys(value))
+
+    @model_validator(mode="after")
+    def validate_exact_fuel_inventory(self) -> "OptimizationRequest":
+        if self.fuel.usage != "exact":
+            return self
+        slots = self.columns * 6
+        if self.fuel.mode == "separate":
+            fuel_slots = self.fuel.single + self.fuel.dual + self.fuel.quad
+            if fuel_slots <= 0:
+                raise ValueError("精确燃料数量必须至少包含一个燃料组件")
+            if fuel_slots > slots:
+                raise ValueError("精确燃料组件数量超过反应堆槽位数")
+        else:
+            if self.fuel.total_rods <= 0:
+                raise ValueError("精确实际棒数必须大于 0")
+            if self.fuel.total_rods > slots * 4:
+                raise ValueError("精确实际棒数无法放入当前反应堆槽位")
+        return self

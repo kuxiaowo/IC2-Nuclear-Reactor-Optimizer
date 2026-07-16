@@ -151,6 +151,16 @@ def cancel_optimization(job_id: str) -> dict:
     return {"status": "cancelling"}
 
 
+@app.post("/api/optimizations/{job_id}/pause")
+def pause_optimization(job_id: str) -> dict:
+    job = _get_job(job_id)
+    try:
+        job.pause()
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return job.snapshot()
+
+
 @app.post("/api/optimizations/{job_id}/resume")
 def resume_optimization(job_id: str) -> dict:
     try:
