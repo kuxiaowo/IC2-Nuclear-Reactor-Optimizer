@@ -39,6 +39,11 @@ CUDA_MAX_BATCH_SIZE = 16_384
 CUDA_MIN_BATCH_SIZE = 8_192
 CUDA_MAX_DIRECT_REACTOR_TICKS = 40_000
 EXHAUSTIVE_WARM_START_LAYOUTS = 512
+EXHAUSTIVE_WARM_VARIANTS = 512
+PARTIAL_COOLING_BOUND_INTERVAL = 4
+POWER_FRONTIER_DP_MAX_COLUMNS = 4
+POWER_FRONTIER_DP_MAX_VARIABLE_SLOTS = 18
+POWER_FRONTIER_DP_MAX_POWER_TYPES = 6
 CHECKPOINT_DIRECTORY = Path(".data/checkpoints")
 
 
@@ -170,6 +175,22 @@ def _power_edge_value(first: str, second: str) -> int:
     if second_spec.kind == "fuel" and first_spec.kind in {"fuel", "reflector"}:
         pulses += second_spec.rod_count
     return int(ReactorSimulator.EU_PER_PULSE) * pulses
+
+
+def _partial_skeleton_power_increment(
+    skeleton: list[str],
+    position: int,
+    item: str,
+    columns: int,
+) -> int:
+    """Exact new vertex/edge power in a row-major skeleton traversal."""
+    value = _power_vertex_value(item)
+    row, column = divmod(position, columns)
+    if column > 0:
+        value += _power_edge_value(skeleton[position - 1], item)
+    if row > 0:
+        value += _power_edge_value(skeleton[position - columns], item)
+    return value
 
 
 @lru_cache(maxsize=131_072)
@@ -362,22 +383,22 @@ def _partial_mark_i_heat_infeasible(
 
 
 @lru_cache(maxsize=131_072)
-def sustainable_vent_upper_bound(
-    skeleton: tuple[str, ...],
+def _sustainable_vent_upper_bound_from_mask(
+    free_mask: int,
+    slots: int,
     columns: int,
     cooling_caps: tuple[tuple[str, int], ...],
 ) -> int:
-    """Return an optimistic upper bound on indefinitely vented heat per tick.
+    """Return the vent bound for one power-occupation mask.
 
-    Heat exchangers only move heat, while coolant cells, condensators and
-    plating provide finite storage.  A self vent cannot reject more than its
-    ``self_vent`` value.  A component vent is optimistically allowed to cool
-    every free neighboring slot, even if those slots cannot all be occupied by
-    coolable components.  Ignoring those conflicts can only overestimate the
-    realizable cooling rate, which makes ``generated > bound`` a sound Mark I
-    infeasibility certificate.
+    Fuel and reflector identities do not enter this bound; only the positions
+    left available to cooling components do.  Using the mask as the cache key
+    therefore merges mathematically identical bound states without merging any
+    thermal simulation states.
     """
-    free_positions = tuple(index for index, item in enumerate(skeleton) if item == "empty")
+    free_positions = tuple(
+        index for index in range(slots) if free_mask & (1 << index)
+    )
     if not free_positions:
         return 0
     free = set(free_positions)
@@ -407,6 +428,170 @@ def sustainable_vent_upper_bound(
     return sum(optimistic_components[:len(free_positions)])
 
 
+def sustainable_vent_upper_bound(
+    skeleton: tuple[str, ...],
+    columns: int,
+    cooling_caps: tuple[tuple[str, int], ...],
+) -> int:
+    """Return an optimistic upper bound on indefinitely vented heat per tick.
+
+    Heat exchangers only move heat, while coolant cells, condensators and
+    plating provide finite storage.  A self vent cannot reject more than its
+    ``self_vent`` value.  A component vent is optimistically allowed to cool
+    every free neighboring slot, even if those slots cannot all be occupied by
+    coolable components.  Ignoring those conflicts can only overestimate the
+    realizable cooling rate, which makes ``generated > bound`` a sound Mark I
+    infeasibility certificate.
+    """
+    free_mask = sum(
+        1 << index for index, item in enumerate(skeleton) if item == "empty"
+    )
+    return _sustainable_vent_upper_bound_from_mask(
+        free_mask,
+        len(skeleton),
+        columns,
+        cooling_caps,
+    )
+
+
+@lru_cache(maxsize=16_384)
+def _partial_sustainable_vent_upper_bound(
+    slots: int,
+    columns: int,
+    undecided_mask: int,
+    fixed_coolable_mask: int,
+    vent_items: tuple[str, ...],
+    placed_vent_masks: tuple[int, ...],
+    remaining_vent_caps: tuple[int, ...],
+    remaining_coolable_count: int,
+) -> int:
+    """Bound venting for every completion of one cooling-search prefix.
+
+    The bound combines two relaxations of side venting.  The vent-centric one
+    lets every remaining vent occupy its individually best undecided slot.  The
+    coolable-centric one lets the same remaining vent copies be reused around
+    different coolable components.  Both dominate every real completion, so
+    their minimum is still an upper bound.  Self venting is bounded separately
+    because independently maximizing the two terms can only increase the sum.
+
+    Masks deliberately forget the identities of non-vent components.  For this
+    necessary condition only ``is_coolable`` matters, so thermally equivalent
+    search prefixes share the cache entry without merging exact simulations.
+    """
+    if not (
+        len(vent_items)
+        == len(placed_vent_masks)
+        == len(remaining_vent_caps)
+    ):
+        raise ValueError("vent state tuples must have equal lengths")
+
+    undecided_slots = undecided_mask.bit_count()
+    neighbor_masks = _grid_neighbor_masks(slots, columns)
+    possible_coolable_mask = fixed_coolable_mask
+    if remaining_coolable_count > 0:
+        # Inventory conflicts are relaxed: every undecided slot may be the one
+        # that receives a remaining coolable component.
+        possible_coolable_mask |= undecided_mask
+
+    placed_self = 0
+    placed_side_vent_bound = 0
+    placed_side_rates: list[int] = []
+    remaining_self_values: list[int] = []
+    remaining_side_values: list[int] = []
+    remaining_side_rates: list[int] = []
+
+    max_future_coolable_degree = max(
+        (
+            (neighbor_masks[index] & possible_coolable_mask).bit_count()
+            for index in range(slots)
+            if undecided_mask & (1 << index)
+        ),
+        default=0,
+    )
+
+    for item, placed_mask, remaining_cap in zip(
+        vent_items,
+        placed_vent_masks,
+        remaining_vent_caps,
+        strict=True,
+    ):
+        spec = COMPONENTS[item]
+        placed_count = placed_mask.bit_count()
+        placed_self += placed_count * spec.self_vent
+        if spec.side_vent:
+            placed_side_rates.extend([spec.side_vent] * placed_count)
+            mask = placed_mask
+            while mask:
+                bit = mask & -mask
+                position = bit.bit_length() - 1
+                placed_side_vent_bound += (
+                    spec.side_vent
+                    * (neighbor_masks[position] & possible_coolable_mask).bit_count()
+                )
+                mask ^= bit
+
+        future_copies = min(max(0, remaining_cap), undecided_slots)
+        if future_copies <= 0:
+            continue
+        if spec.self_vent:
+            remaining_self_values.extend([spec.self_vent] * future_copies)
+        if spec.side_vent:
+            remaining_side_rates.extend([spec.side_vent] * future_copies)
+            remaining_side_values.extend([
+                spec.side_vent * max_future_coolable_degree
+            ] * future_copies)
+
+    remaining_self_values.sort(reverse=True)
+    self_bound = placed_self + sum(remaining_self_values[:undecided_slots])
+
+    remaining_side_values.sort(reverse=True)
+    side_vent_bound = placed_side_vent_bound + sum(
+        remaining_side_values[:undecided_slots]
+    )
+
+    # At most ``undecided_slots`` remaining vents can actually be installed.
+    # Keep only that many rates before constructing coolable-centric bounds.
+    remaining_side_rates.sort(reverse=True)
+    possible_future_side_rates = remaining_side_rates[:undecided_slots]
+    all_possible_side_rates = sorted(
+        (*placed_side_rates, *possible_future_side_rates),
+        reverse=True,
+    )
+
+    # Fixed coolable positions retain their real topology.  Remaining vent
+    # copies may be reused independently for each fixed coolable, a relaxation
+    # that intentionally overestimates simultaneous placement feasibility.
+    side_fixed_coolable_bound = 0
+    mask = fixed_coolable_mask
+    while mask:
+        bit = mask & -mask
+        position = bit.bit_length() - 1
+        neighbor_mask = neighbor_masks[position]
+        for item, placed_mask in zip(vent_items, placed_vent_masks, strict=True):
+            side_fixed_coolable_bound += (
+                COMPONENTS[item].side_vent
+                * (neighbor_mask & placed_mask).bit_count()
+            )
+        future_neighbors = (neighbor_mask & undecided_mask).bit_count()
+        side_fixed_coolable_bound += sum(
+            possible_future_side_rates[:future_neighbors]
+        )
+        mask ^= bit
+
+    future_coolable_count = min(
+        undecided_slots,
+        max(0, remaining_coolable_count),
+    )
+    side_future_coolable_bound = (
+        future_coolable_count * sum(all_possible_side_rates[:4])
+    )
+    side_coolable_bound = (
+        side_fixed_coolable_bound + side_future_coolable_bound
+    )
+
+    return self_bound + min(side_vent_bound, side_coolable_bound)
+
+
 @lru_cache(maxsize=512)
 def _layout_neighbors(index: int, columns: int, slots: int) -> tuple[int, ...]:
     row, column = divmod(index, columns)
@@ -420,6 +605,14 @@ def _layout_neighbors(index: int, columns: int, slots: int) -> tuple[int, ...]:
     if index + columns < slots:
         values.append(index + columns)
     return tuple(values)
+
+
+@lru_cache(maxsize=64)
+def _grid_neighbor_masks(slots: int, columns: int) -> tuple[int, ...]:
+    return tuple(
+        sum(1 << neighbor for neighbor in _layout_neighbors(index, columns, slots))
+        for index in range(slots)
+    )
 
 
 def _maximum_flow(node_count: int, edges: list[tuple[int, int, int]], source: int, sink: int) -> int:
@@ -581,6 +774,67 @@ def has_degrading_power_component(layout: tuple[str, ...], columns: int) -> bool
 FUEL_ITEMS = ("uranium_single", "uranium_dual", "uranium_quad")
 
 
+def _forms_degrading_power_edge(
+    skeleton: list[str],
+    position: int,
+    item: str,
+    columns: int,
+) -> bool:
+    """Whether installing ``item`` creates an irreversible active reflector.
+
+    A finite reflector and a neighboring fuel component are both power-active
+    components.  Later assignments cannot remove that already fixed edge, so
+    every completion below it has a degrading non-fuel component.
+    """
+    spec = COMPONENTS[item]
+    if spec.kind == "fuel":
+        return any(
+            COMPONENTS[skeleton[neighbor]].kind == "reflector"
+            and COMPONENTS[skeleton[neighbor]].max_damage > 0
+            for neighbor in _layout_neighbors(position, columns, len(skeleton))
+        )
+    if spec.kind == "reflector" and spec.max_damage > 0:
+        return any(
+            COMPONENTS[skeleton[neighbor]].kind == "fuel"
+            for neighbor in _layout_neighbors(position, columns, len(skeleton))
+        )
+    return False
+
+
+@lru_cache(maxsize=65_536)
+def _bounded_fuel_rods_reachable(
+    needed_rods: int,
+    available_slots: int,
+    remaining_caps: tuple[int, int, int],
+) -> bool:
+    """Return whether bounded 1/2/4-rod packages can hit an exact target.
+
+    ``reachable[s]`` is a bitset whose bit ``r`` is set exactly when ``r``
+    rods can be packaged into ``s`` slots using the fuel types processed so
+    far.  The transition enumerates every allowed count of the next package,
+    so the final predicate is an exact bounded-knapsack decision rather than
+    an interval relaxation.
+    """
+    if needed_rods < 0 or available_slots < 0:
+        return False
+    target_mask = (1 << (needed_rods + 1)) - 1
+    reachable = [0] * (available_slots + 1)
+    reachable[0] = 1
+    for rod_cost, cap in zip((1, 2, 4), remaining_caps, strict=True):
+        next_reachable = [0] * (available_slots + 1)
+        for used_slots, rods_bits in enumerate(reachable):
+            if rods_bits == 0:
+                continue
+            maximum = min(cap, available_slots - used_slots)
+            for count in range(maximum + 1):
+                next_reachable[used_slots + count] |= (
+                    rods_bits << (count * rod_cost)
+                ) & target_mask
+        reachable = next_reachable
+    target_bit = 1 << needed_rods
+    return any(rods_bits & target_bit for rods_bits in reachable)
+
+
 def _fuel_requirement_feasible(
     request: OptimizationRequest,
     remaining: dict[str, int],
@@ -593,7 +847,11 @@ def _fuel_requirement_feasible(
     if request.fuel.mode == "separate":
         return sum(remaining.get(item, 0) for item in FUEL_ITEMS) <= available_slots
     rods_needed = request.fuel.total_rods - current_rods
-    return 0 <= rods_needed <= available_slots * 4
+    return _bounded_fuel_rods_reachable(
+        rods_needed,
+        available_slots,
+        tuple(remaining.get(item, 0) for item in FUEL_ITEMS),
+    )
 
 
 def _fuel_requirement_complete(
@@ -1345,13 +1603,17 @@ def _run_mark_i_two_level_shard(
     evaluated = 0
     unresolved = 0
     unresolved_power_ceiling = -1.0
+    power_relaxed_pruned_nodes = 0
+    power_relaxed_pruned_layouts = 0
+    power_frontier_bound_calls = 0
+    power_frontier_pruned_nodes = 0
+    power_frontier_pruned_layouts = 0
     visits = 0
     last_report = time.monotonic()
     cancelled = False
     cancel_cache = False
     last_cancel_check = 0.0
     shared_floor_cache = -1.0
-    last_floor_check = 0.0
     boards: dict[str, list[CandidateResult]] = {"I": []}
     pending_layouts: list[tuple[str, ...]] = []
     batch_evaluator = _WorkerBatchEvaluator(
@@ -1372,6 +1634,73 @@ def _run_mark_i_two_level_shard(
     grid_degrees = tuple(
         len(_layout_neighbors(index, request.columns, slots)) for index in range(slots)
     )
+    directed_per_rod = int(ReactorSimulator.EU_PER_PULSE)
+    search_batch_size = _search_batch_size(request)
+    power_choices = (*power_items, "empty")
+    cooling_choices = (*cooling_items, "empty")
+    vent_items = tuple(
+        item for item in cooling_items if COMPONENTS[item].kind == "vent"
+    )
+    vent_item_indices = {item: index for index, item in enumerate(vent_items)}
+    has_side_vent_items = any(COMPONENTS[item].side_vent for item in vent_items)
+    coolable_cooling_items = tuple(
+        item for item in cooling_items if COMPONENTS[item].is_coolable
+    )
+    placed_vent_masks = [0] * len(vent_items)
+    remaining_variable_slots = tuple(
+        sum(index not in fixed for index in range(position, slots))
+        for position in range(slots + 1)
+    )
+    power_labels = tuple(dict.fromkeys(("empty", *power_items, *fixed.values())))
+    power_label_codes = {item: code for code, item in enumerate(power_labels)}
+    empty_power_code = power_label_codes["empty"]
+    power_item_codes = tuple(power_label_codes[item] for item in power_items)
+    fixed_power_codes = tuple(
+        power_label_codes[fixed[position]] if position in fixed else -1
+        for position in range(slots)
+    )
+    power_vertex_values = tuple(_power_vertex_value(item) for item in power_labels)
+    power_edge_values = tuple(
+        tuple(_power_edge_value(first, second) for second in power_labels)
+        for first in power_labels
+    )
+    power_rod_counts = tuple(COMPONENTS[item].rod_count for item in power_items)
+    fuel_power_indices = tuple(
+        index for index, item in enumerate(power_items)
+        if COMPONENTS[item].kind == "fuel"
+    )
+    fuel_power_index_by_item = {
+        item: index for index, item in enumerate(power_items)
+        if COMPONENTS[item].kind == "fuel"
+    }
+    exact_power_frontier_enabled = (
+        request.columns <= POWER_FRONTIER_DP_MAX_COLUMNS
+        and len(power_items) <= POWER_FRONTIER_DP_MAX_POWER_TYPES
+    )
+    crossing_fuel_sources = tuple(
+        tuple(
+            first
+            for first, second in grid_edges
+            if first < position <= second
+        )
+        for position in range(slots + 1)
+    )
+    fixed_future_power_upper = [0] * (slots + 1)
+    for position in range(slots - 1, -1, -1):
+        fixed_future_power_upper[position] = fixed_future_power_upper[position + 1]
+        if position not in fixed:
+            continue
+        item = skeleton[position]
+        spec = COMPONENTS[item]
+        if spec.kind == "fuel":
+            fixed_future_power_upper[position] += (
+                _power_vertex_value(item)
+                + directed_per_rod * spec.rod_count * grid_degrees[position]
+            )
+    initial_degrading_power_component = has_degrading_power_component(
+        tuple(skeleton),
+        request.columns,
+    )
 
     def cancellation_requested() -> bool:
         nonlocal cancel_cache, last_cancel_check
@@ -1385,18 +1714,16 @@ def _run_mark_i_two_level_shard(
             last_cancel_check = now
         return cancel_cache
 
-    def current_power_floor() -> float:
-        nonlocal shared_floor_cache, last_floor_check
+    def current_power_floor(*, refresh_shared: bool = False) -> float:
+        nonlocal shared_floor_cache
         local_board = boards["I"]
         local_floor = (
             local_board[-1].average_eu_per_tick
             if len(local_board) >= request.result_limit
             else -1.0
         )
-        now = time.monotonic()
-        if shared_power_floor is not None and now - last_floor_check >= 0.1:
+        if shared_power_floor is not None and refresh_shared:
             shared_floor_cache = shared_power_floor.value
-            last_floor_check = now
         return max(local_floor, shared_floor_cache)
 
     def report(force: bool = False) -> None:
@@ -1442,14 +1769,64 @@ def _run_mark_i_two_level_shard(
                 )
         report()
 
-    def power_increment(position: int, item: str) -> int:
-        value = _power_vertex_value(item)
-        row, column = divmod(position, request.columns)
-        if column > 0:
-            value += _power_edge_value(skeleton[position - 1], item)
-        if row > 0:
-            value += _power_edge_value(skeleton[position - request.columns], item)
-        return value
+    @lru_cache(maxsize=16_384)
+    def future_variable_power_upper(
+        variable_slots: int,
+        remaining_rods: int,
+        remaining_caps: tuple[int, ...],
+    ) -> int:
+        """Cache the inventory-only part of the directed power relaxation."""
+        if request.fuel.mode == "separate":
+            contributions: list[int] = []
+            for item, cap in zip(power_items, remaining_caps, strict=True):
+                spec = COMPONENTS[item]
+                if spec.kind != "fuel" or cap <= 0:
+                    continue
+                contribution = (
+                    _power_vertex_value(item)
+                    + 4 * directed_per_rod * spec.rod_count
+                )
+                contributions.extend([contribution] * min(cap, variable_slots))
+            contributions.sort(reverse=True)
+            return sum(contributions[:variable_slots])
+
+        # (used slots, used rods) -> best optimistic future contribution.
+        dp: dict[tuple[int, int], int] = {(0, 0): 0}
+        for item, cap in zip(power_items, remaining_caps, strict=True):
+            spec = COMPONENTS[item]
+            if spec.kind != "fuel" or cap <= 0:
+                continue
+            contribution = (
+                _power_vertex_value(item)
+                + 4 * directed_per_rod * spec.rod_count
+            )
+            next_dp: dict[tuple[int, int], int] = {}
+            for (used_slots, used_rods), value in dp.items():
+                max_count = min(
+                    cap,
+                    variable_slots - used_slots,
+                    (remaining_rods - used_rods) // spec.rod_count,
+                )
+                for count in range(max_count + 1):
+                    key = (
+                        used_slots + count,
+                        used_rods + count * spec.rod_count,
+                    )
+                    next_dp[key] = max(
+                        next_dp.get(key, -1),
+                        value + count * contribution,
+                    )
+            dp = next_dp
+        if request.fuel.usage == "exact":
+            return max(
+                (
+                    value
+                    for (_used_slots, used_rods), value in dp.items()
+                    if used_rods == remaining_rods
+                ),
+                default=0,
+            )
+        return max(dp.values(), default=0)
 
     def optimistic_power_bound(position: int, current_power: int, current_rods: int) -> int:
         """Inventory-aware directed-contribution upper bound.
@@ -1461,84 +1838,189 @@ def _run_mark_i_two_level_shard(
         reflectors need not be allocated because assuming all neighbors are
         power-active only makes the bound larger.
         """
-        upper = current_power
+        upper = current_power + fixed_future_power_upper[position]
 
         # Directed terms from already processed fuels to unfinished neighbors.
-        directed_per_rod = int(ReactorSimulator.EU_PER_PULSE)
-        for first, second in grid_edges:
-            if first < position <= second:
-                first_spec = COMPONENTS[skeleton[first]]
-                if first_spec.kind == "fuel":
-                    upper += directed_per_rod * first_spec.rod_count
+        for first in crossing_fuel_sources[position]:
+            first_spec = COMPONENTS[skeleton[first]]
+            if first_spec.kind == "fuel":
+                upper += directed_per_rod * first_spec.rod_count
 
-        variable_slots = 0
-        for index in range(position, slots):
-            if index not in fixed:
-                variable_slots += 1
+        variable_slots = remaining_variable_slots[position]
+        remaining_rods = request.fuel.total_rods - current_rods
+        return upper + future_variable_power_upper(
+            variable_slots,
+            remaining_rods,
+            tuple(power_remaining[item] for item in power_items),
+        )
+
+    def current_power_frontier(position: int) -> tuple[int, ...]:
+        """Encode the processed row-major boundary before ``position``."""
+        row, column = divmod(position, request.columns)
+        values: list[int] = []
+        for frontier_column in range(request.columns):
+            if frontier_column < column:
+                index = row * request.columns + frontier_column
+            elif row > 0:
+                index = (row - 1) * request.columns + frontier_column
+            else:
+                values.append(empty_power_code)
                 continue
-            item = skeleton[index]
-            spec = COMPONENTS[item]
-            if spec.kind == "fuel":
-                upper += (
-                    _power_vertex_value(item)
-                    + directed_per_rod * spec.rod_count * grid_degrees[index]
+            values.append(power_label_codes[skeleton[index]])
+        return tuple(values)
+
+    negative_power = -(10**9)
+
+    @lru_cache(maxsize=65_536)
+    def exact_future_power(
+        position: int,
+        frontier: tuple[int, ...],
+        remaining_rods: int,
+        has_fuel_state: bool,
+        remaining_caps: tuple[int, ...],
+    ) -> int:
+        """Exact maximum additional power below a row-major prefix.
+
+        Earlier geometry enters only through one row of frontier labels.
+        Inventory and rod state determine every remaining global constraint.
+        Finite-reflector degradation and thermal constraints are deliberately
+        relaxed, so the result remains an upper bound for viable Mark I layouts.
+        """
+        if position == slots:
+            if not has_fuel_state:
+                return negative_power
+            if request.fuel.usage == "exact":
+                if request.fuel.mode == "separate":
+                    if any(remaining_caps[index] for index in fuel_power_indices):
+                        return negative_power
+                elif remaining_rods != 0:
+                    return negative_power
+            return 0
+
+        available_slots = remaining_variable_slots[position]
+        if request.fuel.usage == "exact":
+            if request.fuel.mode == "separate":
+                if sum(remaining_caps[index] for index in fuel_power_indices) > available_slots:
+                    return negative_power
+            else:
+                fuel_caps = tuple(
+                    remaining_caps[fuel_power_index_by_item[item]]
+                    if item in fuel_power_index_by_item
+                    else 0
+                    for item in FUEL_ITEMS
                 )
+                if not _bounded_fuel_rods_reachable(
+                    remaining_rods,
+                    available_slots,
+                    fuel_caps,
+                ):
+                    return negative_power
 
-        remaining_fuels = [
-            item for item in power_items
-            if COMPONENTS[item].kind == "fuel" and power_remaining[item] > 0
-        ]
-        if request.fuel.mode == "separate":
-            contributions: list[int] = []
-            for item in remaining_fuels:
-                spec = COMPONENTS[item]
-                contribution = _power_vertex_value(item) + 4 * directed_per_rod * spec.rod_count
-                contributions.extend([contribution] * min(power_remaining[item], variable_slots))
-            contributions.sort(reverse=True)
-            upper += sum(contributions[:variable_slots])
-        else:
-            remaining_rods = request.fuel.total_rods - current_rods
-            # (used slots, used rods) -> best optimistic future contribution.
-            dp: dict[tuple[int, int], int] = {(0, 0): 0}
-            for item in remaining_fuels:
-                spec = COMPONENTS[item]
-                contribution = _power_vertex_value(item) + 4 * directed_per_rod * spec.rod_count
-                next_dp: dict[tuple[int, int], int] = {}
-                for (used_slots, used_rods), value in dp.items():
-                    max_count = min(
-                        power_remaining[item],
-                        variable_slots - used_slots,
-                        (remaining_rods - used_rods) // spec.rod_count,
-                    )
-                    for count in range(max_count + 1):
-                        key = (
-                            used_slots + count,
-                            used_rods + count * spec.rod_count,
-                        )
-                        next_dp[key] = max(
-                            next_dp.get(key, -1),
-                            value + count * contribution,
-                        )
-                dp = next_dp
-            upper += max(dp.values(), default=0)
-        return upper
+        column = position % request.columns
 
-    def count_remaining_layouts(
+        def descend(item_code: int, caps: tuple[int, ...], rods: int, has_fuel: bool) -> int:
+            increment = power_vertex_values[item_code]
+            if column > 0:
+                increment += power_edge_values[frontier[column - 1]][item_code]
+            if position >= request.columns:
+                increment += power_edge_values[frontier[column]][item_code]
+            next_frontier = list(frontier)
+            next_frontier[column] = item_code
+            suffix = exact_future_power(
+                position + 1,
+                tuple(next_frontier),
+                rods,
+                has_fuel,
+                caps,
+            )
+            return (
+                negative_power
+                if suffix == negative_power
+                else increment + suffix
+            )
+
+        fixed_code = fixed_power_codes[position]
+        if fixed_code >= 0:
+            return descend(
+                fixed_code,
+                remaining_caps,
+                remaining_rods,
+                has_fuel_state,
+            )
+
+        best = descend(
+            empty_power_code,
+            remaining_caps,
+            remaining_rods,
+            has_fuel_state,
+        )
+        for item_index, item_code in enumerate(power_item_codes):
+            if remaining_caps[item_index] <= 0:
+                continue
+            rod_cost = power_rod_counts[item_index]
+            if request.fuel.mode == "total_rods" and rod_cost > remaining_rods:
+                continue
+            next_caps = list(remaining_caps)
+            next_caps[item_index] -= 1
+            next_rods = (
+                remaining_rods - rod_cost
+                if request.fuel.mode == "total_rods"
+                else remaining_rods
+            )
+            candidate = descend(
+                item_code,
+                tuple(next_caps),
+                next_rods,
+                has_fuel_state or rod_cost > 0,
+            )
+            best = max(best, candidate)
+        return best
+
+    def exact_power_frontier_bound(
+        position: int,
+        current_power: int,
+        current_rods: int,
+        current_has_fuel: bool,
+    ) -> int | None:
+        if (
+            not exact_power_frontier_enabled
+            or remaining_variable_slots[position]
+            > POWER_FRONTIER_DP_MAX_VARIABLE_SLOTS
+        ):
+            return None
+        remaining_rods = (
+            request.fuel.total_rods - current_rods
+            if request.fuel.mode == "total_rods"
+            else 0
+        )
+        additional = exact_future_power(
+            position,
+            current_power_frontier(position),
+            remaining_rods,
+            current_has_fuel,
+            tuple(power_remaining[item] for item in power_items),
+        )
+        if additional == negative_power:
+            return None
+        return current_power + additional
+
+    @lru_cache(maxsize=16_384)
+    def _count_remaining_layouts_cached(
         position: int,
         current_rods: int,
         current_has_fuel: bool,
+        remaining_caps: tuple[int, ...],
     ) -> int:
         """Count a pruned partial skeleton and every cooling completion below it."""
-        remaining_positions = sum(index not in fixed for index in range(position, slots))
+        remaining_positions = remaining_variable_slots[position]
         used_power_slots = sum(
-            cap - power_remaining[item]
-            for item, cap in zip(power_items, power_caps, strict=True)
+            cap - remaining_cap
+            for cap, remaining_cap in zip(power_caps, remaining_caps, strict=True)
         )
         # (new power slots, new rods, has fuel) -> labelled assignments.
         dp: dict[tuple[int, int, bool], int] = {(0, 0, current_has_fuel): 1}
-        for item in power_items:
+        for item, cap in zip(power_items, remaining_caps, strict=True):
             spec = COMPONENTS[item]
-            cap = power_remaining[item]
             next_dp: dict[tuple[int, int, bool], int] = {}
             for (used, extra_rods, has_fuel), ways in dp.items():
                 maximum = min(cap, remaining_positions - used)
@@ -1578,31 +2060,78 @@ def _run_mark_i_two_level_shard(
             total += ways * count_cooling_completions(free_slots, cooling_caps)
         return total
 
+    def count_remaining_layouts(
+        position: int,
+        current_rods: int,
+        current_has_fuel: bool,
+    ) -> int:
+        return _count_remaining_layouts_cached(
+            position,
+            current_rods,
+            current_has_fuel,
+            tuple(power_remaining[item] for item in power_items),
+        )
+
     def generate_cooling(
         layout: list[str],
         free_positions: tuple[int, ...],
+        undecided_masks: tuple[int, ...],
         offset: int,
         skeleton_power: float,
         skeleton_heat: int,
+        fixed_coolable_mask: int,
     ) -> None:
         nonlocal checked, pruned, evaluated, unresolved, visits, cancelled
         visits += 1
-        if visits % 4096 == 0 and cancellation_requested():
-            cancelled = True
-            return
+        refresh_control = visits % 4096 == 0
+        if refresh_control:
+            if cancellation_requested():
+                cancelled = True
+                return
+            floor = current_power_floor(refresh_shared=True)
+            if floor >= 0 and skeleton_power < floor:
+                count = count_cooling_completions(
+                    len(free_positions) - offset,
+                    tuple(cooling_remaining[item] for item in cooling_items),
+                )
+                checked += count
+                pruned += count
+                report()
+                return
+            report()
         if cancelled:
             return
 
-        floor = current_power_floor()
-        if floor >= 0 and skeleton_power < floor:
-            count = count_cooling_completions(
-                len(free_positions) - offset,
-                tuple(cooling_remaining[item] for item in cooling_items),
+        remaining_free_slots = len(free_positions) - offset
+        should_check_vent_bound = (
+            skeleton_heat > 0
+            and has_side_vent_items
+            and (
+                offset == 0
+                or remaining_free_slots == 0
+                or offset % PARTIAL_COOLING_BOUND_INTERVAL == 0
             )
-            checked += count
-            pruned += count
-            report()
-            return
+        )
+        if should_check_vent_bound:
+            vent_upper = _partial_sustainable_vent_upper_bound(
+                slots,
+                request.columns,
+                undecided_masks[offset],
+                fixed_coolable_mask,
+                vent_items,
+                tuple(placed_vent_masks),
+                tuple(cooling_remaining[item] for item in vent_items),
+                sum(cooling_remaining[item] for item in coolable_cooling_items),
+            )
+            if skeleton_heat > vent_upper:
+                count = count_cooling_completions(
+                    remaining_free_slots,
+                    tuple(cooling_remaining[item] for item in cooling_items),
+                )
+                checked += count
+                pruned += count
+                report()
+                return
 
         if offset == len(free_positions):
             checked += 1
@@ -1612,53 +2141,97 @@ def _run_mark_i_two_level_shard(
                 < skeleton_heat
             ):
                 pruned += 1
-                report()
                 return
             pending_layouts.append(raw)
-            if len(pending_layouts) >= _search_batch_size(request):
+            if len(pending_layouts) >= search_batch_size:
                 flush_pending_layouts()
-            report()
             return
 
 
         position = free_positions[offset]
         # Try occupied completions first so a strong incumbent is available
         # early. Empty remains the final branch; global completeness is intact.
-        for item in [*cooling_items, "empty"]:
+        for item in cooling_choices:
             if item != "empty" and cooling_remaining[item] > 0:
                 cooling_remaining[item] -= 1
                 layout[position] = item
-                generate_cooling(layout, free_positions, offset + 1, skeleton_power, skeleton_heat)
+                bit = 1 << position
+                next_coolable_mask = fixed_coolable_mask
+                if COMPONENTS[item].is_coolable:
+                    next_coolable_mask |= bit
+                vent_index = vent_item_indices.get(item)
+                if vent_index is not None:
+                    placed_vent_masks[vent_index] |= bit
+                generate_cooling(
+                    layout,
+                    free_positions,
+                    undecided_masks,
+                    offset + 1,
+                    skeleton_power,
+                    skeleton_heat,
+                    next_coolable_mask,
+                )
+                if vent_index is not None:
+                    placed_vent_masks[vent_index] ^= bit
                 cooling_remaining[item] += 1
             elif item == "empty":
                 layout[position] = "empty"
-                generate_cooling(layout, free_positions, offset + 1, skeleton_power, skeleton_heat)
+                generate_cooling(
+                    layout,
+                    free_positions,
+                    undecided_masks,
+                    offset + 1,
+                    skeleton_power,
+                    skeleton_heat,
+                    fixed_coolable_mask,
+                )
             if cancelled:
                 break
         layout[position] = "empty"
 
-    def finish_skeleton(skeleton_heat: int) -> None:
+    def finish_skeleton(skeleton_power: int, skeleton_heat: int) -> None:
         nonlocal checked, pruned
         raw_skeleton = tuple(skeleton)
         free_positions = tuple(index for index, item in enumerate(raw_skeleton) if item == "empty")
-        completion_count = count_cooling_completions(len(free_positions), cooling_caps)
-        skeleton_power = skeleton_eu_per_tick(raw_skeleton, request.columns)
+        floor = current_power_floor(refresh_shared=visits % 4096 == 0)
+        if floor >= 0 and skeleton_power < floor:
+            completion_count = count_cooling_completions(
+                len(free_positions),
+                cooling_caps,
+            )
+            checked += completion_count
+            pruned += completion_count
+            report()
+            return
         vent_upper = sustainable_vent_upper_bound(
             raw_skeleton,
             request.columns,
             cooling_cap_items,
         )
-        if (
-            has_degrading_power_component(raw_skeleton, request.columns)
-            or skeleton_heat > vent_upper
-            or (current_power_floor() >= 0 and skeleton_power < current_power_floor())
-        ):
+        if skeleton_heat > vent_upper:
+            completion_count = count_cooling_completions(
+                len(free_positions),
+                cooling_caps,
+            )
             checked += completion_count
             pruned += completion_count
             report()
             return
         layout = list(raw_skeleton)
-        generate_cooling(layout, free_positions, 0, skeleton_power, skeleton_heat)
+        undecided_masks = [0] * (len(free_positions) + 1)
+        for offset in range(len(free_positions) - 1, -1, -1):
+            undecided_masks[offset] = (
+                undecided_masks[offset + 1] | (1 << free_positions[offset])
+            )
+        generate_cooling(
+            layout,
+            free_positions,
+            tuple(undecided_masks),
+            0,
+            skeleton_power,
+            skeleton_heat,
+            0,
+        )
 
     def generate_skeleton(
         position: int,
@@ -1667,23 +2240,38 @@ def _run_mark_i_two_level_shard(
         current_power: int,
         current_power_slots: int,
         current_heat: int,
+        current_has_degrading_power_component: bool,
     ) -> None:
         nonlocal checked, pruned, visits, cancelled
+        nonlocal power_relaxed_pruned_nodes, power_relaxed_pruned_layouts
+        nonlocal power_frontier_bound_calls
+        nonlocal power_frontier_pruned_nodes, power_frontier_pruned_layouts
         visits += 1
-        if visits % 4096 == 0 and cancellation_requested():
-            cancelled = True
-            return
+        refresh_control = visits % 4096 == 0
+        if refresh_control:
+            if cancellation_requested():
+                cancelled = True
+                return
+            report()
         if cancelled:
             return
-        remaining_positions = sum(
-            index not in fixed for index in range(position, slots)
-        )
+        remaining_positions = remaining_variable_slots[position]
         if not _fuel_requirement_feasible(
             request,
             power_remaining,
             current_rods,
             remaining_positions,
         ):
+            return
+        if current_has_degrading_power_component:
+            count = count_remaining_layouts(
+                position,
+                current_rods,
+                current_has_fuel,
+            )
+            checked += count
+            pruned += count
+            report()
             return
         if _partial_mark_i_heat_infeasible(
             request,
@@ -1703,13 +2291,45 @@ def _run_mark_i_two_level_shard(
             pruned += count
             report()
             return
-        floor = current_power_floor()
-        if floor >= 0 and optimistic_power_bound(position, current_power, current_rods) < floor:
-            count = count_remaining_layouts(position, current_rods, current_has_fuel)
-            checked += count
-            pruned += count
-            report()
-            return
+        floor = current_power_floor(refresh_shared=refresh_control)
+        if floor >= 0:
+            relaxed_bound = optimistic_power_bound(
+                position,
+                current_power,
+                current_rods,
+            )
+            if relaxed_bound < floor:
+                count = count_remaining_layouts(position, current_rods, current_has_fuel)
+                checked += count
+                pruned += count
+                power_relaxed_pruned_nodes += 1
+                power_relaxed_pruned_layouts += count
+                report()
+                return
+            if (
+                exact_power_frontier_enabled
+                and remaining_variable_slots[position]
+                <= POWER_FRONTIER_DP_MAX_VARIABLE_SLOTS
+            ):
+                power_frontier_bound_calls += 1
+                frontier_bound = exact_power_frontier_bound(
+                    position,
+                    current_power,
+                    current_rods,
+                    current_has_fuel,
+                )
+                if frontier_bound is not None and frontier_bound < floor:
+                    count = count_remaining_layouts(
+                        position,
+                        current_rods,
+                        current_has_fuel,
+                    )
+                    checked += count
+                    pruned += count
+                    power_frontier_pruned_nodes += 1
+                    power_frontier_pruned_layouts += count
+                    report()
+                    return
         if position == slots:
             if _fuel_requirement_complete(
                 request,
@@ -1717,20 +2337,26 @@ def _run_mark_i_two_level_shard(
                 current_rods,
                 current_has_fuel,
             ):
-                finish_skeleton(current_heat)
+                finish_skeleton(current_power, current_heat)
             return
         if position in fixed:
             generate_skeleton(
                 position + 1,
                 current_rods,
                 current_has_fuel,
-                current_power + power_increment(position, skeleton[position]),
+                current_power + _partial_skeleton_power_increment(
+                    skeleton,
+                    position,
+                    skeleton[position],
+                    request.columns,
+                ),
                 current_power_slots,
                 current_heat,
+                current_has_degrading_power_component,
             )
             return
 
-        for item in [*power_items, "empty"]:
+        for item in power_choices:
             if item == "empty":
                 skeleton[position] = "empty"
                 generate_skeleton(
@@ -1740,6 +2366,7 @@ def _run_mark_i_two_level_shard(
                     current_power,
                     current_power_slots,
                     current_heat,
+                    current_has_degrading_power_component,
                 )
             elif power_remaining[item] > 0:
                 rod_cost = COMPONENTS[item].rod_count
@@ -1757,9 +2384,21 @@ def _run_mark_i_two_level_shard(
                     position + 1,
                     current_rods + rod_cost,
                     current_has_fuel or rod_cost > 0,
-                    current_power + power_increment(position, item),
+                    current_power + _partial_skeleton_power_increment(
+                        skeleton,
+                        position,
+                        item,
+                        request.columns,
+                    ),
                     current_power_slots + 1,
                     current_heat + heat_increment,
+                    current_has_degrading_power_component
+                    or _forms_degrading_power_edge(
+                        skeleton,
+                        position,
+                        item,
+                        request.columns,
+                    ),
                 )
                 power_remaining[item] += 1
             if cancelled:
@@ -1773,6 +2412,7 @@ def _run_mark_i_two_level_shard(
         0,
         fixed_power_slots,
         initial_skeleton_heat,
+        initial_degrading_power_component,
     )
     flush_pending_layouts()
     report(force=True)
@@ -1785,6 +2425,16 @@ def _run_mark_i_two_level_shard(
         "unresolved_power_ceiling": unresolved_power_ceiling,
         "boards": boards,
         "cancelled": cancelled,
+        "power_frontier_stats": {
+            "enabled": exact_power_frontier_enabled,
+            "bound_calls": power_frontier_bound_calls,
+            "cache_hits": exact_future_power.cache_info().hits,
+            "cache_misses": exact_future_power.cache_info().misses,
+            "frontier_pruned_nodes": power_frontier_pruned_nodes,
+            "frontier_pruned_layouts": power_frontier_pruned_layouts,
+            "relaxed_pruned_nodes": power_relaxed_pruned_nodes,
+            "relaxed_pruned_layouts": power_relaxed_pruned_layouts,
+        },
     }
 
 
@@ -1984,6 +2634,16 @@ class OptimizationJob:
         self.unresolved = 0
         self.unresolved_power_ceiling = -1.0
         self.warm_start_evaluated = 0
+        self.power_frontier_stats = {
+            "enabled_shards": 0,
+            "bound_calls": 0,
+            "cache_hits": 0,
+            "cache_misses": 0,
+            "frontier_pruned_nodes": 0,
+            "frontier_pruned_layouts": 0,
+            "relaxed_pruned_nodes": 0,
+            "relaxed_pruned_layouts": 0,
+        }
         self.enumeration_processes = 0
         self.simulation_processes = 0
         self.reserved_cpu_cores = 0
@@ -2084,6 +2744,7 @@ class OptimizationJob:
                 self.unresolved_power_ceiling if self.unresolved else None
             ),
             "warm_start_evaluated": self.warm_start_evaluated,
+            "power_frontier_stats": dict(self.power_frontier_stats),
             "generation": self.generation,
             "message": self.message,
             "error": self.error,
@@ -2249,6 +2910,48 @@ class OptimizationJob:
                 result[rng.randrange(len(result))] = rng.choice(values)
         candidate = tuple(result)
         return candidate if self._within_limits(candidate) and any(COMPONENTS[x].kind == "fuel" for x in candidate) else layout
+
+    def _warm_start_variants(
+        self,
+        seeds: tuple[tuple[str, ...], ...],
+        rng: random.Random,
+        limit: int = EXHAUSTIVE_WARM_VARIANTS,
+    ) -> tuple[tuple[str, ...], ...]:
+        """Create deterministic inventory-preserving swaps around proven seeds."""
+        if not seeds or limit <= 0:
+            return ()
+        variants: set[tuple[str, ...]] = set()
+        attempts = max(64, limit * 32)
+        for _ in range(attempts):
+            seed = rng.choice(seeds)
+            cooling_positions = [
+                index
+                for index, item in enumerate(seed)
+                if COMPONENTS[item].kind not in {"fuel", "reflector"}
+            ]
+            pools = (cooling_positions, list(range(len(seed))))
+            pair = None
+            for positions in pools:
+                if len(positions) < 2:
+                    continue
+                for _attempt in range(8):
+                    first, second = rng.sample(positions, 2)
+                    if seed[first] != seed[second]:
+                        pair = (first, second)
+                        break
+                if pair is not None:
+                    break
+            if pair is None:
+                continue
+            first, second = pair
+            candidate = list(seed)
+            candidate[first], candidate[second] = candidate[second], candidate[first]
+            raw = tuple(candidate)
+            if raw not in seeds:
+                variants.add(raw)
+            if len(variants) >= limit:
+                break
+        return tuple(sorted(variants))
 
     def _evaluate(self, layout: tuple[str, ...]) -> CandidateResult | None:
         if self._control_requested() or not self._within_limits(layout):
@@ -2439,11 +3142,46 @@ class OptimizationJob:
                 self.request.cpu_workers,
             )
             self.warm_start_evaluated = len(warm_results)
+            proven_warm_seeds: list[tuple[str, ...]] = []
             for result in warm_results:
                 if mark_family(result.mark) == "I":
+                    proven_warm_seeds.append(result.layout)
                     self._accept(result, count_evaluation=False)
             if self._control_requested():
                 return
+            if (
+                proven_warm_seeds
+                and len(self.leaderboards["I"]) < self.request.result_limit
+            ):
+                self.message = "正在围绕已验证 Mark I 布局建立 Top-K 功率下界"
+                variant_limit = min(
+                    EXHAUSTIVE_WARM_VARIANTS,
+                    max(64, self.request.result_limit * 16),
+                )
+                variants = tuple(
+                    layout
+                    for layout in self._warm_start_variants(
+                        tuple(proven_warm_seeds),
+                        rng,
+                        variant_limit,
+                    )
+                    if layout not in layouts
+                )
+                variant_results = evaluate_layout_batch(
+                    variants,
+                    self.request.columns,
+                    self.request.max_reactor_ticks,
+                    False,
+                    self._control_requested,
+                    self.request.compute_backend,
+                    self.request.cpu_workers,
+                )
+                self.warm_start_evaluated += len(variant_results)
+                for result in variant_results:
+                    if mark_family(result.mark) == "I":
+                        self._accept(result, count_evaluation=False)
+                if self._control_requested():
+                    return
         cpu_plan = cpu_scheduling_plan(2)
         scheduling_capacity = (
             len(cpu_plan.worker_cpu_set_ids)
@@ -2617,6 +3355,21 @@ class OptimizationJob:
                         self.unresolved_power_ceiling,
                         result["unresolved_power_ceiling"],
                     )
+                    frontier_stats = result.get("power_frontier_stats")
+                    if frontier_stats is not None:
+                        self.power_frontier_stats["enabled_shards"] += int(
+                            frontier_stats["enabled"]
+                        )
+                        for key in (
+                            "bound_calls",
+                            "cache_hits",
+                            "cache_misses",
+                            "frontier_pruned_nodes",
+                            "frontier_pruned_layouts",
+                            "relaxed_pruned_nodes",
+                            "relaxed_pruned_layouts",
+                        ):
+                            self.power_frontier_stats[key] += frontier_stats[key]
                     update_progress(
                         result["shard_id"],
                         result["checked"],

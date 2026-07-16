@@ -2,7 +2,9 @@ import json
 import random
 import threading
 import time
+from itertools import combinations, product
 
+from ic2_reactor.components import COMPONENTS
 from ic2_reactor.models import FuelConstraint, OptimizationRequest
 from ic2_reactor.mark import mark_family
 from ic2_reactor.optimizer import (
@@ -10,11 +12,16 @@ from ic2_reactor.optimizer import (
     OptimizationJob,
     _fixed_point_certificate,
     _evaluate_search_batch,
+    _fuel_requirement_feasible,
+    _layout_neighbors,
     _partial_mark_i_heat_infeasible,
+    _partial_sustainable_vent_upper_bound,
+    _partial_skeleton_power_increment,
     _partial_skeleton_heat_increment,
     _rank_candidates,
     _run_exhaustive_shard,
     _wait_for_worker_control,
+    _sustainable_vent_upper_bound_from_mask,
     canonical_layout,
     canonical_tuple,
     count_cooling_completions,
@@ -109,6 +116,31 @@ def test_incremental_partial_heat_matches_full_skeleton_calculation():
             assert heat == skeleton_heat_per_tick(tuple(skeleton), 3)
 
 
+def test_row_major_partial_power_matches_full_skeleton_calculation():
+    rng = random.Random(222)
+    values = (
+        "uranium_single",
+        "uranium_dual",
+        "uranium_quad",
+        "neutron_reflector",
+        "iridium_reflector",
+        "empty",
+    )
+    for _ in range(20):
+        skeleton = ["empty"] * 18
+        power = 0
+        for position in range(18):
+            item = rng.choice(values)
+            power += _partial_skeleton_power_increment(
+                skeleton,
+                position,
+                item,
+                3,
+            )
+            skeleton[position] = item
+            assert power == theoretical_eu_per_tick(tuple(skeleton), 3)
+
+
 def test_partial_heat_bound_keeps_a_thermally_possible_root():
     request = OptimizationRequest(
         columns=3,
@@ -129,6 +161,82 @@ def test_partial_heat_bound_keeps_a_thermally_possible_root():
         available_slots=18,
         current_heat=0,
     )
+
+
+def test_exact_total_rods_feasibility_uses_bounded_package_reachability():
+    request = OptimizationRequest(
+        columns=3,
+        fuel=FuelConstraint(mode="total_rods", usage="exact", total_rods=3),
+        marks=["I"],
+        solver="exhaustive",
+    )
+
+    assert not _fuel_requirement_feasible(
+        request,
+        {"uranium_single": 0, "uranium_dual": 0, "uranium_quad": 1},
+        current_rods=0,
+        available_slots=1,
+    )
+    assert _fuel_requirement_feasible(
+        request,
+        {"uranium_single": 1, "uranium_dual": 1, "uranium_quad": 0},
+        current_rods=0,
+        available_slots=2,
+    )
+
+
+def test_exact_total_rods_reachability_preserves_generic_exhaustive_space(monkeypatch):
+    request = OptimizationRequest(
+        columns=3,
+        fuel=FuelConstraint(mode="total_rods", usage="exact", total_rods=3),
+        component_limits={},
+        marks=["I", "II"],
+        solver="exhaustive",
+        cpu_workers=1,
+        max_reactor_ticks=2_000,
+    )
+
+    def fake_evaluate(layout, columns, max_reactor_ticks, cancel_check=None):
+        power = theoretical_eu_per_tick(layout, columns)
+        return CandidateResult(
+            layout,
+            "Mark I-I",
+            power,
+            power * max_reactor_ticks,
+            max_reactor_ticks * 20,
+            1.0,
+            sum(item != "empty" for item in layout),
+            canonical_layout(layout, columns),
+        )
+
+    class Queue:
+        def put(self, _message):
+            pass
+
+    class Event:
+        def is_set(self):
+            return False
+
+    monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
+    result = _run_exhaustive_shard(
+        request.model_dump(mode="json"), 0, (), Queue(), Event()
+    )
+
+    assert result["checked"] == result["evaluated"] == (
+        estimate_exhaustive_space(request)
+    ) == 1_122
+
+
+def test_vent_bound_cache_reuses_equal_power_occupation_masks():
+    cooling_caps = (("heat_vent", 2),)
+    single = tuple(["uranium_single", *(["empty"] * 17)])
+    quad = tuple(["uranium_quad", *(["empty"] * 17)])
+    _sustainable_vent_upper_bound_from_mask.cache_clear()
+
+    assert sustainable_vent_upper_bound(single, 3, cooling_caps) == (
+        sustainable_vent_upper_bound(quad, 3, cooling_caps)
+    )
+    assert _sustainable_vent_upper_bound_from_mask.cache_info().hits == 1
 
 
 def test_partial_heat_bound_closes_an_impossible_root_combinatorially():
@@ -242,6 +350,85 @@ def test_sustainable_vent_bound_is_optimistic_but_respects_slots_and_inventory()
     ) == 18
 
 
+def test_partial_vent_bound_dominates_every_small_prefix_completion():
+    columns = 2
+    slots = columns * 6
+    undecided = (3, 4, 5)
+    undecided_mask = sum(1 << position for position in undecided)
+    fixed_coolable_mask = (1 << 0) | (1 << 2)
+    vent_items = ("component_heat_vent", "heat_vent")
+    placed_vent_masks = (1 << 1, 1 << 0)
+    remaining_vent_caps = (1, 1)
+
+    upper = _partial_sustainable_vent_upper_bound(
+        slots,
+        columns,
+        undecided_mask,
+        fixed_coolable_mask,
+        vent_items,
+        placed_vent_masks,
+        remaining_vent_caps,
+        2,
+    )
+
+    fixed = ["empty"] * slots
+    fixed[0] = "heat_vent"
+    fixed[1] = "component_heat_vent"
+    fixed[2] = "coolant_10k"
+    choices = ("empty", "component_heat_vent", "heat_vent", "coolant_10k")
+    exact_capacities = []
+    for completion in product(choices, repeat=len(undecided)):
+        if completion.count("component_heat_vent") > 1:
+            continue
+        if completion.count("heat_vent") > 1:
+            continue
+        if completion.count("coolant_10k") > 1:
+            continue
+        layout = list(fixed)
+        for position, item in zip(undecided, completion, strict=True):
+            layout[position] = item
+        capacity = 0
+        for position, item in enumerate(layout):
+            spec = COMPONENTS[item]
+            capacity += spec.self_vent
+            if spec.side_vent:
+                capacity += spec.side_vent * sum(
+                    COMPONENTS[layout[neighbor]].is_coolable
+                    for neighbor in _layout_neighbors(position, columns, slots)
+                )
+        exact_capacities.append(capacity)
+
+    assert max(exact_capacities) <= upper
+
+
+def test_partial_vent_bound_uses_coolable_inventory_and_fixed_topology():
+    slots = 18
+    columns = 3
+    all_but_corner = ((1 << slots) - 1) ^ 1
+    vent_items = ("component_heat_vent",)
+
+    assert _partial_sustainable_vent_upper_bound(
+        slots,
+        columns,
+        all_but_corner,
+        0,
+        vent_items,
+        (0,),
+        (3,),
+        0,
+    ) == 0
+    assert _partial_sustainable_vent_upper_bound(
+        slots,
+        columns,
+        all_but_corner,
+        1,
+        vent_items,
+        (0,),
+        (3,),
+        0,
+    ) == 8
+
+
 def test_sustainable_heat_flow_bound_tracks_heat_delivery_paths():
     adjacent_vent = tuple(["uranium_single", "heat_vent", *("empty" for _ in range(16))])
     remote_vent = tuple(["uranium_single", "empty", "heat_vent", *("empty" for _ in range(15))])
@@ -261,6 +448,46 @@ def test_active_finite_reflector_cannot_form_mark_i_fixed_state():
     inactive = tuple(["neutron_reflector", "empty", "uranium_single", *("empty" for _ in range(15))])
     assert has_degrading_power_component(active, 3)
     assert not has_degrading_power_component(inactive, 3)
+
+
+def test_active_finite_reflector_closes_partial_skeleton_before_finish(monkeypatch):
+    request = OptimizationRequest(
+        columns=3,
+        fuel=FuelConstraint(
+            mode="separate", usage="exact", single=1, dual=0, quad=0
+        ),
+        component_limits={"neutron_reflector": 1, "heat_vent": 1},
+        marks=["I"],
+        solver="exhaustive",
+        cpu_workers=1,
+        max_reactor_ticks=2_000,
+    )
+
+    class Queue:
+        def put(self, _message):
+            pass
+
+    class Event:
+        def is_set(self):
+            return False
+
+    def fail_if_finished(*_args):
+        raise AssertionError("active finite reflector should prune before finish_skeleton")
+
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer.sustainable_vent_upper_bound",
+        fail_if_finished,
+    )
+    result = _run_exhaustive_shard(
+        request.model_dump(mode="json"),
+        0,
+        ((0, "uranium_single"), (1, "neutron_reflector")),
+        Queue(),
+        Event(),
+    )
+
+    assert result["checked"] == result["pruned"] == 17
+    assert result["evaluated"] == 0
 
 
 def test_fixed_point_certificate_reuses_identical_layout_result():
@@ -435,6 +662,7 @@ def test_mark_i_exhaustive_power_bound_skips_only_noncompetitive_layouts(monkeyp
 
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_vent_upper_bound", lambda *_args: 10**9)
+    monkeypatch.setattr("ic2_reactor.optimizer._partial_sustainable_vent_upper_bound", lambda *_args: 10**9)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_heat_flow_upper_bound", lambda *_args: 10**9)
     monkeypatch.setattr("ic2_reactor.optimizer._partial_mark_i_heat_infeasible", lambda *_args: False)
     result = _run_exhaustive_shard(request.model_dump(mode="json"), 0, (), Queue(), Event())
@@ -442,6 +670,9 @@ def test_mark_i_exhaustive_power_bound_skips_only_noncompetitive_layouts(monkeyp
     assert result["checked"] == estimate_exhaustive_space(request) == 342
     assert result["pruned"] > 0
     assert result["evaluated"] + result["pruned"] == result["checked"]
+    assert result["power_frontier_stats"]["enabled"]
+    assert result["power_frontier_stats"]["bound_calls"] > 0
+    assert result["power_frontier_stats"]["frontier_pruned_layouts"] > 0
 
     exact_best = 0.0
     for first in range(18):
@@ -457,6 +688,68 @@ def test_mark_i_exhaustive_power_bound_skips_only_noncompetitive_layouts(monkeyp
             layout[second] = "uranium_dual"
             exact_best = max(exact_best, theoretical_eu_per_tick(tuple(layout), 3))
     assert result["boards"]["I"][0].average_eu_per_tick == exact_best
+
+
+def test_power_frontier_dp_preserves_exact_total_rod_optimum(monkeypatch):
+    request = OptimizationRequest(
+        columns=3,
+        fuel=FuelConstraint(mode="total_rods", usage="exact", total_rods=3),
+        component_limits={},
+        marks=["I"],
+        solver="exhaustive",
+        result_limit=1,
+        cpu_workers=1,
+        max_reactor_ticks=2_000,
+    )
+
+    def fake_evaluate(layout, columns, max_reactor_ticks, cancel_check=None):
+        power = theoretical_eu_per_tick(layout, columns)
+        return CandidateResult(
+            layout,
+            "Mark I-I",
+            power,
+            power * 40_000,
+            40_000,
+            1.0,
+            sum(item != "empty" for item in layout),
+            canonical_layout(layout, columns),
+        )
+
+    class Queue:
+        def put(self, _message):
+            pass
+
+    class Event:
+        def is_set(self):
+            return False
+
+    monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
+    monkeypatch.setattr("ic2_reactor.optimizer.sustainable_vent_upper_bound", lambda *_args: 10**9)
+    monkeypatch.setattr("ic2_reactor.optimizer.sustainable_heat_flow_upper_bound", lambda *_args: 10**9)
+    monkeypatch.setattr("ic2_reactor.optimizer._partial_mark_i_heat_infeasible", lambda *_args: False)
+    result = _run_exhaustive_shard(
+        request.model_dump(mode="json"), 0, (), Queue(), Event()
+    )
+
+    exact_best = 0.0
+    for positions in combinations(range(18), 3):
+        layout = ["empty"] * 18
+        for position in positions:
+            layout[position] = "uranium_single"
+        exact_best = max(exact_best, theoretical_eu_per_tick(tuple(layout), 3))
+    for single_position in range(18):
+        for dual_position in range(18):
+            if single_position == dual_position:
+                continue
+            layout = ["empty"] * 18
+            layout[single_position] = "uranium_single"
+            layout[dual_position] = "uranium_dual"
+            exact_best = max(exact_best, theoretical_eu_per_tick(tuple(layout), 3))
+
+    assert result["checked"] == estimate_exhaustive_space(request) == 1_122
+    assert result["evaluated"] + result["pruned"] == result["checked"]
+    assert result["boards"]["I"][0].average_eu_per_tick == exact_best
+    assert result["power_frontier_stats"]["frontier_pruned_layouts"] > 0
 
 
 def test_mark_i_exact_fuel_generator_counts_only_complete_inventory(monkeypatch):
@@ -489,6 +782,7 @@ def test_mark_i_exact_fuel_generator_counts_only_complete_inventory(monkeypatch)
 
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_vent_upper_bound", lambda *_args: 10**9)
+    monkeypatch.setattr("ic2_reactor.optimizer._partial_sustainable_vent_upper_bound", lambda *_args: 10**9)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_heat_flow_upper_bound", lambda *_args: 10**9)
     result = _run_exhaustive_shard(
         request.model_dump(mode="json"), 0, (), Queue(), Event()
@@ -538,6 +832,10 @@ def test_mark_i_cooling_search_visits_full_layout_before_empty_variants(monkeypa
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
     monkeypatch.setattr(
         "ic2_reactor.optimizer.sustainable_vent_upper_bound",
+        lambda *_args: 10**9,
+    )
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer._partial_sustainable_vent_upper_bound",
         lambda *_args: 10**9,
     )
     monkeypatch.setattr(
@@ -592,6 +890,63 @@ def test_mark_i_heat_conservation_prunes_an_impossible_cooling_subtree():
     assert result["evaluated"] == 0
 
 
+def test_partial_cooling_bound_prunes_prefixes_without_losing_counts(monkeypatch):
+    request = OptimizationRequest(
+        columns=3,
+        fuel=FuelConstraint(
+            mode="separate", usage="exact", single=1, dual=0, quad=0
+        ),
+        component_limits={
+            "iridium_reflector": 1,
+            "component_heat_vent": 3,
+            "coolant_10k": 1,
+        },
+        marks=["I"],
+        solver="exhaustive",
+        cpu_workers=1,
+        max_reactor_ticks=2_000,
+    )
+
+    def fake_evaluate(layout, columns, max_reactor_ticks, cancel_check=None):
+        power = theoretical_eu_per_tick(layout, columns)
+        return CandidateResult(
+            layout,
+            "Mark I-I",
+            power,
+            power * 40_000,
+            40_000,
+            1.0,
+            sum(item != "empty" for item in layout),
+            canonical_layout(layout, columns),
+        )
+
+    class Queue:
+        def put(self, _message):
+            pass
+
+    class Event:
+        def is_set(self):
+            return False
+
+    monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bound",
+        lambda *_args: 10**9,
+    )
+    result = _run_exhaustive_shard(
+        request.model_dump(mode="json"),
+        0,
+        ((0, "uranium_single"), (1, "iridium_reflector")),
+        Queue(),
+        Event(),
+    )
+
+    completion_count = count_cooling_completions(16, (3, 1))
+    assert result["checked"] == completion_count
+    assert result["evaluated"] + result["pruned"] == completion_count
+    assert completion_count * 9 // 10 <= result["pruned"] < completion_count
+
+
 def test_mark_i_heat_flow_prunes_completions_without_a_sustainable_path(monkeypatch):
     request = OptimizationRequest(
         columns=3,
@@ -618,7 +973,14 @@ def test_mark_i_heat_flow_prunes_completions_without_a_sustainable_path(monkeypa
         def is_set(self):
             return False
 
+    def fail_if_prefix_bound_runs(*_args):
+        raise AssertionError("self-vent-only cooling must skip the prefix bound")
+
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer._partial_sustainable_vent_upper_bound",
+        fail_if_prefix_bound_runs,
+    )
     result = _run_exhaustive_shard(
         request.model_dump(mode="json"),
         0,
@@ -716,6 +1078,35 @@ def test_exact_heuristic_population_always_uses_requested_fuel_counts():
         assert layout.count("uranium_dual") == 1
         assert layout.count("uranium_quad") == 1
         assert job._within_limits(layout)
+
+
+def test_warm_start_variants_preserve_inventory_and_power_skeleton():
+    request = OptimizationRequest(
+        columns=3,
+        fuel=FuelConstraint(
+            mode="separate", usage="exact", single=1, dual=0, quad=0
+        ),
+        component_limits={"heat_vent": 2, "advanced_heat_vent": 1},
+        marks=["I"],
+        solver="exhaustive",
+    )
+    job = OptimizationJob(request)
+    seed = tuple([
+        "uranium_single",
+        "heat_vent",
+        "heat_vent",
+        "advanced_heat_vent",
+        *(["empty"] * 14),
+    ])
+
+    first = job._warm_start_variants((seed,), random.Random(221), limit=16)
+    second = job._warm_start_variants((seed,), random.Random(221), limit=16)
+
+    assert first == second
+    assert len(first) == 16
+    assert all(sorted(layout) == sorted(seed) for layout in first)
+    assert all(power_skeleton(layout) == power_skeleton(seed) for layout in first)
+    assert all(job._within_limits(layout) for layout in first)
 
 
 def test_exact_random_layout_fills_all_slots_when_cooling_inventory_allows_it():
@@ -884,6 +1275,7 @@ def test_mark_i_partial_bound_counting_respects_total_rod_packages(monkeypatch):
 
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_vent_upper_bound", lambda *_args: 10**9)
+    monkeypatch.setattr("ic2_reactor.optimizer._partial_sustainable_vent_upper_bound", lambda *_args: 10**9)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_heat_flow_upper_bound", lambda *_args: 10**9)
     result = _run_exhaustive_shard(
         request.model_dump(mode="json"), 0, (), Queue(), Event()
