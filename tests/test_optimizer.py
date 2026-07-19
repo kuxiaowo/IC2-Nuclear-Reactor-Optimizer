@@ -32,6 +32,7 @@ from ic2_reactor.optimizer import (
     power_skeleton,
     skeleton_heat_per_tick,
     sustainable_heat_flow_upper_bound,
+    sustainable_heat_flow_upper_bounds,
     sustainable_vent_upper_bound,
     theoretical_eu_per_tick,
 )
@@ -443,6 +444,30 @@ def test_sustainable_heat_flow_bound_tracks_heat_delivery_paths():
     assert sustainable_heat_flow_upper_bound(reflected, 3) == 6
 
 
+def test_numba_sustainable_heat_flow_batch_matches_scalar_network():
+    rng = random.Random(0x1C2)
+    component_ids = tuple(COMPONENTS)
+    for columns in (3, 6, 9):
+        slots = columns * 6
+        layouts = []
+        for _ in range(24):
+            layout = [
+                "empty" if rng.random() < 0.55 else rng.choice(component_ids)
+                for _ in range(slots)
+            ]
+            layout[rng.randrange(slots)] = rng.choice(
+                ("uranium_single", "uranium_dual", "uranium_quad")
+            )
+            layouts.append(tuple(layout))
+        batch = tuple(layouts)
+
+        expected = [
+            sustainable_heat_flow_upper_bound(layout, columns)
+            for layout in batch
+        ]
+        assert sustainable_heat_flow_upper_bounds(batch, columns).tolist() == expected
+
+
 def test_active_finite_reflector_cannot_form_mark_i_fixed_state():
     active = tuple(["neutron_reflector", "uranium_single", *("empty" for _ in range(16))])
     inactive = tuple(["neutron_reflector", "empty", "uranium_single", *("empty" for _ in range(15))])
@@ -663,7 +688,10 @@ def test_mark_i_exhaustive_power_bound_skips_only_noncompetitive_layouts(monkeyp
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_vent_upper_bound", lambda *_args: 10**9)
     monkeypatch.setattr("ic2_reactor.optimizer._partial_sustainable_vent_upper_bound", lambda *_args: 10**9)
-    monkeypatch.setattr("ic2_reactor.optimizer.sustainable_heat_flow_upper_bound", lambda *_args: 10**9)
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bounds",
+        lambda layouts, *_args: [10**9] * len(layouts),
+    )
     monkeypatch.setattr("ic2_reactor.optimizer._partial_mark_i_heat_infeasible", lambda *_args: False)
     result = _run_exhaustive_shard(request.model_dump(mode="json"), 0, (), Queue(), Event())
 
@@ -725,7 +753,10 @@ def test_power_frontier_dp_preserves_exact_total_rod_optimum(monkeypatch):
 
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_vent_upper_bound", lambda *_args: 10**9)
-    monkeypatch.setattr("ic2_reactor.optimizer.sustainable_heat_flow_upper_bound", lambda *_args: 10**9)
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bounds",
+        lambda layouts, *_args: [10**9] * len(layouts),
+    )
     monkeypatch.setattr("ic2_reactor.optimizer._partial_mark_i_heat_infeasible", lambda *_args: False)
     result = _run_exhaustive_shard(
         request.model_dump(mode="json"), 0, (), Queue(), Event()
@@ -750,6 +781,68 @@ def test_power_frontier_dp_preserves_exact_total_rod_optimum(monkeypatch):
     assert result["evaluated"] + result["pruned"] == result["checked"]
     assert result["boards"]["I"][0].average_eu_per_tick == exact_best
     assert result["power_frontier_stats"]["frontier_pruned_layouts"] > 0
+
+
+def test_adaptive_power_frontier_dp_handles_small_six_and_nine_column_states(
+    monkeypatch,
+):
+    def fake_evaluate(layout, columns, max_reactor_ticks, cancel_check=None):
+        power = theoretical_eu_per_tick(layout, columns)
+        return CandidateResult(
+            layout,
+            "Mark I-I",
+            power,
+            power * 40_000,
+            40_000,
+            1.0,
+            sum(item != "empty" for item in layout),
+            canonical_layout(layout, columns),
+        )
+
+    class Queue:
+        def put(self, _message):
+            pass
+
+    class Event:
+        def is_set(self):
+            return False
+
+    monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer.sustainable_vent_upper_bound",
+        lambda *_args: 10**9,
+    )
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bounds",
+        lambda layouts, *_args: [10**9] * len(layouts),
+    )
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer._partial_mark_i_heat_infeasible",
+        lambda *_args: False,
+    )
+
+    for columns in (6, 9):
+        request = OptimizationRequest(
+            columns=columns,
+            fuel=FuelConstraint(
+                mode="separate", usage="exact", single=2, dual=0, quad=0
+            ),
+            component_limits={},
+            marks=["I"],
+            solver="exhaustive",
+            result_limit=1,
+            cpu_workers=1,
+            max_reactor_ticks=2_000,
+        )
+        result = _run_exhaustive_shard(
+            request.model_dump(mode="json"), 0, (), Queue(), Event()
+        )
+
+        assert result["checked"] == estimate_exhaustive_space(request)
+        assert result["evaluated"] + result["pruned"] == result["checked"]
+        assert result["boards"]["I"][0].average_eu_per_tick == 20.0
+        assert result["power_frontier_stats"]["enabled"]
+        assert result["power_frontier_stats"]["ordering_bound_calls"] > 0
 
 
 def test_mark_i_exact_fuel_generator_counts_only_complete_inventory(monkeypatch):
@@ -783,7 +876,10 @@ def test_mark_i_exact_fuel_generator_counts_only_complete_inventory(monkeypatch)
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_vent_upper_bound", lambda *_args: 10**9)
     monkeypatch.setattr("ic2_reactor.optimizer._partial_sustainable_vent_upper_bound", lambda *_args: 10**9)
-    monkeypatch.setattr("ic2_reactor.optimizer.sustainable_heat_flow_upper_bound", lambda *_args: 10**9)
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bounds",
+        lambda layouts, *_args: [10**9] * len(layouts),
+    )
     result = _run_exhaustive_shard(
         request.model_dump(mode="json"), 0, (), Queue(), Event()
     )
@@ -839,8 +935,8 @@ def test_mark_i_cooling_search_visits_full_layout_before_empty_variants(monkeypa
         lambda *_args: 10**9,
     )
     monkeypatch.setattr(
-        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bound",
-        lambda *_args: 10**9,
+        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bounds",
+        lambda layouts, *_args: [10**9] * len(layouts),
     )
     monkeypatch.setattr(
         "ic2_reactor.optimizer._partial_mark_i_heat_infeasible",
@@ -930,8 +1026,8 @@ def test_partial_cooling_bound_prunes_prefixes_without_losing_counts(monkeypatch
 
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
     monkeypatch.setattr(
-        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bound",
-        lambda *_args: 10**9,
+        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bounds",
+        lambda layouts, *_args: [10**9] * len(layouts),
     )
     result = _run_exhaustive_shard(
         request.model_dump(mode="json"),
@@ -1276,7 +1372,10 @@ def test_mark_i_partial_bound_counting_respects_total_rod_packages(monkeypatch):
     monkeypatch.setattr("ic2_reactor.optimizer.evaluate_layout", fake_evaluate)
     monkeypatch.setattr("ic2_reactor.optimizer.sustainable_vent_upper_bound", lambda *_args: 10**9)
     monkeypatch.setattr("ic2_reactor.optimizer._partial_sustainable_vent_upper_bound", lambda *_args: 10**9)
-    monkeypatch.setattr("ic2_reactor.optimizer.sustainable_heat_flow_upper_bound", lambda *_args: 10**9)
+    monkeypatch.setattr(
+        "ic2_reactor.optimizer.sustainable_heat_flow_upper_bounds",
+        lambda layouts, *_args: [10**9] * len(layouts),
+    )
     result = _run_exhaustive_shard(
         request.model_dump(mode="json"), 0, (), Queue(), Event()
     )

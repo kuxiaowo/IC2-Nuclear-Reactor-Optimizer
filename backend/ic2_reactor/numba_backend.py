@@ -731,6 +731,207 @@ def _simulate_one(
     )
 
 
+@njit(cache=True)
+def _sustainable_heat_flow_one(
+    codes,
+    neighbors,
+    kind,
+    rod_count,
+    internal_pulses,
+    self_vent,
+    hull_draw,
+    side_vent,
+    exchange_side,
+    exchange_hull,
+    accepts_heat,
+    is_coolable,
+):
+    """Solve the relaxed per-tick thermal network for one packed layout.
+
+    A dense residual matrix is deliberately used here.  Reactor grids have at
+    most 54 slots (57 flow nodes), so its fixed small footprint is cheaper than
+    allocating a variable adjacency structure for every row in a batch.
+    """
+    slots = codes.shape[0]
+    generated = 0
+    for index in range(slots):
+        code = int(codes[index])
+        if kind[code] != _FUEL:
+            continue
+        pulses = int(internal_pulses[code])
+        for offset in range(4):
+            neighbor = int(neighbors[index, offset])
+            if neighbor < 0:
+                break
+            neighbor_kind = int(kind[int(codes[neighbor])])
+            if neighbor_kind == _FUEL or neighbor_kind == _REFLECTOR:
+                pulses += 1
+        generated += 2 * int(rod_count[code]) * pulses * (pulses + 1)
+    if generated <= 0:
+        return 0
+
+    hull = 0
+    source = slots + 1
+    sink = slots + 2
+    node_count = slots + 3
+    residual = np.zeros((node_count, node_count), dtype=np.int32)
+
+    for index in range(slots):
+        code = int(codes[index])
+        node = index + 1
+        component_kind = int(kind[code])
+        if component_kind == _FUEL:
+            pulses = int(internal_pulses[code])
+            for offset in range(4):
+                neighbor = int(neighbors[index, offset])
+                if neighbor < 0:
+                    break
+                neighbor_kind = int(kind[int(codes[neighbor])])
+                if neighbor_kind == _FUEL or neighbor_kind == _REFLECTOR:
+                    pulses += 1
+            heat = 2 * int(rod_count[code]) * pulses * (pulses + 1)
+            residual[source, node] += heat
+            residual[node, hull] += generated
+            for offset in range(4):
+                neighbor = int(neighbors[index, offset])
+                if neighbor < 0:
+                    break
+                if accepts_heat[int(codes[neighbor])] != 0:
+                    residual[node, neighbor + 1] += generated
+            continue
+
+        if self_vent[code] > 0:
+            residual[node, sink] += int(self_vent[code])
+        if hull_draw[code] > 0:
+            residual[hull, node] += int(hull_draw[code])
+        if side_vent[code] > 0:
+            for offset in range(4):
+                neighbor = int(neighbors[index, offset])
+                if neighbor < 0:
+                    break
+                if is_coolable[int(codes[neighbor])] != 0:
+                    residual[neighbor + 1, sink] += int(side_vent[code])
+        if component_kind == _EXCHANGER:
+            if exchange_hull[code] > 0:
+                hull_limit = max(
+                    int(exchange_hull[code]),
+                    int(exchange_side[code]) // 2,
+                    1,
+                )
+                residual[hull, node] += hull_limit
+                residual[node, hull] += hull_limit
+            if exchange_side[code] > 0:
+                for offset in range(4):
+                    neighbor = int(neighbors[index, offset])
+                    if neighbor < 0:
+                        break
+                    if accepts_heat[int(codes[neighbor])] != 0:
+                        neighbor_node = neighbor + 1
+                        capacity = int(exchange_side[code])
+                        residual[node, neighbor_node] += capacity
+                        residual[neighbor_node, node] += capacity
+
+    # Edmonds-Karp on a tiny dense graph.  The total source capacity is exactly
+    # ``generated``; reaching it is therefore both an exact max-flow value and
+    # an immediate stopping certificate.
+    parent = np.empty(node_count, dtype=np.int16)
+    queue_values = np.empty(node_count, dtype=np.int16)
+    total = 0
+    while total < generated:
+        for node in range(node_count):
+            parent[node] = -1
+        parent[source] = source
+        queue_values[0] = source
+        head = 0
+        tail = 1
+        while head < tail and parent[sink] < 0:
+            start = int(queue_values[head])
+            head += 1
+            for end in range(node_count):
+                if parent[end] < 0 and residual[start, end] > 0:
+                    parent[end] = start
+                    queue_values[tail] = end
+                    tail += 1
+                    if end == sink:
+                        break
+        if parent[sink] < 0:
+            break
+
+        amount = generated - total
+        node = sink
+        while node != source:
+            start = int(parent[node])
+            amount = min(amount, int(residual[start, node]))
+            node = start
+        node = sink
+        while node != source:
+            start = int(parent[node])
+            residual[start, node] -= amount
+            residual[node, start] += amount
+            node = start
+        total += amount
+    return total
+
+
+@njit(cache=True)
+def _sustainable_heat_flow_batch_kernel(
+    component_codes,
+    neighbors,
+    kind,
+    rod_count,
+    internal_pulses,
+    self_vent,
+    hull_draw,
+    side_vent,
+    exchange_side,
+    exchange_hull,
+    accepts_heat,
+    is_coolable,
+    output,
+):
+    # Enumeration workers are already process-parallel.  Keeping this loop
+    # serial prevents nested Numba thread pools from oversubscribing the CPU.
+    for row in range(component_codes.shape[0]):
+        output[row] = _sustainable_heat_flow_one(
+            component_codes[row],
+            neighbors,
+            kind,
+            rod_count,
+            internal_pulses,
+            self_vent,
+            hull_draw,
+            side_vent,
+            exchange_side,
+            exchange_hull,
+            accepts_heat,
+            is_coolable,
+        )
+
+
+def sustainable_heat_flow_upper_bounds(batch: PackedLayoutBatch) -> np.ndarray:
+    """Return exact relaxed-network max-flow values for a packed layout batch."""
+    output = np.zeros(batch.batch_size, dtype=np.int32)
+    if batch.batch_size == 0:
+        return output
+    table = COMPONENT_KERNEL_TABLE
+    _sustainable_heat_flow_batch_kernel(
+        batch.component_codes,
+        packed_neighbor_table(batch.columns),
+        table.kind,
+        table.rod_count,
+        table.internal_pulses,
+        table.self_vent,
+        table.hull_draw,
+        table.side_vent,
+        table.exchange_side,
+        table.exchange_hull,
+        table.accepts_heat,
+        table.is_coolable,
+        output,
+    )
+    return output
+
+
 @njit(cache=True, parallel=True)
 def _evaluate_batch_kernel(
     component_codes,
